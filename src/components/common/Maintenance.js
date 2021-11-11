@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-// import "./Common.scss";
 export class Maintenance extends Component {
   render() {
     return (

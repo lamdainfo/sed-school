@@ -36,14 +36,11 @@ class Sidebar extends Component {
                   id="nav_filter_input"
                   placeholder="Filter menu"
                   className="form-control"
-                  tabindex="0"
                 />
                 <a
                   href="#"
-                  onclick="return false;"
                   className="btn-primary btn-search-close js-waves-off"
                   data-action="toggle"
-                  data-className="list-filter-active"
                   data-target=".page-sidebar"
                 >
                   <i className="fal fa-chevron-up"></i>
@@ -53,7 +50,7 @@ class Sidebar extends Component {
 
             <div className="info-card">
               <img
-                src="https://schoolonweb-private.s3.ap-south-1.amazonaws.com/uploads/2222222/image/57c3c0cf71b0b5dd4ac45538bd124eb2d2ca0c96.png?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIA5FCGLRFPOLTY3PA5%2F20211109%2Fap-south-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20211109T101322Z&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Expires=3600&amp;X-Amz-Signature=762b40b2eccbc47a7154953e006f8dd564b51fa1a62b2528507e3301547d4d92"
+                src="https://schoolonweb-private.s3.ap-south-1.amazonaws.com/uploads/2222222/image/57c3c0cf71b0b5dd4ac45538bd124eb2d2ca0c96.png?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA5FCGLRFPOLTY3PA5%2F20211111%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20211111T162642Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3600&X-Amz-Signature=7d3271650c432912cc54a9eb61e8ffafb4edfea328f7f69597bfaacc375f2c36"
                 className="profile-image rounded-circle"
                 alt="School Logo"
               />
@@ -76,10 +73,8 @@ class Sidebar extends Component {
               />
               <a
                 href="#"
-                onclick="return false;"
                 className="pull-trigger-btn"
                 data-action="toggle"
-                data-className="list-filter-active"
                 data-target=".page-sidebar"
                 data-focus="nav_filter_input"
               >
@@ -89,65 +84,45 @@ class Sidebar extends Component {
 
             <ul id="js-nav-menu" className="nav-menu">
               <li>
-                <a
-                  href="https://dev.lamdainfotech.com/parentlogin/dashboard?authToken=S0krRzRwTXB6Q3pQWlp3eFdFYXlhdz09&amp;dToken=UGREUmZjMzVJa09WYVY4eVUzZXV3Z092Y2w3TGlSSm9hQVN5dEc5S2w0cz0="
-                  title="Dashboard"
-                  data-filter-tags="dashboard"
-                >
+                <Link to="/dashboard">
                   <i className="fal fa-home"></i>
                   <span className="nav-link-text" data-i18n="nav.dashboard">
                     Dashboard
                   </span>
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a
-                  href="https://dev.lamdainfotech.com/parentlogin/noticeboard/all?authToken=S0krRzRwTXB6Q3pQWlp3eFdFYXlhdz09&amp;dToken=UGREUmZjMzVJa09WYVY4eVUzZXV3Z092Y2w3TGlSSm9hQVN5dEc5S2w0cz0="
-                  title="Notice Board"
-                  data-filter-tags="notice board"
-                >
+                <Link to="/notice-board">
                   <i className="fal fa-file-edit"></i>
                   <span className="nav-link-text" data-i18n="nav.notice_board">
                     Notice Board
                   </span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="https://dev.lamdainfotech.com/parentlogin/homework/all?authToken=S0krRzRwTXB6Q3pQWlp3eFdFYXlhdz09&amp;dToken=UGREUmZjMzVJa09WYVY4eVUzZXV3Z092Y2w3TGlSSm9hQVN5dEc5S2w0cz0="
-                  title="Homework"
-                  data-filter-tags="homework"
-                >
+                <Link to="/home-work">
                   <i className="fal fa-book-reader"></i>
                   <span className="nav-link-text" data-i18n="nav.homework">
                     Homework
                   </span>
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a
-                  href="https://dev.lamdainfotech.com/parentlogin/live-class?authToken=S0krRzRwTXB6Q3pQWlp3eFdFYXlhdz09&amp;dToken=UGREUmZjMzVJa09WYVY4eVUzZXV3Z092Y2w3TGlSSm9hQVN5dEc5S2w0cz0="
-                  title="Live Classes"
-                  data-filter-tags="live classes"
-                >
+                <Link to="/live-class">
                   <i className="fal fa-camcorder"></i>
                   <span className="nav-link-text">Live Classes</span>
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a
-                  href="https://dev.lamdainfotech.com/parentlogin/fees?authToken=S0krRzRwTXB6Q3pQWlp3eFdFYXlhdz09&amp;dToken=UGREUmZjMzVJa09WYVY4eVUzZXV3Z092Y2w3TGlSSm9hQVN5dEc5S2w0cz0="
-                  title="Fees"
-                  data-filter-tags="fees"
-                >
+                <Link to="/fees">
                   <i className="fal fa-receipt"></i>
                   <span className="nav-link-text" data-i18n="nav.fees">
                     Fees
                   </span>
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>

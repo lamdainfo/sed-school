@@ -69,7 +69,7 @@ export class AdminLayout extends Component {
                   href="#"
                   className="header-btn btn press-scale-down"
                   data-action="toggle"
-                  data-className="mobile-nav-on"
+                 
                 >
                   <i className="ni ni-menu"></i>
                 </a>
