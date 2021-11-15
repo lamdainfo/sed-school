@@ -7,13 +7,13 @@ const config = {
   IS_MAINTENANCE_MODE: MAINTENANCE_MODE,
   EXTENSION: APP_EXTENSION,
 
-  APP_URL: "https://portal.canopyws.com/",
-  API_URL: "https://api.canopyws.com/",
+  APP_URL: "https://lamdainfotech.com",
+  API_URL: "https://lamdainfotech.com/api/v1/public/api/",
 };
 
 if (APP_ENV === "DEV") {
-  config.APP_URL = "https://portal.canopyws.com/";
-  config.API_URL = "https://api.canopyws.com/";
+  config.APP_URL = "https://dev.lamdainfotech.com";
+  config.API_URL = "https://dev.lamdainfotech.com/api/v1/public/api/";
 }
 
 export const packageConfigure = {

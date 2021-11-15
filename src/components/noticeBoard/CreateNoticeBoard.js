@@ -1,20 +1,62 @@
-import React, { Component } from "react";
-import { Input } from "antd";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Input, Row, Col, Select, Form, Upload, Button } from "antd";
+import { postRequest } from "../../axios";
+import { UploadOutlined } from "@ant-design/icons";
 
-export default class CreateNoticeBoard extends Component {
-  state = {};
+import PageHeader from "../common/PageHeader";
 
-  render() {
-    return (
+const { Option } = Select;
+const { TextArea } = Input;
+
+const CreateNoticeBoard = () => {
+  const [state, setState] = useState({
+    edit_mode: "",
+    posted_on: null,
+    category: null,
+    subject: null,
+    description: null,
+    comment_enable: null,
+    school_code: null,
+    is_draft: null,
+  });
+  const [btnLoading, setBtnLoading] = useState(false);
+  const [categoryList, setCategoryList] = useState([]);
+
+  useEffect(() => {
+    getCategoryList();
+  }, []);
+
+  const handleChange = (field, value) => {
+    setState({ ...state, [field]: value.target.value });
+  };
+
+  const handleSelectChange = (field, value) => {
+    setState({ ...state, [field]: value });
+  };
+
+  const getCategoryList = async () => {
+    const response = await postRequest("get-notice-board-category");
+    setCategoryList(response.data.response);
+  };
+
+  const onFinish = async () => {
+    setBtnLoading(true);
+  };
+
+  const uploadProps = {
+    name: "file",
+    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
+    headers: {
+      authorization: "authorization-text",
+    },
+  };
+
+  return (
+    <>
       <main id="js-page-content" role="main" className="page-content">
         <div id="content">
-          <div className="subheader">
-            <h1 className="subheader-title">
-              <i className="subheader-icon fal fa-clipboard"></i> Notice{" "}
-              <span className="fw-300">Board</span>
-            </h1>
-          </div>
+          <PageHeader pageTitle="Notice Board" />
           <div className="row">
             <div className="col-md-12">
               <div id="panel-1" className="panel">
@@ -25,157 +67,175 @@ export default class CreateNoticeBoard extends Component {
                       to="/notice-board"
                       className="btn btn-sm btn-info waves-effect waves-themed"
                     >
-                      <i className="fal fa-clipboard-list"></i> View Notice Board
+                      <i className="fal fa-clipboard-list"></i> View Notice
+                      Board
                     </Link>
                   </div>
                 </div>
                 <div className="panel-container show">
                   <div className="panel-content p-0">
-                    <form
-                      action="https://dev.lamdainfotech.com/stafflogin/noticeboard/new?authToken=M05NeFB4bnUyNURmNnNRcWtvSG52Zz09&amp;dToken=UGREUmZjMzVJa09WYVY4eVUzZXV3Z092Y2w3TGlSSm9hQVN5dEc5S2w0cz0="
-                      method="post"
-                      enctype="multipart/form-data"
-                      role="form"
+                    <Form
+                      onFinish={onFinish}
+                      autoComplete="off"
+                      layout="vertical"
                     >
                       <div className="panel-content">
-                        <div className="form-row">
-                          <div className="col-md-4 mb-3">
-                            <label for="stdClass" className="form-label">
-                              Class
-                            </label>
-                            <select
-                              id="stdClass"
-                              name="stdClass"
-                              className="form-control"
+                        <Row gutter={[15]}>
+                          <Col xs={24} sm={12} lg={8}>
+                            <Form.Item
+                              name="class"
+                              label="Class"
+                              rules={[
+                                {
+                                  required: true,
+                                  whitespace: true,
+                                  message: "Please select class!",
+                                },
+                              ]}
                             >
-                              <option value="" selected>
-                                Select...
-                              </option>
-                              <option value="II-A">II-A</option>
-                              <option value="V-A">V-A</option>
-                            </select>
-                          </div>
-                          <div className="col-md-8 mb-3">
-                            <label for="rolls" className="form-label">
-                              Roll(s)
-                            </label>
-                            <select
-                              id="rolls"
-                              name="rolls[]"
-                              multiple="multiple"
-                              className="select2 form-control"
-                            ></select>
-                            <div className="custom-control custom-switch mt-1">
-                              <input
-                                type="checkbox"
-                                className="custom-control-input"
-                                name="slRolls"
-                                id="slRolls"
-                              />
-                              <label className="custom-control-label" for="slRolls">
-                                Select All
-                              </label>
-                            </div>
-                          </div>
-                        </div>
+                              <Select
+                                placeholder="Select Class"
+                                onChange={(value) =>
+                                  handleSelectChange("class", value)
+                                }
+                              >
+                                <Option value="7">7</Option>
+                                <Option value="8">8</Option>
+                              </Select>
+                            </Form.Item>
+                          </Col>
 
+                          <Col xs={24} sm={12} lg={8}>
+                            <Form.Item
+                              name="rolls"
+                              label="Roll(s)"
+                              rules={[
+                                {
+                                  required: true,
+                                  whitespace: true,
+                                  message: "Please select rolls!",
+                                },
+                              ]}
+                            >
+                              <Select
+                                placeholder="Select Rolls"
+                                onChange={(value) =>
+                                  handleSelectChange("rolls", value)
+                                }
+                              >
+                                <Option value="7">7</Option>
+                                <Option value="8">8</Option>
+                              </Select>
+                            </Form.Item>
+                          </Col>
+                        </Row>
                         <hr />
-                        <div className="form-row">
-                          <div className="col-md-4 mb-3">
-                            <label
-                              className="form-label required"
-                              for="form_description"
-                            >
-                              Category
-                            </label>
-                            <span className="text-danger">*</span>
 
-                            <select
-                              id="category"
+                        <Row gutter={[15]}>
+                          <Col xs={24} sm={12} lg={8}>
+                            <Form.Item
                               name="category"
-                              className="form-control"
+                              label="Category"
+                              rules={[
+                                {
+                                  required: true,
+                                  whitespace: true,
+                                  message: "Please select category!",
+                                },
+                              ]}
                             >
-                              <option value="">Select...</option>
-                              <option value="ODMySjM4TEJ6bldRaytjYnozU2dodz09">
-                                CLASS TEACHER UPDATES
-                              </option>
-                            </select>
-                          </div>
-                          <div className="col-md-4 mb-3">
-                            <label
-                              className="form-label required"
-                              for="enable_commnet"
+                              <Select
+                                placeholder="Select Category"
+                                onChange={(value) =>
+                                  handleSelectChange("category", value)
+                                }
+                              >
+                                {!!categoryList &&
+                                  categoryList.map((s) => (
+                                    <Option key={s.id} value={s.name}>
+                                      {s.name}
+                                    </Option>
+                                  ))}
+                              </Select>
+                            </Form.Item>
+                          </Col>
+                          <Col xs={24} sm={12} lg={8}>
+                            <Form.Item
+                              name="comment_enable"
+                              label="Enable Comment"
                             >
-                              Enable Comment
-                            </label>
-                            <span className="text-danger">*</span>
+                              <Select
+                                defaultValue="0"
+                                onChange={(value) =>
+                                  handleSelectChange("comment_enable", value)
+                                }
+                              >
+                                <Option value="0">No</Option>
+                                <Option value="1">Yes</Option>
+                              </Select>
+                            </Form.Item>
+                          </Col>
 
-                            <select
-                              id="enable_commnet"
-                              name="enable_commnet"
-                              className="form-control"
-                            >
-                              <option value="1">Yes</option>
-                              <option value="0" selected>
-                                No
-                              </option>
-                            </select>
-                          </div>
-                        </div>
-                        <div className="form-row">
-                          <div className="col-md-12 mb-3">
-                            <label className="form-label required" for="subject">
-                              Subject{" "}
-                            </label>
-                            <span className="text-danger">*</span>
-                            <input
-                              type="text"
+                          <Col xs={24} sm={12} lg={24}>
+                            <Form.Item
+                              label="Subject"
                               name="subject"
-                              id="subject"
-                              required
-                              className="form-control"
-                              maxlength="150"
-                            />
-                          </div>
-                        </div>
-                        <div className="form-row">
-                          <div className="col-md-12 mb-3">
-                            <label
-                              className="form-label required"
-                              for="description"
+                              rules={[
+                                {
+                                  required: true,
+                                  whitespace: true,
+                                  message: "Please enter subject",
+                                },
+                              ]}
                             >
-                              Description
-                            </label>
-                            <span className="text-danger">*</span>
-                            <textarea
+                              <Input
+                                onChange={(value) =>
+                                  handleChange("subject", value)
+                                }
+                              />
+                            </Form.Item>
+                          </Col>
+
+                          <Col xs={24} sm={12} lg={24}>
+                            <Form.Item
+                              label="Description"
                               name="description"
-                              id="description"
-                              required
-                              className="form-control"
-                              rows="5"
-                            ></textarea>
-                          </div>
-                        </div>
-                        <div className="form-row">
-                          <div className="col-md-12 mb-3">
-                            <label className="form-label">
-                              Attachment(s) [Attach up to 4 files.]
-                            </label>
-                          </div>
-                        </div>
+                              rules={[
+                                {
+                                  required: true,
+                                  whitespace: true,
+                                  message: "Please enter description",
+                                },
+                              ]}
+                            >
+                              <TextArea rows={4} />
+                            </Form.Item>
+                          </Col>
+
+                          <Col xs={24} sm={12} lg={24}>
+                            <label>Attachment(s) [Attach up to 4 files.]</label>
+                            <br />
+                            <Upload {...uploadProps}>
+                              <Button icon={<UploadOutlined />}>
+                                Click to Upload
+                              </Button>
+                            </Upload>
+                          </Col>
+                        </Row>
+                        <br />
                       </div>
+
                       <div className="panel-content border-faded border-left-0 border-right-0 border-bottom-0 d-flex flex-row">
-                        <button
-                          type="submit"
-                          id="form_submitNew"
-                          name="submitNew"
-                          value="1"
+                        <Button
+                          type="primary"
+                          htmlType="submit"
+                          loading={btnLoading}
                           className="btn btn-primary ml-auto waves-effect waves-themed"
                         >
                           Publish
-                        </button>
+                        </Button>
                       </div>
-                    </form>
+                    </Form>
                   </div>
                 </div>
               </div>
@@ -183,6 +243,8 @@ export default class CreateNoticeBoard extends Component {
           </div>
         </div>
       </main>
-    );
-  }
-}
+    </>
+  );
+};
+
+export default CreateNoticeBoard;

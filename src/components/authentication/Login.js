@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Row, Col, Input, Button, Form, Checkbox } from "antd";
-import { MailOutlined, LockOutlined } from "@ant-design/icons";
+import { Input, Button, Form } from "antd";
+import { postRequest } from "../../axios";
 import Password from "antd/lib/input/Password";
 
 import {
@@ -12,7 +12,11 @@ import { redirectIfLoggedIn } from "../../utils/Helpers";
 import { AUTH_USER_TOKEN_KEY } from "../../utils/constants";
 
 const Login = () => {
-  const [state, setState] = useState({ email: "", password: "" });
+  const [state, setState] = useState({
+    code: null,
+    username: null,
+    password: null,
+  });
   const [btnLoading, setBtnLoading] = useState(false);
 
   useEffect(() => {
@@ -23,81 +27,89 @@ const Login = () => {
     setState({ ...state, [field]: value.target.value });
   };
 
-  const onLogin = () => {
+  const onLogin = async () => {
     setBtnLoading(true);
+
+    try {
+      const response = await postRequest("login", state);
+      
+      localStorage.clear();
+      localStorage.setItem("dbtoken", response.data.response.dbtoken);
+      localStorage.setItem("restoken", response.data.response.restoken);
+      localStorage.setItem("userType", response.data.response.userType);
+
+      SuccessNotificationMsg("Success", "Succesfully logged in!");
+      window.location.href = "/dashboard";
+
+    } catch (error) {
+      setBtnLoading(false);
+      ErrorNotificationMsg(error.errmsg);
+    }
   };
 
   return (
     <>
       <div className="card p-4 border-top-left-radius-0 border-top-right-radius-0">
-        <form
-          id="form-login"
-          action="#"
-          method="post"
-          className="needs-validation"
-          novalidate
-        >
-          <input
-            type="hidden"
-            name="_token"
-            value="Je0YbOykAQt0qg8XVs72uRhtPdheZRmZK0S6UoUg"
-          />
-
-          <div className="form-group">
-            <label className="form-label" for="sch_code">
-              School Code
-            </label>
-            <input
-              type="text"
-              id="sch_code"
-              name="school_code"
-              maxlength="7"
-              className="form-control"
-              required
-              value=""
-            />
-            <div className="invalid-feedback">Please enter School Code</div>
-          </div>
-          <div className="form-group">
-            <label className="form-label" for="username">
-              Username / Unique ID
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              maxlength="7"
-              className="form-control"
-              required
-              value=""
-            />
-            <div className="invalid-feedback">Please enter Username</div>
-          </div>
-          <div className="form-group">
-            <label className="form-label" for="password">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="form-control"
-              required
-              value=""
-            />
-            <div className="invalid-feedback">Enter your password</div>
-          </div>
-          <button
-            type="submit"
-            className="btn btn-primary waves-effect waves-themed"
+        <Form onFinish={onLogin} autoComplete="off" layout="vertical">
+          <Form.Item
+            label="School Code"
+            name="code"
+            rules={[
+              {
+                required: true,
+                whitespace: true,
+                message: "Please enter school code",
+              },
+            ]}
           >
-            <i className="fal fa-sign-in-alt mr-1"></i> Sign In
-          </button>
-        </form>
+            <Input
+              onChange={(value) => handleChange("code", value)}
+              placeholder="Enter school code"
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Username / Unique ID"
+            name="username"
+            rules={[
+              {
+                required: true,
+                whitespace: true,
+                message: "Please enter username",
+              },
+            ]}
+          >
+            <Input
+              onChange={(value) => handleChange("username", value)}
+              placeholder="Enter username"
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[
+              {
+                required: true,
+                whitespace: true,
+                message: "Please enter password",
+              },
+            ]}
+          >
+            <Password
+              onChange={(value) => handleChange("password", value)}
+              placeholder="Enter password"
+            />
+          </Form.Item>
+
+          <Button type="primary" htmlType="submit" loading={btnLoading}>
+            Sign In
+          </Button>
+        </Form>
       </div>
       <div className="blankpage-footer text-center">
         <Link to="/forgot-password">
-          <strong>Forgot password?</strong>
+          <strong>Forgot Password?</strong>
         </Link>
       </div>
     </>
