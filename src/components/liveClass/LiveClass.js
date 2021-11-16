@@ -2,13 +2,29 @@ import React, { useState, useEffect } from "react";
 import { Layout } from "antd";
 import { postRequest } from "../../axios";
 
+import { getSessionData } from "../../utils/Helpers";
+import { Link } from "react-router-dom";
+
 const { Content } = Layout;
 
 const LiveClass = () => {
   const [btnLoading, setBtnLoading] = useState(false);
   const [apiLoading, setApiLoading] = useState(false);
-  const [noticeBoardList, setNoticeBoardList] = useState([]);
+  const [liveClassList, setLiveClassList] = useState([]);
   const [paginationData, setPaginationData] = useState([]);
+
+  useEffect(() => {
+    getLiveClassList();
+  }, []);
+
+  const getLiveClassList = async () => {
+    const getClassResponse = await postRequest("live-class-list-staff", {
+      filterDate: "25/11/2021",
+      page: 1,
+    });
+    setLiveClassList(getClassResponse.data.response.live_classes);
+    setPaginationData(getClassResponse.data.paginationData);
+  };
 
   return (
     <main id="js-page-content" role="main" className="page-content">
@@ -38,60 +54,63 @@ const LiveClass = () => {
                   width="100"
                 />
               </h4>
-              <div className="panel-container show" id="loadData">
-                <div className="panel-content" id="loadData">
-                  <div className="card border mb-2">
-                    <div className="card-body">
-                      <img
-                        src="https://schoolonweb-private.s3.ap-south-1.amazonaws.com/uploads/2222222/image/63b45c31626394532b39e78c38fc924c91cb78bd.jpeg?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIA5FCGLRFPOLTY3PA5%2F20211111%2Fap-south-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20211111T085052Z&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Expires=3600&amp;X-Amz-Signature=7157fda28b90d978900e890925fbd80de19a98209142102ca4d01199b683beac"
-                        className="profile-image rounded-circle"
-                      />{" "}
-                      <span className="badge card-title">
-                        {" "}
-                        <strong>ENGLISH</strong>
-                      </span>
-                      <br />{" "}
-                      <span
-                        className="badge text-white "
-                        style={{ backgroundColor: "#0025FF" }}
-                      >
-                        V-A
-                      </span>{" "}
-                      <div className="frame-wrap mb-2">
-                        <span className="d-block text-muted">
-                          <i className="fas fa-sm fa-angle-double-right text-warning"></i>
-                          Live Class ID : 25 October
-                        </span>
-                      </div>
-                      <div className="frame-wrap mb-2">
-                        <span className="d-block text-muted">
-                          <i className="fas fa-sm fa-angle-double-right text-warning"></i>
-                          Class Scheduled At : 25 October
-                        </span>
-                      </div>
-                      <div className="frame-wrap mb-2">
-                        <span className="d-block text-muted">
-                          <i className="fa fa-sm fa-angle-double-right text-warning"></i>
-                          Duration : 25 October
-                        </span>
-                      </div>
-                      <div className="frame-wrap mb-2">
-                        <span className="d-block text-muted">
-                          <i className="fas fa-sm fa-angle-double-right text-warning"></i>
-                          Created At : 25 October
-                        </span>
-                      </div>
-                    </div>
+              <div className="panel-container show">
+                <div className="panel-content">
+                  {liveClassList &&
+                    liveClassList.map((liveClass) => {
+                      return (
+                        <div className="card border mb-2">
+                          <div className="card-body">
+                            <img
+                              src={liveClass.teacher_img}
+                              className="profile-image rounded-circle"
+                            />{" "}
+                            <span className="badge card-title">
+                              {" "}
+                              <strong>{liveClass.subject_name}</strong>
+                            </span>
+                            <br />{" "}
+                            <span
+                              className="badge text-white "
+                              style={{ backgroundColor: "#0025FF" }}
+                            >
+                              {liveClass.class_code}
+                            </span>{" "}
+                            <div className="frame-wrap mb-2">
+                              <span className="d-block text-muted">
+                                <i className="fas fa-sm fa-angle-double-right text-warning"></i>
+                                Teacher Name : {liveClass.teacher_name}
+                              </span>
+                            </div>
+                            <div className="frame-wrap mb-2">
+                              <span className="d-block text-muted">
+                                <i className="fas fa-sm fa-angle-double-right text-warning"></i>
+                                Class Scheduled At :{" "}
+                                {liveClass.live_class_date +
+                                  " " +
+                                  liveClass.start_time}
+                              </span>
+                            </div>
+                            <div className="frame-wrap mb-2">
+                              <span className="d-block text-muted">
+                                <i className="fa fa-sm fa-angle-double-right text-warning"></i>
+                                Duration : {liveClass.duration} Minutes
+                              </span>
+                            </div>
+                          </div>
 
-                    <div class="card-footer text-muted py-2">
-                      <span id="attd083am5IMjhJZEN4VTJHRFdWWE1uQT09">0</span> /
-                      7 / 7 <i class="fal fa-user-alt mr-2"></i>
-                      &nbsp;&nbsp;|&nbsp;&nbsp;
-                      <a href="javascript:void(0);">
-                        <i class="fas fa-trash-alt text-danger mr-2"></i>
-                      </a>
-                    </div>
-                  </div>
+                          <div class="card-footer text-muted py-2">
+                            {liveClass.totalAttend} / {liveClass.total_students}{" "}
+                            &nbsp;
+                            <i class="fal fa-user-alt mr-2"></i>
+                            &nbsp;|&nbsp;&nbsp;
+                            <Link to="/">
+                              <i class="fas fa-trash-alt text-danger mr-2"></i>
+                            </Link>
+                          </div>
+                        </div>
+                      );
+                    })}
                   <div>
                     <div className="dataTables_wrapper">
                       <div className="row">
@@ -103,7 +122,9 @@ const LiveClass = () => {
                             style={{ paddingLeft: "10px" }}
                             aria-live="polite"
                           >
-                            Showing 1 to 10 of 29 entries
+                            Showing {paginationData.current} to{" "}
+                            {paginationData.last} of{" "}
+                            {paginationData.total_record} entries
                           </div>
                         </div>
                         <div className="col-md-7">

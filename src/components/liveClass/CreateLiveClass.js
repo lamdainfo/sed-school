@@ -13,23 +13,28 @@ import {
 } from "antd";
 
 import PageHeader from "../common/PageHeader";
+import {
+  SuccessNotificationMsg,
+  ErrorNotificationMsg,
+} from "../../utils/NotificationHelper";
 import { getSessionData, getUserData } from "../../utils/Helpers";
 
 const { Option } = Select;
 
 const CreateLiveClass = (props) => {
-  const dateFormat = "YYYY/MM/DD";
+  const dateFormat = "YYYY-MM-DD";
   const timeFormat = "HH:mm";
 
   const [state, setState] = useState({
-    edit_mode: "",
-    posted_on: null,
-    category: null,
-    subject: null,
-    description: null,
-    comment_enable: null,
-    school_code: null,
-    is_draft: null,
+    session_code: getSessionData().code,
+    class_code: null,
+    sections: [],
+    subject_code: null,
+    class_date: moment().format("YYYY-MM-DD"),
+    class_start_time: moment().format("HH:mm"),
+    class_duration: null,
+    remarks: null,
+    status: 1,
   });
 
   const [btnLoading, setBtnLoading] = useState(false);
@@ -78,11 +83,11 @@ const CreateLiveClass = (props) => {
   };
 
   const handleSectionChange = async (field, value) => {
-    setState({ ...state, [field]: value });
+    setState({ ...state, sections: [value] });
 
     const subjectRes = await postRequest("get-subject-by-class-multi-section", {
       session_code: getSessionData().code,
-      class_code: state.class,
+      class_code: state.class_code,
       sections: [value],
       tid: getUserData().tid,
     });
@@ -92,11 +97,30 @@ const CreateLiveClass = (props) => {
 
   const onFinish = async () => {
     setBtnLoading(true);
+
+    try {
+      const createClassResponse = await postRequest("live-class-create", state);
+
+      SuccessNotificationMsg("Success", "Live class created successfully");
+      setBtnLoading(false);
+      props.history.push("/live-class");
+    } catch (error) {
+      setBtnLoading(false);
+      ErrorNotificationMsg(error.errmsg);
+    }
   };
 
   const disablePastDate = (current) => {
     let customDate = moment().format("YYYY-MM-DD");
     return current && current < moment(customDate, "YYYY-MM-DD");
+  };
+
+  const handleChangeTime = (time, timeString) => {
+    setState({ ...state, class_start_time: timeString });
+  };
+
+  const handleChangeDate = (date, dateString) => {
+    setState({ ...state, class_date: dateString });
   };
 
   return (
@@ -121,11 +145,10 @@ const CreateLiveClass = (props) => {
                         <Col xs={24} sm={12} lg={8}>
                           <label>Class *</label>
                           <Form.Item
-                            name="class"
+                            name="class_code"
                             rules={[
                               {
                                 required: true,
-                                whitespace: true,
                                 message: "Please select class!",
                               },
                             ]}
@@ -133,7 +156,7 @@ const CreateLiveClass = (props) => {
                             <Select
                               placeholder="Select Class"
                               onChange={(value) =>
-                                handleClassChange("class", value)
+                                handleClassChange("class_code", value)
                               }
                             >
                               {!!classList &&
@@ -148,11 +171,10 @@ const CreateLiveClass = (props) => {
                         <Col xs={24} sm={12} lg={8}>
                           <label>Section *</label>
                           <Form.Item
-                            name="section"
+                            name="sections"
                             rules={[
                               {
                                 required: true,
-                                whitespace: true,
                                 message: "Please select section!",
                               },
                             ]}
@@ -160,7 +182,7 @@ const CreateLiveClass = (props) => {
                             <Select
                               placeholder="Select Section"
                               onChange={(value) =>
-                                handleSectionChange("section", value)
+                                handleSectionChange("sections", value)
                               }
                             >
                               {!!sectionList &&
@@ -175,11 +197,10 @@ const CreateLiveClass = (props) => {
                         <Col xs={24} sm={12} lg={8}>
                           <label>Subject *</label>
                           <Form.Item
-                            name="subject"
+                            name="subject_code"
                             rules={[
                               {
                                 required: true,
-                                whitespace: true,
                                 message: "Please select subject!",
                               },
                             ]}
@@ -187,7 +208,7 @@ const CreateLiveClass = (props) => {
                             <Select
                               placeholder="Select Subject"
                               onChange={(value) =>
-                                handleSelectChange("subject", value)
+                                handleSelectChange("subject_code", value)
                               }
                             >
                               {!!subjectList &&
@@ -202,19 +223,12 @@ const CreateLiveClass = (props) => {
 
                         <Col xs={24} sm={12} lg={8}>
                           <label>Class Date *</label>
-                          <Form.Item
-                            name="date"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please select date!",
-                              },
-                            ]}
-                          >
+                          <Form.Item name="class_date">
                             <DatePicker
                               defaultValue={moment()}
                               format={dateFormat}
                               disabledDate={disablePastDate}
+                              onChange={handleChangeDate}
                               style={{ width: "100%" }}
                             />
                           </Form.Item>
@@ -222,19 +236,12 @@ const CreateLiveClass = (props) => {
 
                         <Col xs={24} sm={12} lg={8}>
                           <label>From Time *</label>
-                          <Form.Item
-                            name="fronttime"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please select front time!",
-                              },
-                            ]}
-                          >
+                          <Form.Item name="class_start_time">
                             <TimePicker
                               defaultValue={moment()}
                               format={timeFormat}
                               style={{ width: "100%" }}
+                              onChange={handleChangeTime}
                             />
                           </Form.Item>
                         </Col>
@@ -242,18 +249,18 @@ const CreateLiveClass = (props) => {
                         <Col xs={24} sm={12} lg={8}>
                           <label>Duration *</label>
                           <Form.Item
-                            name="duration"
+                            name="class_duration"
                             rules={[
                               {
                                 required: true,
-                                message: "Please select duration!",
+                                message: "Please select class duration!",
                               },
                             ]}
                           >
                             <Select
                               placeholder="Select Duration"
                               onChange={(value) =>
-                                handleSelectChange("duration", value)
+                                handleSelectChange("class_duration", value)
                               }
                             >
                               <Option value="20">20 min</Option>
@@ -279,30 +286,22 @@ const CreateLiveClass = (props) => {
 
                         <Col xs={24} sm={12} lg={8}>
                           <label>Status *</label>
-                          <Form.Item
-                            name="status"
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please select status!",
-                              },
-                            ]}
-                          >
+                          <Form.Item name="status">
                             <Select
                               placeholder="Select Status"
-                              defaultValue="1"
+                              defaultValue={1}
                               onChange={(value) =>
                                 handleSelectChange("status", value)
                               }
                             >
-                              <Option value="1">Active</Option>
-                              <Option value="0">Inactive</Option>
+                              <Option value={1}>Active</Option>
+                              <Option value={0}>Inactive</Option>
                             </Select>
                           </Form.Item>
                         </Col>
                       </Row>
                     </div>
-                    <div class="panel-content border-faded border-left-0 border-right-0 border-bottom-0 d-flex flex-row">
+                    <div className="panel-content border-faded border-left-0 border-right-0 border-bottom-0 d-flex flex-row">
                       <Button
                         type="primary"
                         htmlType="submit"

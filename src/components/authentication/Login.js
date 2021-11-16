@@ -9,7 +9,6 @@ import {
   ErrorNotificationMsg,
 } from "../../utils/NotificationHelper";
 import { redirectIfLoggedIn } from "../../utils/Helpers";
-import { AUTH_USER_TOKEN_KEY } from "../../utils/constants";
 
 const Login = () => {
   const [state, setState] = useState({
@@ -100,6 +99,7 @@ const Login = () => {
             <Input
               onChange={(value) => handleChange("code", value)}
               placeholder="Enter school code"
+              maxLength="7"
             />
           </Form.Item>
 
