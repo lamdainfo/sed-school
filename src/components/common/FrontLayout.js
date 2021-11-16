@@ -1,15 +1,11 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { Layout, Row, Col, Menu, Dropdown, Select } from "antd";
 
 import LogoSmall from "../../styles/LogoSmall";
-
 import { validateToken, logout } from "../../utils/Helpers";
 import { AUTH_USER_TOKEN_KEY } from "../../utils/constants";
 
 import "antd/dist/antd.css";
 import "../../css/page-login-alt.css";
-
 export class FrontLayout extends Component {
   state = {
     loginStatus: false,

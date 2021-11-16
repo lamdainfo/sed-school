@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { postRequest } from "../../axios";
+import moment from "moment";
 import {
   Input,
   Form,
@@ -13,10 +13,14 @@ import {
 } from "antd";
 
 import PageHeader from "../common/PageHeader";
+import { getSessionData, getUserData } from "../../utils/Helpers";
 
 const { Option } = Select;
 
-const CreateLiveClass = () => {
+const CreateLiveClass = (props) => {
+  const dateFormat = "YYYY/MM/DD";
+  const timeFormat = "HH:mm";
+
   const [state, setState] = useState({
     edit_mode: "",
     posted_on: null,
@@ -27,7 +31,11 @@ const CreateLiveClass = () => {
     school_code: null,
     is_draft: null,
   });
+
   const [btnLoading, setBtnLoading] = useState(false);
+  const [classList, setClassList] = useState([]);
+  const [sectionList, setSectionList] = useState([]);
+  const [subjectList, setSubjectList] = useState([]);
 
   const handleChange = (field, value) => {
     setState({ ...state, [field]: value.target.value });
@@ -37,8 +45,58 @@ const CreateLiveClass = () => {
     setState({ ...state, [field]: value });
   };
 
+  useEffect(() => {
+    getClassList();
+  }, []);
+
+  const getClassList = async () => {
+    const classRes = await postRequest("get-teacher-class-subject", {
+      session_code: getSessionData().code,
+      tid: getUserData().tid,
+    });
+
+    let classArr = classRes.data.response.as_class_teacher.concat(
+      classRes.data.response.as_subject_teacher
+    );
+    let uniqueClassList = classArr.filter(
+      (item, pos) => classArr.indexOf(item) === pos
+    );
+    setClassList(uniqueClassList);
+  };
+
+  const handleClassChange = async (field, value) => {
+    let classCode = value.split("-");
+
+    setState({ ...state, [field]: classCode[0] });
+
+    const sectionRes = await postRequest("get-section-by-class", {
+      session_code: getSessionData().code,
+      class_code: classCode[0],
+    });
+
+    setSectionList(sectionRes.data.response);
+  };
+
+  const handleSectionChange = async (field, value) => {
+    setState({ ...state, [field]: value });
+
+    const subjectRes = await postRequest("get-subject-by-class-multi-section", {
+      session_code: getSessionData().code,
+      class_code: state.class,
+      sections: [value],
+      tid: getUserData().tid,
+    });
+
+    setSubjectList(subjectRes.data.response);
+  };
+
   const onFinish = async () => {
     setBtnLoading(true);
+  };
+
+  const disablePastDate = (current) => {
+    let customDate = moment().format("YYYY-MM-DD");
+    return current && current < moment(customDate, "YYYY-MM-DD");
   };
 
   return (
@@ -75,11 +133,15 @@ const CreateLiveClass = () => {
                             <Select
                               placeholder="Select Class"
                               onChange={(value) =>
-                                handleSelectChange("class", value)
+                                handleClassChange("class", value)
                               }
                             >
-                              <Option value="7">7</Option>
-                              <Option value="8">8</Option>
+                              {!!classList &&
+                                classList.map((s) => (
+                                  <Option key={s} value={s}>
+                                    {s}
+                                  </Option>
+                                ))}
                             </Select>
                           </Form.Item>
                         </Col>
@@ -95,12 +157,19 @@ const CreateLiveClass = () => {
                               },
                             ]}
                           >
-                            <Input
-                              placeholder="Enter API key"
+                            <Select
+                              placeholder="Select Section"
                               onChange={(value) =>
-                                handleChange("section", value)
+                                handleSectionChange("section", value)
                               }
-                            />
+                            >
+                              {!!sectionList &&
+                                sectionList.map((s) => (
+                                  <Option key={s} value={s}>
+                                    {s}
+                                  </Option>
+                                ))}
+                            </Select>
                           </Form.Item>
                         </Col>
                         <Col xs={24} sm={12} lg={8}>
@@ -121,8 +190,12 @@ const CreateLiveClass = () => {
                                 handleSelectChange("subject", value)
                               }
                             >
-                              <Option value="Maths">Maths</Option>
-                              <Option value="science">science</Option>
+                              {!!subjectList &&
+                                subjectList.map((s) => (
+                                  <Option key={s.id} value={s.id}>
+                                    {s.subject_name}
+                                  </Option>
+                                ))}
                             </Select>
                           </Form.Item>
                         </Col>
@@ -139,8 +212,10 @@ const CreateLiveClass = () => {
                             ]}
                           >
                             <DatePicker
-                              placeholder="class date"
-                              onChange={(value) => handleChange("date", value)}
+                              defaultValue={moment()}
+                              format={dateFormat}
+                              disabledDate={disablePastDate}
+                              style={{ width: "100%" }}
                             />
                           </Form.Item>
                         </Col>
@@ -157,9 +232,9 @@ const CreateLiveClass = () => {
                             ]}
                           >
                             <TimePicker
-                              onChange={(value) =>
-                                handleChange("fronttime", value)
-                              }
+                              defaultValue={moment()}
+                              format={timeFormat}
+                              style={{ width: "100%" }}
                             />
                           </Form.Item>
                         </Col>
@@ -181,8 +256,11 @@ const CreateLiveClass = () => {
                                 handleSelectChange("duration", value)
                               }
                             >
-                              <Option value="30 min">30 min</Option>
-                              <Option value="40 min">40 min</Option>
+                              <Option value="20">20 min</Option>
+                              <Option value="25">25 min</Option>
+                              <Option value="30">30 min</Option>
+                              <Option value="35">35 min</Option>
+                              <Option value="40">40 min</Option>
                             </Select>
                           </Form.Item>
                         </Col>
@@ -212,12 +290,13 @@ const CreateLiveClass = () => {
                           >
                             <Select
                               placeholder="Select Status"
+                              defaultValue="1"
                               onChange={(value) =>
                                 handleSelectChange("status", value)
                               }
                             >
-                              <Option value="shopify">Active</Option>
-                              <Option value="wordpress">Inactive</Option>
+                              <Option value="1">Active</Option>
+                              <Option value="0">Inactive</Option>
                             </Select>
                           </Form.Item>
                         </Col>
@@ -236,7 +315,7 @@ const CreateLiveClass = () => {
                       <Button
                         type="reset"
                         loading={btnLoading}
-                        onClick={() => this.props.history.push("/dashboard")}
+                        onClick={() => props.history.push("/dashboard")}
                         className="btn btn-primary ml-auto waves-effect waves-themed"
                       >
                         Cancel

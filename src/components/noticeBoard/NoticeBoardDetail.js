@@ -32,6 +32,7 @@ const NoticeBoardDetail = (props) => {
             <img
               src={props.noticeBoardDetail.published_by_image}
               className="profile-image rounded-circle"
+              alt="publish-by"
             />
             <span className="d-block">
               Posted On : <strong> {props.noticeBoardDetail.posted_on}</strong>

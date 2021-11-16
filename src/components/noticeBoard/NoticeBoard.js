@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Layout } from "antd";
 import { postRequest } from "../../axios";
 
 import NoticeBoardDetail from "./NoticeBoardDetail";
 
-const { Content } = Layout;
-
 const NoticeBoard = () => {
-  const [btnLoading, setBtnLoading] = useState(false);
-  const [apiLoading, setApiLoading] = useState(false);
+  // const [btnLoading, setBtnLoading] = useState(false);
+  // const [apiLoading, setApiLoading] = useState(false);
   const [noticeBoardList, setNoticeBoardList] = useState([]);
   const [paginationData, setPaginationData] = useState([]);
 
@@ -47,7 +44,7 @@ const NoticeBoard = () => {
               <h4>
                 <img
                   src="https://dev.lamdainfotech.com/parentlogin/img/ajax-loader.gif"
-                  id="loadingStuff"
+                  alt="loadingStuff"
                   style={{ marginLeft: "41%", display: "none" }}
                   width="100"
                 />
@@ -62,6 +59,7 @@ const NoticeBoard = () => {
                             <img
                               src={noticeBoard.published_by_image}
                               className="profile-image rounded-circle"
+                              alt="publish-by"
                             />{" "}
                             <span className="badge card-title">
                               {" "}

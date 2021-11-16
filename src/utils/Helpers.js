@@ -11,6 +11,26 @@ export const logout = () => {
   window.location.href = "/";
 };
 
+export const getSchoolData = () => {
+  let schoolData = localStorage.getItem("schoolData");
+  return JSON.parse(schoolData);
+};
+
+export const getSessionData = () => {
+  let sessionData = localStorage.getItem("session_data");
+  return JSON.parse(sessionData);
+};
+
+export const getUserData = () => {
+  let userData = localStorage.getItem("userData");
+  return JSON.parse(userData);
+};
+
+export const getSchoolMenu = () => {
+  let schoolMenu = localStorage.getItem("school_menu");
+  return schoolMenu !== "" ? schoolMenu.split(",") : [];
+};
+
 export const authUserData = () => {
   let authData = localStorage.getItem("auth_user_data");
   return JSON.parse(authData);

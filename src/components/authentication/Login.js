@@ -31,16 +31,51 @@ const Login = () => {
     setBtnLoading(true);
 
     try {
-      const response = await postRequest("login", state);
-      
-      localStorage.clear();
-      localStorage.setItem("dbtoken", response.data.response.dbtoken);
-      localStorage.setItem("restoken", response.data.response.restoken);
-      localStorage.setItem("userType", response.data.response.userType);
+      const loginResponse = await postRequest("login", state);
+
+      if (
+        loginResponse.data &&
+        loginResponse.data.response.dbtoken !== undefined
+      ) {
+        localStorage.clear();
+        localStorage.setItem("dbtoken", loginResponse.data.response.dbtoken);
+        localStorage.setItem("restoken", loginResponse.data.response.restoken);
+        localStorage.setItem("userType", loginResponse.data.response.userType);
+
+        const userDetailResponse = await postRequest("login-user-info", state);
+
+        let userData = {
+          name: userDetailResponse.data.response.name,
+          mobile: userDetailResponse.data.response.mobile,
+          image_url: userDetailResponse.data.response.image_url,
+          unique_id: state.username,
+          tid: userDetailResponse.data.response.id,
+        };
+
+        let schoolData = {
+          sch_name:
+            userDetailResponse.data.response.school_information.sch_name,
+          address: userDetailResponse.data.response.school_information.address,
+          district:
+            userDetailResponse.data.response.school_information.district,
+          sch_img: userDetailResponse.data.response.school_image.school_logo,
+        };
+
+        localStorage.setItem(
+          "session_data",
+          JSON.stringify(userDetailResponse.data.response.sessionData)
+        );
+        localStorage.setItem("schoolData", JSON.stringify(schoolData));
+        localStorage.setItem(
+          "school_menu",
+          userDetailResponse.data.response.school_information.school_menu
+        );
+        localStorage.setItem("userData", JSON.stringify(userData));
+      }
 
       SuccessNotificationMsg("Success", "Succesfully logged in!");
+      setBtnLoading(false);
       window.location.href = "/dashboard";
-
     } catch (error) {
       setBtnLoading(false);
       ErrorNotificationMsg(error.errmsg);
