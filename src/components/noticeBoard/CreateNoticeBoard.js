@@ -1,30 +1,41 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import moment from "moment";
 import { Input, Row, Col, Select, Form, Upload, Button } from "antd";
 import { postRequest } from "../../axios";
 import { UploadOutlined } from "@ant-design/icons";
 
 import PageHeader from "../common/PageHeader";
+import {
+  SuccessNotificationMsg,
+  ErrorNotificationMsg,
+} from "../../utils/NotificationHelper";
+import { getSessionData, getUserData } from "../../utils/Helpers";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-const CreateNoticeBoard = () => {
+const CreateNoticeBoard = (props) => {
   const [state, setState] = useState({
     edit_mode: "",
     posted_on: null,
     category: null,
     subject: null,
     description: null,
-    comment_enable: null,
+    comment_enable: 0,
     school_code: null,
     is_draft: null,
+    class_code: null,
+    student_list: [],
   });
   const [btnLoading, setBtnLoading] = useState(false);
   const [categoryList, setCategoryList] = useState([]);
+  const [classList, setClassList] = useState([]);
+  const [studentList, setStudentList] = useState([]);
 
   useEffect(() => {
     getCategoryList();
+    getClassList();
   }, []);
 
   const handleChange = (field, value) => {
@@ -40,8 +51,84 @@ const CreateNoticeBoard = () => {
     setCategoryList(response.data.response);
   };
 
+  const getClassList = async () => {
+    const classRes = await postRequest("get-teacher-class-subject", {
+      session_code: getSessionData().code,
+      tid: getUserData().tid,
+    });
+
+    let classArr = classRes.data.response.as_class_teacher.concat(
+      classRes.data.response.as_subject_teacher
+    );
+    let uniqueClassList = classArr.filter(
+      (item, pos) => classArr.indexOf(item) === pos
+    );
+    setClassList(uniqueClassList);
+  };
+
+  const handleClassChange = async (field, value) => {
+    let classCode = value.split("-");
+
+    setState({ ...state, [field]: classCode[0] });
+
+    const studentRes = await postRequest("get-student-list-by-class", {
+      sid: getSessionData().code,
+      sclass: classCode[0],
+      sections: classCode[1],
+    });
+
+    setStudentList(studentRes.data.response);
+  };
+
   const onFinish = async () => {
-    setBtnLoading(true);
+    // setBtnLoading(true);
+
+    let studentsArr = [];
+    state.student_list.map((student) => {
+      let sInfo = student.split("-");
+      studentsArr.push({ id: sInfo[0], name: sInfo[1] });
+    });
+
+    const payload = {
+      edit_mode: "",
+      session_id: getSessionData().code,
+      posted_on: moment().format("YYYY-MM-DD"),
+      category: state.category,
+      subject: state.subject,
+      description: state.description,
+      comment_enable: state.comment_enable,
+      school_code: "5555555",
+      is_draft: "0",
+      sdata: {
+        class_code: state.class_code,
+        edit_student_list: [],
+        student_list: studentsArr,
+        staff_list: [],
+      },
+      // "multifile": [
+      //   {
+      //     "file_name": "IMG_1636181784933",
+      //     "ext": ".jpg",
+      //     "file": ""
+      //   }
+      // ]
+    };
+
+    //console.log(payload);
+
+    try {
+      const createNoticeBoardResponse = await postRequest(
+        "add-notice-board",
+        payload
+      );
+
+      SuccessNotificationMsg("Success", "Notice Board created successfully");
+      setBtnLoading(false);
+      props.history.push("/notice-board");
+    } catch (error) {
+      setBtnLoading(false);
+      ErrorNotificationMsg(error.errmsg);
+    }
   };
 
   const uploadProps = {
@@ -83,12 +170,11 @@ const CreateNoticeBoard = () => {
                         <Row gutter={[15]}>
                           <Col xs={24} sm={12} lg={8}>
                             <Form.Item
-                              name="class"
+                              name="class_code"
                               label="Class"
                               rules={[
                                 {
                                   required: true,
-                                  whitespace: true,
                                   message: "Please select class!",
                                 },
                               ]}
@@ -96,35 +182,50 @@ const CreateNoticeBoard = () => {
                               <Select
                                 placeholder="Select Class"
                                 onChange={(value) =>
-                                  handleSelectChange("class", value)
+                                  handleClassChange("class_code", value)
                                 }
                               >
-                                <Option value="7">7</Option>
-                                <Option value="8">8</Option>
+                                {!!classList &&
+                                  classList.map((s) => (
+                                    <Option key={s} value={s}>
+                                      {s}
+                                    </Option>
+                                  ))}
                               </Select>
                             </Form.Item>
                           </Col>
 
                           <Col xs={24} sm={12} lg={8}>
                             <Form.Item
-                              name="rolls"
+                              name="student_list"
                               label="Roll(s)"
                               rules={[
                                 {
                                   required: true,
-                                  whitespace: true,
-                                  message: "Please select rolls!",
+                                  message: "Please select students!",
                                 },
                               ]}
                             >
                               <Select
+                                mode="multiple"
                                 placeholder="Select Rolls"
                                 onChange={(value) =>
-                                  handleSelectChange("rolls", value)
+                                  handleSelectChange("student_list", value)
                                 }
                               >
-                                <Option value="7">7</Option>
-                                <Option value="8">8</Option>
+                                {!!studentList &&
+                                  studentList.map((s) => (
+                                    <Option
+                                      key={s.roll_no}
+                                      value={
+                                        s.student_class_id +
+                                        "-" +
+                                        s.student_name
+                                      }
+                                    >
+                                      {s.roll_no + " - " + s.student_name}
+                                    </Option>
+                                  ))}
                               </Select>
                             </Form.Item>
                           </Col>
@@ -139,7 +240,6 @@ const CreateNoticeBoard = () => {
                               rules={[
                                 {
                                   required: true,
-                                  whitespace: true,
                                   message: "Please select category!",
                                 },
                               ]}
@@ -152,7 +252,7 @@ const CreateNoticeBoard = () => {
                               >
                                 {!!categoryList &&
                                   categoryList.map((s) => (
-                                    <Option key={s.id} value={s.name}>
+                                    <Option key={s.id} value={s.id}>
                                       {s.name}
                                     </Option>
                                   ))}
@@ -165,13 +265,13 @@ const CreateNoticeBoard = () => {
                               label="Enable Comment"
                             >
                               <Select
-                                defaultValue="0"
+                                defaultValue={0}
                                 onChange={(value) =>
                                   handleSelectChange("comment_enable", value)
                                 }
                               >
-                                <Option value="0">No</Option>
-                                <Option value="1">Yes</Option>
+                                <Option value={0}>No</Option>
+                                <Option value={1}>Yes</Option>
                               </Select>
                             </Form.Item>
                           </Col>
@@ -183,7 +283,6 @@ const CreateNoticeBoard = () => {
                               rules={[
                                 {
                                   required: true,
-                                  whitespace: true,
                                   message: "Please enter subject",
                                 },
                               ]}
@@ -208,7 +307,12 @@ const CreateNoticeBoard = () => {
                                 },
                               ]}
                             >
-                              <TextArea rows={4} />
+                              <TextArea
+                                rows={4}
+                                onChange={(value) =>
+                                  handleChange("description", value)
+                                }
+                              />
                             </Form.Item>
                           </Col>
 

@@ -14,7 +14,7 @@ axiosClient.defaults.headers = {
 };
 
 if (dbToken && dbToken !== null && dbToken !== undefined) {
-  console.log("Login success")
+  //alert("Login success")
   axiosClient.defaults.headers.DBAuth = dbToken;
   axiosClient.defaults.headers.Authorization = token ? `Bearer ${token}` : null;
 }

@@ -24,6 +24,8 @@ import SubmitedHomeWork from "../homeWork/SubmitedHomeWork";
 import LiveClass from "../liveClass/LiveClass";
 import CreateLiveClass from "../liveClass/CreateLiveClass";
 
+import Fees from "../fees";
+
 /* Other Common Route Components */
 import Logout from "../authentication/Logout";
 import Maintenance from "../common/Maintenance";
@@ -59,6 +61,8 @@ export default class Routes extends Component {
         <PrivateRoute exact path="/live-class" component={LiveClass} />
         <PrivateRoute exact path="/create-live-class" component={CreateLiveClass} />
 
+        <PrivateRoute exact path="/fees" component={Fees} />
+        
         <OpenRoute exact path="/logout" component={Logout} />
         <OpenRoute path="*" component={Notfound} />
       </Switch>

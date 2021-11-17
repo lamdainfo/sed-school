@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import LogoSmall from "../../styles/LogoSmall";
-import { getUserData, getSchoolData, getSchoolMenu } from "../../utils/Helpers";
+import { getUserData, getSchoolData } from "../../utils/Helpers";
 
 const Sidebar = () => {
 
@@ -73,7 +73,7 @@ const Sidebar = () => {
             <li>
               <Link to="/dashboard">
                 <i className="fal fa-home"></i>
-                <span className="nav-link-text" data-i18n="nav.dashboard">
+                <span className="nav-link-text">
                   Dashboard
                 </span>
               </Link>
@@ -82,7 +82,7 @@ const Sidebar = () => {
             <li>
               <Link to="/notice-board">
                 <i className="fal fa-file-edit"></i>
-                <span className="nav-link-text" data-i18n="nav.notice_board">
+                <span className="nav-link-text">
                   Notice Board
                 </span>
               </Link>
@@ -90,7 +90,7 @@ const Sidebar = () => {
             <li>
               <Link to="/home-work">
                 <i className="fal fa-book-reader"></i>
-                <span className="nav-link-text" data-i18n="nav.homework">
+                <span className="nav-link-text">
                   Homework
                 </span>
               </Link>
@@ -106,7 +106,7 @@ const Sidebar = () => {
             <li>
               <Link to="/fees">
                 <i className="fal fa-receipt"></i>
-                <span className="nav-link-text" data-i18n="nav.fees">
+                <span className="nav-link-text">
                   Fees
                 </span>
               </Link>

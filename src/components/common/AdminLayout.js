@@ -1,7 +1,9 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 import { getSchoolData, getUserData, logout } from "../../utils/Helpers";
 import Sidebar from "../common/Sidebar";
+import ChangePassword from "../authentication/ChangePassword";
 
 import "antd/dist/antd.css";
 
@@ -12,33 +14,6 @@ const AdminLayout = (props) => {
         <Sidebar />
         <div className="page-content-wrapper">
           <header className="page-header">
-            <div className="page-logo">
-              <a
-                href="#"
-                className="page-logo-link press-scale-down d-flex align-items-center position-relative"
-                data-toggle="modal"
-                data-target="#modal-shortcut"
-              >
-                <img
-                  src="img/logo.png"
-                  alt="SmartAdmin WebApp"
-                  aria-roledescription="logo"
-                />
-                <span className="page-logo-text mr-1">SmartAdmin WebApp</span>
-                <span className="position-absolute text-white opacity-50 small pos-top pos-right mr-2 mt-n2"></span>
-                <i className="fal fa-angle-down d-inline-block ml-1 fs-lg color-primary-300"></i>
-              </a>
-            </div>
-
-            <div className="hidden-lg-up">
-              <a
-                href="#"
-                className="header-btn btn press-scale-down"
-                data-action="toggle"
-              >
-                <i className="ni ni-menu"></i>
-              </a>
-            </div>
             <div className="ml-auto d-flex">
               <div>
                 <a
@@ -74,19 +49,17 @@ const AdminLayout = (props) => {
                     </div>
                   </div>
                   <div className="dropdown-divider m-0"></div>
-                  <a href="#" className="dropdown-item" data-action="app-reset">
-                    <span data-i18n="drpdwn.reset_layout">Change Password</span>
-                  </a>
+                  <ChangePassword />
                   <div className="dropdown-divider m-0"></div>
-                  <a
+                  <Link
+                    onClick={logout}
                     className="dropdown-item fw-500 pt-3 pb-3"
-                    href="page_login.html"
                   >
-                    <span onClick={logout}>Logout</span>
+                    <span>Logout</span>
                     <span className="float-right fw-n">
                       Unique ID: {getUserData().unique_id}
                     </span>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
