@@ -9,7 +9,7 @@ import "antd/dist/antd.css";
 
 const AdminLayout = (props) => {
   return (
-    <div className="page-wrapper">
+    <div className="page-wrapper mod-nav-link">
       <div className="page-inner">
         <Sidebar />
         <div className="page-content-wrapper">

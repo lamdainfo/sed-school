@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Layout } from "antd";
 import { postRequest } from "../../axios";
 
-import { getSessionData } from "../../utils/Helpers";
+import { getUserType } from "../../utils/Helpers";
 import { Link } from "react-router-dom";
 
 const { Content } = Layout;
@@ -25,6 +25,15 @@ const LiveClass = () => {
     setLiveClassList(getClassResponse.data.response.live_classes);
     setPaginationData(getClassResponse.data.paginationData);
   };
+
+  const deleteLiveClass = async () => {
+    // const getClassResponse = await postRequest("live-class-list-staff", {
+    //   filterDate: "25/11/2021",
+    //   page: 1,
+    // });
+    getLiveClassList()
+   
+  }; 
 
   return (
     <main id="js-page-content" role="main" className="page-content">
@@ -78,13 +87,13 @@ const LiveClass = () => {
                             </span>{" "}
                             <div className="frame-wrap mb-2">
                               <span className="d-block text-muted">
-                                <i className="fas fa-sm fa-angle-double-right text-warning"></i>
+                                <i className="fal fa-sm fa-angle-double-right text-warning"></i>
                                 Teacher Name : {liveClass.teacher_name}
                               </span>
                             </div>
                             <div className="frame-wrap mb-2">
                               <span className="d-block text-muted">
-                                <i className="fas fa-sm fa-angle-double-right text-warning"></i>
+                                <i className="fal fa-sm fa-angle-double-right text-warning"></i>
                                 Class Scheduled At :{" "}
                                 {liveClass.live_class_date +
                                   " " +
@@ -97,6 +106,22 @@ const LiveClass = () => {
                                 Duration : {liveClass.duration} Minutes
                               </span>
                             </div>
+                            {liveClass.is_meeting_ready ? (
+                              <a
+                                href={
+                                  getUserType() === "staff"
+                                    ? liveClass.teacher_start_url
+                                    : liveClass.join_url
+                                }
+                                class="btn btn-sm btn-default"
+                              >
+                                Join Class
+                              </a>
+                            ) : (
+                              <a class="btn btn-sm btn-default">
+                                Class Not Ready{" "}
+                              </a>
+                            )}
                           </div>
 
                           <div class="card-footer text-muted py-2">
@@ -104,8 +129,8 @@ const LiveClass = () => {
                             &nbsp;
                             <i class="fal fa-user-alt mr-2"></i>
                             &nbsp;|&nbsp;&nbsp;
-                            <Link to="/">
-                              <i class="fas fa-trash-alt text-danger mr-2"></i>
+                            <Link onClick={() => deleteLiveClass()}>
+                              <i class="fal fa-trash-alt text-danger mr-2"></i>
                             </Link>
                           </div>
                         </div>

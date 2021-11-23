@@ -3,12 +3,11 @@ import { Layout } from "antd";
 import { postRequest } from "../../axios";
 
 import HomeWorkDetail from "./HomeWorkDetail";
-import HomeWorkLikeList from "./HomeWorkLikeList";
 import { getSessionData } from "../../utils/Helpers";
 
 const { Content } = Layout;
 
-const HomeWork = () => {
+const ApprovalHomeWork = () => {
   const [btnLoading, setBtnLoading] = useState(false);
   const [apiLoading, setApiLoading] = useState(false);
   const [homeWorkList, setHomeWorkList] = useState([]);
@@ -19,14 +18,9 @@ const HomeWork = () => {
   }, []);
 
   const getHomeWorkList = async () => {
-    const response = await postRequest("get-all-homework", {
-      sid: getSessionData().code,
-      school_code: "2222222",
-      class_code: "",
-      filter_date: "",
-      subject: "",
-      is_assignment: 0,
-      is_submission: 0,
+    const response = await postRequest("pending-approval-homework-list", {
+      scode: getSessionData().code,
+      filter_date: "26/11/2021",
     });
     setHomeWorkList(response.data.response.homework_list);
     setPaginationData(response.data.paginationData);
@@ -38,7 +32,7 @@ const HomeWork = () => {
         <div className="subheader">
           <h1 className="subheader-title">
             <i className="subheader-icon fal fa-clipboard"></i>{" "}
-            <span class="fw-300">Homework</span>
+            <span class="fw-300">Homework Approval List</span>
             <span id="filterBtn" style={{ float: "right" }}>
               <button className="btn btn-sm btn-primary waves-effect waves-themed">
                 <i className="fal fa-filter"></i> Filter
@@ -101,17 +95,17 @@ const HomeWork = () => {
                             </div>
 
                             <HomeWorkDetail homeWorkDetail={homeWork} />
-
-                            <a
-                              href="#"
-                              target="_blank"
-                              class="btn btn-sm btn-success ml-2"
-                            >
-                              VIEW SUBMITTED HOMEWORK
-                            </a>
                           </div>
                           <div class="card-footer text-muted py-2">
-                            <HomeWorkLikeList homeWorkDetail={homeWork} />
+                            <a
+                              href="#"
+                              class="text-primary mr-2"
+                              onclick="showHWLikes('b0ZJbUdXV1NVQUZMMEVrbFplYVAyUT09')"
+                            >
+                              {homeWork?.total_like}
+                              <i class="fal fa-thumbs-up "></i>
+                            </a>
+
                             <a href="#" class="text-primary mr-2">
                               {homeWork?.comment_count}
                               <i class="fal fa-comment ml-1"></i>
@@ -119,7 +113,7 @@ const HomeWork = () => {
 
                             <a href="#" class="text-primary mr-2">
                               {homeWork?.documents_count}
-                              <i class="fal fa-paperclip ml-1"></i>
+                              <i class="fal fa-paperclip"></i>
                             </a>
                           </div>
                         </div>
@@ -182,4 +176,4 @@ const HomeWork = () => {
   );
 };
 
-export default HomeWork;
+export default ApprovalHomeWork;

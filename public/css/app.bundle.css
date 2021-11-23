@@ -8078,3 +8078,8 @@ body:not(.mobile-detected)::-webkit-scrollbar-thumb:vertical:hover {
         display: table;
     }
 }
+
+
+.ant-modal {
+    width: 800px !important;
+}

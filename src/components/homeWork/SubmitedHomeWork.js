@@ -68,9 +68,9 @@ export default class SubmitedHomeWork extends Component {
                           </span>
 
                           <span className="d-block text-muted">
-                            <i className="fas fa-sm fa-angle-double-right text-warning"></i>
+                            <i className="fal fa-sm fa-angle-double-right text-warning"></i>
                             Assigned On : 04 August &nbsp;
-                            <i className="fas fa-sm fa-angle-double-right  text-warning ml-2"></i>
+                            <i className="fal fa-sm fa-angle-double-right  text-warning ml-2"></i>
                             Submit By : 04 August
                           </span>
                         </div>
@@ -81,7 +81,7 @@ export default class SubmitedHomeWork extends Component {
                           className="text-primary mr-2"
                           onclick="showHWLikes('b0ZJbUdXV1NVQUZMMEVrbFplYVAyUT09')"
                         >
-                          2<i className="fas fa-thumbs-up "></i>
+                          2<i className="fal fa-thumbs-up "></i>
                         </a>
 
                         <a href="#" className="text-primary mr-2">
@@ -89,7 +89,7 @@ export default class SubmitedHomeWork extends Component {
                         </a>
 
                         <a href="#" className="text-primary mr-2">
-                          2<i className="fas fa-paperclip"></i>
+                          2<i className="fal fa-paperclip"></i>
                         </a>
                       </div>
                     </div>

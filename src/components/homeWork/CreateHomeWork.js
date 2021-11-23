@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import moment from "moment";
 import {
   Input,
   Row,
@@ -14,23 +15,36 @@ import { postRequest } from "../../axios";
 import { UploadOutlined } from "@ant-design/icons";
 
 import PageHeader from "../common/PageHeader";
+import {
+  SuccessNotificationMsg,
+  ErrorNotificationMsg,
+} from "../../utils/NotificationHelper";
+import { getSessionData, getUserData } from "../../utils/Helpers";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-const CreateHomeWork = () => {
+const CreateHomeWork = (props) => {
+  const dateFormat = "YYYY-MM-DD";
   const [state, setState] = useState({
-    topic: "",
-    description: null,
+    class_code: null,
+    student_list: [],
+    assignment_date: moment().format("YYYY-MM-DD"),
+    submission_date: moment().format("YYYY-MM-DD"),
+    subject: null,
     page_no: null,
     chapter_no: null,
-    subject: null,
-    tclass: null,
-    comment: null,
-    assignment_date: null,
-    submission_date: null,
+    comment_enable: 0,
+    topic: "",
+    description: null,
   });
   const [btnLoading, setBtnLoading] = useState(false);
+  const [classList, setClassList] = useState([]);
+  const [studentList, setStudentList] = useState([]);
+
+  useEffect(() => {
+    getClassList();
+  }, []);
 
   const handleChange = (field, value) => {
     setState({ ...state, [field]: value.target.value });
@@ -40,8 +54,105 @@ const CreateHomeWork = () => {
     setState({ ...state, [field]: value });
   };
 
+  const handleChangeAssignmentDate = (date, dateString) => {
+    setState({ ...state, assignment_date: dateString });
+  };
+
+  const handleChangeSubmissionDate = (date, dateString) => {
+    setState({ ...state, submission_date: dateString });
+  };
+
+  const disablePastDate = (current) => {
+    let customDate = moment().format("YYYY-MM-DD");
+    return current && current < moment(customDate, "YYYY-MM-DD");
+  };
+
+  const getClassList = async () => {
+    const classRes = await postRequest("get-teacher-class-subject", {
+      session_code: getSessionData().code,
+      tid: getUserData().tid,
+    });
+
+    let classArr = classRes.data.response.as_class_teacher.concat(
+      classRes.data.response.as_subject_teacher
+    );
+    let uniqueClassList = classArr.filter(
+      (item, pos) => classArr.indexOf(item) === pos
+    );
+    setClassList(uniqueClassList);
+  };
+
+  const handleClassChange = async (field, value) => {
+    let classCode = value.split("-");
+
+    setState({ ...state, [field]: classCode[0] });
+
+    const studentRes = await postRequest("get-student-list-by-class", {
+      sid: getSessionData().code,
+      sclass: classCode[0],
+      sections: classCode[1],
+    });
+
+    setStudentList(studentRes.data.response);
+  };
+
   const onFinish = async () => {
-    setBtnLoading(true);
+    // setBtnLoading(true);
+
+    let studentsArr = [];
+    state.student_list.map((student) => {
+      let sInfo = student.split("-");
+      studentsArr.push({ id: sInfo[0], name: sInfo[1] });
+    });
+
+    const payload = {
+      edit_mode: "",
+      sid: getSessionData().code,
+      posted_on: moment().format("YYYY-MM-DD"),
+      category: state.category,
+      subject: state.subject,
+      topic: state.topic,
+      description: state.description,
+      page_no: state.page_no,
+      chapter_no: state.chapter_no,
+      comment_enable: state.comment_enable,
+      assignment_date: state.assignment_date,
+      submission_date: state.submission_date,
+      school_code: "5555555",
+      is_draft: "0",
+      tclass: state.class_code,
+      hid: "",
+      sdata: {
+        class_code: state.class_code,
+        edit_mode: "",
+        homework_id: "",
+        edit_student_list: [],
+        student_list: studentsArr,
+      },
+      // "multifile": [
+      //   {
+      //     "file_name": "IMG_1636181784933",
+      //     "ext": ".jpg",
+      //     "file": ""
+      //   }
+      // ]
+    };
+
+    //console.log(payload);
+
+    try {
+      const createHomeCreateHomeWorkResponse = await postRequest(
+        "add-homework",
+        payload
+      );
+
+      SuccessNotificationMsg("Success", "Homework created successfully");
+      setBtnLoading(false);
+      props.history.push("/home-work");
+    } catch (error) {
+      setBtnLoading(false);
+      ErrorNotificationMsg(error.errmsg);
+    }
   };
 
   const uploadProps = {
@@ -64,11 +175,10 @@ const CreateHomeWork = () => {
                   <h2>Home Work</h2>
                   <div className="panel-toolbar">
                     <Link
-                      to="/notice-board"
+                      to="/home-work"
                       className="btn btn-sm btn-info waves-effect waves-themed"
                     >
-                      <i className="fal fa-clipboard-list"></i> View Notice
-                      Board
+                      <i className="fal fa-clipboard-list"></i> View Home Work
                     </Link>
                   </div>
                 </div>
@@ -83,12 +193,11 @@ const CreateHomeWork = () => {
                         <Row gutter={[15]}>
                           <Col xs={24} sm={12} lg={8}>
                             <Form.Item
-                              name="class"
+                              name="class_code"
                               label="Class"
                               rules={[
                                 {
                                   required: true,
-                                  whitespace: true,
                                   message: "Please select class!",
                                 },
                               ]}
@@ -96,35 +205,50 @@ const CreateHomeWork = () => {
                               <Select
                                 placeholder="Select Class"
                                 onChange={(value) =>
-                                  handleSelectChange("class", value)
+                                  handleClassChange("class_code", value)
                                 }
                               >
-                                <Option value="7">7</Option>
-                                <Option value="8">8</Option>
+                                {!!classList &&
+                                  classList.map((s) => (
+                                    <Option key={s} value={s}>
+                                      {s}
+                                    </Option>
+                                  ))}
                               </Select>
                             </Form.Item>
                           </Col>
 
                           <Col xs={24} sm={12} lg={8}>
                             <Form.Item
-                              name="rolls"
+                              name="student_list"
                               label="Roll(s)"
                               rules={[
                                 {
                                   required: true,
-                                  whitespace: true,
-                                  message: "Please select rolls!",
+                                  message: "Please select students!",
                                 },
                               ]}
                             >
                               <Select
+                                mode="multiple"
                                 placeholder="Select Rolls"
                                 onChange={(value) =>
-                                  handleSelectChange("rolls", value)
+                                  handleSelectChange("student_list", value)
                                 }
                               >
-                                <Option value="7">7</Option>
-                                <Option value="8">8</Option>
+                                {!!studentList &&
+                                  studentList.map((s) => (
+                                    <Option
+                                      key={s.roll_no}
+                                      value={
+                                        s.student_class_id +
+                                        "-" +
+                                        s.student_name
+                                      }
+                                    >
+                                      {s.roll_no + " - " + s.student_name}
+                                    </Option>
+                                  ))}
                               </Select>
                             </Form.Item>
                           </Col>
@@ -136,17 +260,13 @@ const CreateHomeWork = () => {
                             <Form.Item
                               name="assignment_date"
                               label="Assignment Date"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please select assignment date!",
-                                },
-                              ]}
                             >
                               <DatePicker
-                                onChange={(value) =>
-                                  handleChange("assignment_date", value)
-                                }
+                                defaultValue={moment()}
+                                format={dateFormat}
+                                disabledDate={disablePastDate}
+                                onChange={handleChangeAssignmentDate}
+                                style={{ width: "100%" }}
                               />
                             </Form.Item>
                           </Col>
@@ -154,17 +274,13 @@ const CreateHomeWork = () => {
                             <Form.Item
                               name="submission_date"
                               label="Submission Date"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please select submission date!",
-                                },
-                              ]}
                             >
                               <DatePicker
-                                onChange={(value) =>
-                                  handleChange("submission_date", value)
-                                }
+                                defaultValue={moment()}
+                                format={dateFormat}
+                                disabledDate={disablePastDate}
+                                onChange={handleChangeSubmissionDate}
+                                style={{ width: "100%" }}
                               />
                             </Form.Item>
                           </Col>
@@ -233,13 +349,13 @@ const CreateHomeWork = () => {
                               label="Enable Comment"
                             >
                               <Select
-                                defaultValue="0"
+                                defaultValue={0}
                                 onChange={(value) =>
                                   handleSelectChange("comment_enable", value)
                                 }
                               >
-                                <Option value="0">No</Option>
-                                <Option value="1">Yes</Option>
+                                <Option value={0}>No</Option>
+                                <Option value={1}>Yes</Option>
                               </Select>
                             </Form.Item>
                           </Col>
@@ -276,7 +392,12 @@ const CreateHomeWork = () => {
                                 },
                               ]}
                             >
-                              <TextArea rows={4} />
+                              <TextArea
+                                rows={4}
+                                onChange={(value) =>
+                                  handleChange("description", value)
+                                }
+                              />
                             </Form.Item>
                           </Col>
 

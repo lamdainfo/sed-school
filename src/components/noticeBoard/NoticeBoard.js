@@ -2,23 +2,36 @@ import React, { useState, useEffect } from "react";
 import { postRequest } from "../../axios";
 
 import NoticeBoardDetail from "./NoticeBoardDetail";
+import NoticeBoardLikeList from "./NoticeBoardLikeList";
+import { getSessionData } from "../../utils/Helpers";
 
 const NoticeBoard = () => {
   // const [btnLoading, setBtnLoading] = useState(false);
   // const [apiLoading, setApiLoading] = useState(false);
   const [noticeBoardList, setNoticeBoardList] = useState([]);
-  const [paginationData, setPaginationData] = useState([]);
+  const [paginationData, setPaginationData] = useState({
+    page: 1,
+  });
 
   useEffect(() => {
-    getNoticeBoardList();
+    getNoticeBoardList(1);
   }, []);
 
-  const getNoticeBoardList = async () => {
+  const getNoticeBoardList = async (page) => {
     const response = await postRequest("get-all-notice-board-information", {
-      scode: "RDRzM3N0VXRJT0p6LzRCcnFTakZqQT09",
+      scode: getSessionData().code,
+      page: page,
     });
     setNoticeBoardList(response.data.response.noticeinfo);
     setPaginationData(response.data.paginationData);
+  };
+
+  const handlePrevPage = () => {
+    // getNoticeBoardList(paginationData.page - 1);
+  };
+
+  const handleNextPage = () => {
+    // getNoticeBoardList(paginationData.page + 1);
   };
 
   return (
@@ -75,10 +88,13 @@ const NoticeBoard = () => {
                             <span className="d-block text-muted">
                               Posted By : {noticeBoard.published_by}
                             </span>
+                            <span className="d-block text-muted">
+                              Approved By : {noticeBoard.approved_by}
+                            </span>
                             <div className="frame-wrap mb-2">
                               {" "}
                               <span className="d-block text-muted">
-                                <i className="fas fa-sm fa-angle-double-right text-warning"></i>{" "}
+                                <i className="fal fa-sm fa-angle-double-right text-warning"></i>{" "}
                                 Posted On : {noticeBoard.posted_on}
                               </span>{" "}
                             </div>
@@ -87,11 +103,9 @@ const NoticeBoard = () => {
                             />
                           </div>
                           <div className="card-footer text-muted py-2">
-                            {" "}
-                            <span className="text-primary">
-                              {noticeBoard.total_like}{" "}
-                              <i className="fal fa-thumbs-up"></i>
-                            </span>{" "}
+                            <NoticeBoardLikeList
+                              noticeBoardDetail={noticeBoard}
+                            />
                             &nbsp;&nbsp;{" "}
                             <span className="text-primary">
                               {noticeBoard.comment_count}{" "}
@@ -118,7 +132,9 @@ const NoticeBoard = () => {
                             style={{ paddingLeft: "10px" }}
                             aria-live="polite"
                           >
-                            Showing 1 to 10 of 29 entries
+                            Showing {paginationData.current} to{" "}
+                            {paginationData.record_per_page} of{" "}
+                            {paginationData.total_record} entries
                           </div>
                         </div>
                         <div className="col-md-7">
@@ -135,7 +151,10 @@ const NoticeBoard = () => {
                                 id="prevBtn"
                               >
                                 {" "}
-                                <a href="#" className="page-link">
+                                <a
+                                  onClick={handlePrevPage}
+                                  className="page-link"
+                                >
                                   <i className="fal fa-chevron-left"></i>
                                 </a>{" "}
                               </li>
@@ -144,7 +163,10 @@ const NoticeBoard = () => {
                                 id="nextBtn"
                               >
                                 {" "}
-                                <a href="#" className="page-link">
+                                <a
+                                  onClick={handleNextPage}
+                                  className="page-link"
+                                >
                                   <i className="fal fa-chevron-right"></i>
                                 </a>{" "}
                               </li>

@@ -26,6 +26,11 @@ export const getUserData = () => {
   return JSON.parse(userData);
 };
 
+export const getUserType = () => {
+  let userType = localStorage.getItem("userType");
+  return userType;
+};
+
 export const getSchoolMenu = () => {
   let schoolMenu = localStorage.getItem("school_menu");
   return schoolMenu !== "" ? schoolMenu.split(",") : [];

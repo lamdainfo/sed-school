@@ -5,7 +5,6 @@ import LogoSmall from "../../styles/LogoSmall";
 import { getUserData, getSchoolData } from "../../utils/Helpers";
 
 const Sidebar = () => {
-
   return (
     <>
       <aside className="page-sidebar">
@@ -73,42 +72,76 @@ const Sidebar = () => {
             <li>
               <Link to="/dashboard">
                 <i className="fal fa-home"></i>
-                <span className="nav-link-text">
-                  Dashboard
-                </span>
+                <span className="nav-link-text">Dashboard</span>
               </Link>
             </li>
 
-            <li>
-              <Link to="/notice-board">
+            <li className="active">
+              <a title="Form Stuff">
                 <i className="fal fa-file-edit"></i>
-                <span className="nav-link-text">
-                  Notice Board
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/home-work">
-                <i className="fal fa-book-reader"></i>
-                <span className="nav-link-text">
-                  Homework
-                </span>
-              </Link>
+                <span className="nav-link-text">Notice Board</span>
+              </a>
+              <ul>
+                <li>
+                  <Link to="/create-notice-board">
+                    <span className="nav-link-text">Create</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/notice-board">
+                    <span className="nav-link-text">View</span>
+                  </Link>
+                </li>
+              </ul>
             </li>
 
-            <li>
-              <Link to="/live-class">
+            <li className="active">
+              <a title="Form Stuff">
+                <i className="fal fa-book-reader"></i>
+                <span className="nav-link-text">Homework</span>
+              </a>
+              <ul>
+                <li>
+                  <Link to="/create-home-work">
+                    <span className="nav-link-text">Create</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/home-work">
+                    <span className="nav-link-text">View</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/approval-home-work">
+                    <span className="nav-link-text">Approval List</span>
+                  </Link>
+                </li>
+              </ul>
+            </li>
+
+            <li className="active">
+              <a title="Form Stuff">
                 <i className="fal fa-camcorder"></i>
                 <span className="nav-link-text">Live Classes</span>
-              </Link>
+              </a>
+              <ul>
+                <li>
+                  <Link to="/create-live-class">
+                    <span className="nav-link-text">Create</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/live-class">
+                    <span className="nav-link-text">View</span>
+                  </Link>
+                </li>
+              </ul>
             </li>
 
             <li>
               <Link to="/fees">
                 <i className="fal fa-receipt"></i>
-                <span className="nav-link-text">
-                  Fees
-                </span>
+                <span className="nav-link-text">Fees</span>
               </Link>
             </li>
           </ul>
