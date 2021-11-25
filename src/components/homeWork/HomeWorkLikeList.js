@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { Modal } from "antd";
-
 import { postRequest } from "../../axios";
-import { getSessionData } from "../../utils/Helpers";
 
 const HomeWorkLikeList = (props) => {
   const [showModel, setShowModel] = useState(false);
-  const [homeWorkDetail, setHomeWorkDetail] = useState(null);
+  const [likeList, setLikeList] = useState(null);
 
   const hideModelFunction = () => {
     setShowModel(false);
@@ -14,21 +12,28 @@ const HomeWorkLikeList = (props) => {
 
   const showModelFunction = () => {
     setShowModel(true);
-    getNoticeBoard();
+    getLikeList();
   };
 
-  const getNoticeBoard = async () => {
-    const response = await postRequest("get-single-homework", {
-      hid: props.homeWorkDetail.id,      
+  const getLikeList = async () => {
+    const response = await postRequest("get-student-like-by-type", {
+      object_id: props.homeWorkDetail.id,
+      type: "hw",
     });
-    setHomeWorkDetail(response.data.response);
+    setLikeList(response.data.response);
   };
 
   return (
     <>
-      <span className="text-primary mr-2" onClick={() => showModelFunction()}>
+      <span className="text-primary" onClick={() => showModelFunction()}>
         {props.homeWorkDetail.total_like}{" "}
-        <i className="fal fa-thumbs-up"></i>
+        <i
+          className={
+            props.homeWorkDetail.total_like > 0
+              ? "fas fa-thumbs-up"
+              : "fal fa-thumbs-up"
+          }
+        ></i>
       </span>
 
       <Modal
@@ -40,7 +45,11 @@ const HomeWorkLikeList = (props) => {
           <div className="row">
             <div className="col-md-12">
               <span className="d-block">
-                Topic : <strong>{homeWorkDetail?.topic}</strong>
+                Topic : <strong>{props.homeWorkDetail?.topic}</strong>
+              </span>
+              <span className="d-block">
+                Assignment Date :{" "}
+                <strong>{props.homeWorkDetail?.assignment_date}</strong>
               </span>
             </div>
           </div>
@@ -67,19 +76,37 @@ const HomeWorkLikeList = (props) => {
                     <td>Like</td>
                   </tr>
                 </thead>
-                <tbody id="loadData">
-                  <tr>
-                    <td>1</td>
-                    <td>
-                      <i className="fal fa-eye text-primary"></i> SHAUNA NATH
-                    </td>
-                    <td>II</td>
-                    <td>A</td>
-                    <td>2</td>
-                    <td>
-                      <i className="fal fa-thumbs-up text-primary"></i>
-                    </td>
-                  </tr>
+                <tbody>
+                  {likeList &&
+                    likeList.map((student, id) => {
+                      return (
+                        <tr key={id}>
+                          <td>{id + 1}</td>
+                          <td>
+                            <i
+                              className={
+                                student?.is_seen
+                                  ? "fas fa-eye text-primary"
+                                  : "fal fa-eye text-primary"
+                              }
+                            ></i>{" "}
+                            {student?.name}
+                          </td>
+                          <td>{student?.class}</td>
+                          <td>{student?.section}</td>
+                          <td>{student?.roll}</td>
+                          <td>
+                            <i
+                              className={
+                                student?.like
+                                  ? "fas fa-thumbs-up text-primary"
+                                  : "fal fa-thumbs-up text-primary"
+                              }
+                            ></i>
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>

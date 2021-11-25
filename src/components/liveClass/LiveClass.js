@@ -1,39 +1,61 @@
 import React, { useState, useEffect } from "react";
-import { Layout } from "antd";
-import { postRequest } from "../../axios";
-
-import { getUserType } from "../../utils/Helpers";
 import { Link } from "react-router-dom";
+import { Popconfirm } from "antd";
+import moment from "moment";
 
-const { Content } = Layout;
+import { postRequest } from "../../axios";
+import { getUserType } from "../../utils/Helpers";
+import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
 
 const LiveClass = () => {
   const [btnLoading, setBtnLoading] = useState(false);
   const [apiLoading, setApiLoading] = useState(false);
+  const [popConfirmShowStatus, setPopConfirmShowStatus] = useState(false);
+  const [editIndexStatus, setEditIndexStatus] = useState(null);
+
   const [liveClassList, setLiveClassList] = useState([]);
-  const [paginationData, setPaginationData] = useState([]);
+  const [paginationData, setPaginationData] = useState({
+    page: 1,
+  });
 
   useEffect(() => {
-    getLiveClassList();
+    getLiveClassList(1);
   }, []);
 
-  const getLiveClassList = async () => {
+  const getLiveClassList = async (page) => {
     const getClassResponse = await postRequest("live-class-list-staff", {
-      filterDate: "25/11/2021",
-      page: 1,
+      filterDate: "25/11/2021", //moment().format("DD/MM/YYYY"),
+      page: page,
     });
     setLiveClassList(getClassResponse.data.response.live_classes);
     setPaginationData(getClassResponse.data.paginationData);
   };
 
-  const deleteLiveClass = async () => {
-    // const getClassResponse = await postRequest("live-class-list-staff", {
-    //   filterDate: "25/11/2021",
-    //   page: 1,
-    // });
-    getLiveClassList()
-   
-  }; 
+  const deleteLiveClass = async (id) => {
+    const deleteClassRes = await postRequest("live-class-delete", {
+      id: id,
+    });
+    SuccessNotificationMsg("Success", "Live Class deleted successfully");
+    getLiveClassList(paginationData.current);
+  };
+
+  const handlePrevPage = () => {
+    getLiveClassList(paginationData.current - 1);
+  };
+
+  const handleNextPage = () => {
+    getLiveClassList(paginationData.current + 1);
+  };
+
+  const showStatusPopconfirm = (index) => {
+    setPopConfirmShowStatus(true);
+    setEditIndexStatus(index);
+  };
+
+  const handleCancelPopConfirmStatus = () => {
+    setPopConfirmShowStatus(false);
+    setEditIndexStatus(null);
+  };
 
   return (
     <main id="js-page-content" role="main" className="page-content">
@@ -41,7 +63,7 @@ const LiveClass = () => {
         <div className="subheader">
           <h1 className="subheader-title">
             <i className="subheader-icon fal fa-clipboard"></i>{" "}
-            <span class="fw-300">Live Classes</span>
+            <span className="fw-300">Live Classes</span>
             <span id="filterBtn" style={{ float: "right" }}>
               <button className="btn btn-sm btn-primary waves-effect waves-themed">
                 <i className="fal fa-filter"></i> Filter
@@ -55,20 +77,12 @@ const LiveClass = () => {
               <div className="panel-hdr">
                 <h2>Live Classes List</h2>
               </div>
-              <h4>
-                <img
-                  src="https://dev.lamdainfotech.com/parentlogin/img/ajax-loader.gif"
-                  id="loadingStuff"
-                  style={{ marginLeft: "41%", display: "none" }}
-                  width="100"
-                />
-              </h4>
               <div className="panel-container show">
                 <div className="panel-content">
                   {liveClassList &&
                     liveClassList.map((liveClass) => {
                       return (
-                        <div className="card border mb-2">
+                        <div className="card border mb-2" key={liveClass.id}>
                           <div className="card-body">
                             <img
                               src={liveClass.teacher_img}
@@ -113,78 +127,114 @@ const LiveClass = () => {
                                     ? liveClass.teacher_start_url
                                     : liveClass.join_url
                                 }
-                                class="btn btn-sm btn-default"
+                                className="btn btn-sm btn-default"
                               >
                                 Join Class
                               </a>
                             ) : (
-                              <a class="btn btn-sm btn-default">
+                              <a className="btn btn-sm btn-default">
                                 Class Not Ready{" "}
                               </a>
                             )}
                           </div>
 
-                          <div class="card-footer text-muted py-2">
-                            {liveClass.totalAttend} / {liveClass.total_students}{" "}
+                          <div className="card-footer text-muted py-2">
+                            {liveClass.totalAttend} / {liveClass.total_students}
                             &nbsp;
-                            <i class="fal fa-user-alt mr-2"></i>
+                            <i className="fal fa-user-alt mr-2"></i>
                             &nbsp;|&nbsp;&nbsp;
-                            <Link onClick={() => deleteLiveClass()}>
-                              <i class="fal fa-trash-alt text-danger mr-2"></i>
-                            </Link>
+                            {editIndexStatus === liveClass.id ? (
+                              <Popconfirm
+                                className="action"
+                                title="Are you sure ? If a Zoom class is deleted then all other information related this will be delete. Do you really want to delete?"
+                                onConfirm={() => deleteLiveClass(liveClass.id)}
+                                onCancel={() => handleCancelPopConfirmStatus()}
+                                okText="Yes"
+                                placement="right"
+                                visible={popConfirmShowStatus}
+                              >
+                                <span
+                                  onClick={() =>
+                                    showStatusPopconfirm(liveClass.id)
+                                  }
+                                >
+                                  <i className="fas fa-trash-alt text-danger mr-2"></i>
+                                </span>
+                              </Popconfirm>
+                            ) : (
+                              <span
+                                onClick={() =>
+                                  showStatusPopconfirm(liveClass.id)
+                                }
+                              >
+                                <i className="fas fa-trash-alt text-danger mr-2"></i>
+                              </span>
+                            )}
                           </div>
                         </div>
                       );
                     })}
-                  <div>
-                    <div className="dataTables_wrapper">
-                      <div className="row">
-                        <div className="col-md-5">
-                          <div
-                            className="dataTables_info"
-                            id="dt_basic_info"
-                            role="status"
-                            style={{ paddingLeft: "10px" }}
-                            aria-live="polite"
-                          >
-                            Showing {paginationData.current} to{" "}
-                            {paginationData.last} of{" "}
-                            {paginationData.total_record} entries
+
+                  {liveClassList && liveClassList.length === 0 && (
+                    <div className="alert alert-warning ">
+                      No Live Class List Found!
+                    </div>
+                  )}
+
+                  {liveClassList && liveClassList.length > 0 && (
+                    <div>
+                      <div className="dataTables_wrapper mt-3">
+                        <div className="row">
+                          <div className="col-md-5">
+                            <div className="dataTables_info">
+                              Showing{" "}
+                              {paginationData.current === 1
+                                ? "1"
+                                : (paginationData.current - 1) * 10 + 1}{" "}
+                              to{" "}
+                              {paginationData.current *
+                                paginationData.record_per_page}{" "}
+                              of {paginationData.total_record} entries
+                            </div>
                           </div>
-                        </div>
-                        <div className="col-md-7">
-                          <div
-                            className="dataTables_paginate paging_simple_numbers"
-                            id="dt_basic_paginate"
-                          >
-                            <ul
-                              className="pagination"
-                              style={{ paddingRight: "10px" }}
-                            >
-                              <li
-                                className="paginate_button page-item previous disabled"
-                                id="prevBtn"
-                              >
-                                {" "}
-                                <a href="#" className="page-link">
-                                  <i className="fal fa-chevron-left"></i>
-                                </a>{" "}
-                              </li>
-                              <li
-                                className="paginate_button page-item next"
-                                id="nextBtn"
-                              >
-                                {" "}
-                                <a href="#" className="page-link">
-                                  <i className="fal fa-chevron-right"></i>
-                                </a>{" "}
-                              </li>
-                            </ul>
+                          <div className="col-md-7 right">
+                            <div className="dataTables_paginate paging_simple_numbers">
+                              <ul className="pagination">
+                                <li
+                                  className={
+                                    paginationData.prev === ""
+                                      ? "paginate_button page-item previous disabled"
+                                      : "paginate_button page-item previous"
+                                  }
+                                >
+                                  <a
+                                    onClick={handlePrevPage}
+                                    className="page-link"
+                                  >
+                                    <i className="fal fa-chevron-left"></i>
+                                  </a>
+                                </li>
+                                <li
+                                  className={
+                                    paginationData.next === ""
+                                      ? "paginate_button page-item next disabled"
+                                      : "paginate_button page-item next"
+                                  }
+                                >
+                                  <a
+                                    onClick={handleNextPage}
+                                    className="page-link"
+                                  >
+                                    <i className="fal fa-chevron-right"></i>
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>

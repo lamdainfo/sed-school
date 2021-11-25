@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import LogoSmall from "../../styles/LogoSmall";
+import coverBG from "../../images/cover-2-lg.png";
 import { getUserData, getSchoolData } from "../../utils/Helpers";
 
 const Sidebar = () => {
@@ -15,25 +16,6 @@ const Sidebar = () => {
         </div>
 
         <nav id="js-primary-nav" className="primary-nav" role="navigation">
-          <div className="nav-filter">
-            <div className="position-relative">
-              <input
-                type="text"
-                id="nav_filter_input"
-                placeholder="Filter menu"
-                className="form-control"
-              />
-              <a
-                href="#"
-                className="btn-primary btn-search-close js-waves-off"
-                data-action="toggle"
-                data-target=".page-sidebar"
-              >
-                <i className="fal fa-chevron-up"></i>
-              </a>
-            </div>
-          </div>
-
           <div className="info-card">
             <img
               src={getSchoolData().sch_img}
@@ -46,26 +28,12 @@ const Sidebar = () => {
                   {getUserData().name}
                 </span>
               </a>
-              {/* <span className="d-inline-block text-truncate text-truncate-sm">
-                Class : II-A
-                <br />
-                Roll No. : 1
-              </span> */}
             </div>
             <img
-              src="https://dev.lamdainfotech.com/parentlogin/img/card-backgrounds/cover-2-lg.png"
+              src={coverBG}
               className="cover"
               alt="cover"
             />
-            <a
-              href="#"
-              className="pull-trigger-btn"
-              data-action="toggle"
-              data-target=".page-sidebar"
-              data-focus="nav_filter_input"
-            >
-              <i className="fal fa-angle-down"></i>
-            </a>
           </div>
 
           <ul id="js-nav-menu" className="nav-menu">
@@ -132,17 +100,10 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link to="/live-class">
-                    <span className="nav-link-text">View</span>
+                    <span className="nav-link-text">List</span>
                   </Link>
                 </li>
               </ul>
-            </li>
-
-            <li>
-              <Link to="/fees">
-                <i className="fal fa-receipt"></i>
-                <span className="nav-link-text">Fees</span>
-              </Link>
             </li>
           </ul>
         </nav>

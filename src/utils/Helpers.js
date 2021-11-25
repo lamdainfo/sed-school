@@ -36,38 +36,28 @@ export const getSchoolMenu = () => {
   return schoolMenu !== "" ? schoolMenu.split(",") : [];
 };
 
-export const authUserData = () => {
-  let authData = localStorage.getItem("auth_user_data");
-  return JSON.parse(authData);
-};
+// export const redirectIfNotAdmin = () => {
+//   let authData = authUserData();
 
-export const redirectIfNotAdmin = () => {
-  let authData = authUserData();
+//   if (authData === null) {
+//     window.location.href = "/login";
+//   }
 
-  if (authData === null) {
-    window.location.href = "/login";
-  }
+//   if (authData.userType === "admin" && authData.appusersId !== "") {
+//     window.location.href = "/admin-dashboard";
+//   }
 
-  if (authData.userType === "admin" && authData.appusersId !== "") {
-    window.location.href = "/admin-dashboard";
-  }
-
-  if (authData.userType === "student" && authData.appusersId !== "") {
-    window.location.href = "/student-dashboard";
-  }
-};
+//   if (authData.userType === "student" && authData.appusersId !== "") {
+//     window.location.href = "/student-dashboard";
+//   }
+// };
 
 export const redirectIfLoggedIn = () => {
-  let authData = authUserData();
+  let token = localStorage.getItem("restoken");
+  let userType = getUserType();
 
-  if (authData !== null && authData !== undefined) {
-    if (authData.userType === "admin") {
-      window.location.href = "/admin-dashboard";
-    }
-    
-    if (authData.userType === "student" && authData.appusersId !== "") {
-      window.location.href = "/student-dashboard";
-    }
+  if (token !== null && token !== undefined && userType !== null) {
+    window.location.href = "/dashboard";
   }
 };
 

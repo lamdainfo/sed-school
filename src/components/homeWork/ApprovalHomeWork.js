@@ -1,29 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { Layout } from "antd";
 import { postRequest } from "../../axios";
 
 import HomeWorkDetail from "./HomeWorkDetail";
 import { getSessionData } from "../../utils/Helpers";
 
-const { Content } = Layout;
-
 const ApprovalHomeWork = () => {
   const [btnLoading, setBtnLoading] = useState(false);
   const [apiLoading, setApiLoading] = useState(false);
   const [homeWorkList, setHomeWorkList] = useState([]);
-  const [paginationData, setPaginationData] = useState([]);
+  const [paginationData, setPaginationData] = useState({
+    page: 1,
+  });
 
   useEffect(() => {
-    getHomeWorkList();
+    getHomeWorkList(1);
   }, []);
 
-  const getHomeWorkList = async () => {
+  const getHomeWorkList = async (page) => {
     const response = await postRequest("pending-approval-homework-list", {
       scode: getSessionData().code,
-      filter_date: "26/11/2021",
+      filterDate: "",
+      class_section: "",
+      subject_id: "",
+      page: page,
     });
-    setHomeWorkList(response.data.response.homework_list);
+
+    setHomeWorkList(
+      response.data.response.homework_list
+        ? response.data.response.homework_list
+        : []
+    );
     setPaginationData(response.data.paginationData);
+  };
+
+  const handlePrevPage = () => {
+    getHomeWorkList(paginationData.current - 1);
+  };
+
+  const handleNextPage = () => {
+    getHomeWorkList(paginationData.current + 1);
   };
 
   return (
@@ -96,76 +111,70 @@ const ApprovalHomeWork = () => {
 
                             <HomeWorkDetail homeWorkDetail={homeWork} />
                           </div>
-                          <div class="card-footer text-muted py-2">
-                            <a
-                              href="#"
-                              class="text-primary mr-2"
-                              onclick="showHWLikes('b0ZJbUdXV1NVQUZMMEVrbFplYVAyUT09')"
-                            >
-                              {homeWork?.total_like}
-                              <i class="fal fa-thumbs-up "></i>
-                            </a>
-
-                            <a href="#" class="text-primary mr-2">
-                              {homeWork?.comment_count}
-                              <i class="fal fa-comment ml-1"></i>
-                            </a>
-
-                            <a href="#" class="text-primary mr-2">
-                              {homeWork?.documents_count}
-                              <i class="fal fa-paperclip"></i>
-                            </a>
-                          </div>
                         </div>
                       );
                     })}
-                  <div>
-                    <div className="dataTables_wrapper">
-                      <div className="row">
-                        <div className="col-md-5">
-                          <div
-                            className="dataTables_info"
-                            id="dt_basic_info"
-                            role="status"
-                            style={{ paddingLeft: "10px" }}
-                            aria-live="polite"
-                          >
-                            Showing 1 to 10 of 29 entries
+
+                  {homeWorkList && homeWorkList.length === 0 && (
+                    <div className="alert alert-warning ">
+                      No Home Work List Found!
+                    </div>
+                  )}
+
+                  {homeWorkList && homeWorkList.length > 0 && (
+                    <div>
+                      <div className="dataTables_wrapper mt-3">
+                        <div className="row">
+                          <div className="col-md-5">
+                            <div className="dataTables_info">
+                              Showing{" "}
+                              {paginationData.current === 1
+                                ? "1"
+                                : (paginationData.current - 1) * 10 + 1}{" "}
+                              to{" "}
+                              {paginationData.current *
+                                paginationData.record_per_page}{" "}
+                              of {paginationData.total_record} entries
+                            </div>
                           </div>
-                        </div>
-                        <div className="col-md-7">
-                          <div
-                            className="dataTables_paginate paging_simple_numbers"
-                            id="dt_basic_paginate"
-                          >
-                            <ul
-                              className="pagination"
-                              style={{ paddingRight: "10px" }}
-                            >
-                              <li
-                                className="paginate_button page-item previous disabled"
-                                id="prevBtn"
-                              >
-                                {" "}
-                                <a href="#" className="page-link">
-                                  <i className="fal fa-chevron-left"></i>
-                                </a>{" "}
-                              </li>
-                              <li
-                                className="paginate_button page-item next"
-                                id="nextBtn"
-                              >
-                                {" "}
-                                <a href="#" className="page-link">
-                                  <i className="fal fa-chevron-right"></i>
-                                </a>{" "}
-                              </li>
-                            </ul>
+                          <div className="col-md-7 right">
+                            <div className="dataTables_paginate paging_simple_numbers">
+                              <ul className="pagination">
+                                <li
+                                  className={
+                                    paginationData.prev === ""
+                                      ? "paginate_button page-item previous disabled"
+                                      : "paginate_button page-item previous"
+                                  }
+                                >
+                                  <a
+                                    onClick={handlePrevPage}
+                                    className="page-link"
+                                  >
+                                    <i className="fal fa-chevron-left"></i>
+                                  </a>
+                                </li>
+                                <li
+                                  className={
+                                    paginationData.next === ""
+                                      ? "paginate_button page-item next disabled"
+                                      : "paginate_button page-item next"
+                                  }
+                                >
+                                  <a
+                                    onClick={handleNextPage}
+                                    className="page-link"
+                                  >
+                                    <i className="fal fa-chevron-right"></i>
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>

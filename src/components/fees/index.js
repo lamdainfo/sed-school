@@ -11,7 +11,7 @@ const Fees = () => {
         <div className="subheader">
           <h1 className="subheader-title">
             <i className="subheader-icon fal fa-clipboard"></i>{" "}
-            <span class="fw-300">Fees</span>
+            <span className="fw-300">Fees</span>
           </h1>
         </div>
         <Row gutter={[15]}>

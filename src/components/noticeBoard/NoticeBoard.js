@@ -6,8 +6,6 @@ import NoticeBoardLikeList from "./NoticeBoardLikeList";
 import { getSessionData } from "../../utils/Helpers";
 
 const NoticeBoard = () => {
-  // const [btnLoading, setBtnLoading] = useState(false);
-  // const [apiLoading, setApiLoading] = useState(false);
   const [noticeBoardList, setNoticeBoardList] = useState([]);
   const [paginationData, setPaginationData] = useState({
     page: 1,
@@ -27,11 +25,11 @@ const NoticeBoard = () => {
   };
 
   const handlePrevPage = () => {
-    // getNoticeBoardList(paginationData.page - 1);
+    getNoticeBoardList(paginationData.current - 1);
   };
 
   const handleNextPage = () => {
-    // getNoticeBoardList(paginationData.page + 1);
+    getNoticeBoardList(paginationData.current + 1);
   };
 
   return (
@@ -121,61 +119,66 @@ const NoticeBoard = () => {
                       );
                     })}
 
-                  <div>
-                    <div className="dataTables_wrapper">
-                      <div className="row">
-                        <div className="col-md-5">
-                          <div
-                            className="dataTables_info"
-                            id="dt_basic_info"
-                            role="status"
-                            style={{ paddingLeft: "10px" }}
-                            aria-live="polite"
-                          >
-                            Showing {paginationData.current} to{" "}
-                            {paginationData.record_per_page} of{" "}
-                            {paginationData.total_record} entries
+                  {noticeBoardList && noticeBoardList.length === 0 && (
+                    <div className="alert alert-warning">
+                      No Notice Board List Found!
+                    </div>
+                  )}
+
+                  {noticeBoardList && noticeBoardList.length > 0 && (
+                    <div>
+                      <div className="dataTables_wrapper mt-3">
+                        <div className="row">
+                          <div className="col-md-5">
+                            <div className="dataTables_info">
+                              Showing{" "}
+                              {paginationData.current === 1
+                                ? "1"
+                                : (paginationData.current - 1) * 10 + 1}{" "}
+                              to{" "}
+                              {paginationData.current *
+                                paginationData.record_per_page}{" "}
+                              of {paginationData.total_record} entries
+                            </div>
                           </div>
-                        </div>
-                        <div className="col-md-7">
-                          <div
-                            className="dataTables_paginate paging_simple_numbers"
-                            id="dt_basic_paginate"
-                          >
-                            <ul
-                              className="pagination"
-                              style={{ paddingRight: "10px" }}
-                            >
-                              <li
-                                className="paginate_button page-item previous disabled"
-                                id="prevBtn"
-                              >
-                                {" "}
-                                <a
-                                  onClick={handlePrevPage}
-                                  className="page-link"
+                          <div className="col-md-7 right">
+                            <div className="dataTables_paginate paging_simple_numbers">
+                              <ul className="pagination">
+                                <li
+                                  className={
+                                    paginationData.prev === ""
+                                      ? "paginate_button page-item previous disabled"
+                                      : "paginate_button page-item previous"
+                                  }
                                 >
-                                  <i className="fal fa-chevron-left"></i>
-                                </a>{" "}
-                              </li>
-                              <li
-                                className="paginate_button page-item next"
-                                id="nextBtn"
-                              >
-                                {" "}
-                                <a
-                                  onClick={handleNextPage}
-                                  className="page-link"
+                                  <a
+                                    onClick={handlePrevPage}
+                                    className="page-link"
+                                  >
+                                    <i className="fal fa-chevron-left"></i>
+                                  </a>
+                                </li>
+                                <li
+                                  className={
+                                    paginationData.next === ""
+                                      ? "paginate_button page-item next disabled"
+                                      : "paginate_button page-item next"
+                                  }
                                 >
-                                  <i className="fal fa-chevron-right"></i>
-                                </a>{" "}
-                              </li>
-                            </ul>
+                                  <a
+                                    onClick={handleNextPage}
+                                    className="page-link"
+                                  >
+                                    <i className="fal fa-chevron-right"></i>
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>

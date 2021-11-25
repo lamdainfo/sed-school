@@ -20,6 +20,7 @@ import CreateNoticeBoard from "../noticeBoard/CreateNoticeBoard";
 import HomeWork from "../homeWork/HomeWork";
 import ApprovalHomeWork from "../homeWork/ApprovalHomeWork";
 import CreateHomeWork from "../homeWork/CreateHomeWork";
+import CreateHomeWorkBySubject from "../homeWork/CreateHomeWorkBySubject";
 import SubmitedHomeWork from "../homeWork/SubmitedHomeWork";
 
 import LiveClass from "../liveClass/LiveClass";
@@ -57,6 +58,7 @@ export default class Routes extends Component {
 
         <PrivateRoute exact path="/home-work" component={HomeWork} />
         <PrivateRoute exact path="/create-home-work" component={CreateHomeWork} />
+        <PrivateRoute exact path="/create-home-work-by-subject" component={CreateHomeWorkBySubject} />
         <PrivateRoute exact path="/approval-home-work" component={ApprovalHomeWork} />
         <PrivateRoute exact path="/submitted-home-work" component={SubmitedHomeWork} />
 

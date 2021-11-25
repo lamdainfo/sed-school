@@ -75,7 +75,6 @@ class ForgotPassword extends React.Component {
             <button
               type="button"
               class="btn btn-default ml-2 waves-effect waves-themed"
-              
               data-dismiss="modal"
             >
               <i class="fal fa-times"></i> Close

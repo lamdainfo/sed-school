@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { postRequest } from "../../axios";
 
-import { getSessionData } from "../../utils/Helpers";
-import { Link } from "react-router-dom";
+import { getSessionData, getSchoolData } from "../../utils/Helpers";
 
 const PaidFees = () => {
   const [apiLoading, setApiLoading] = useState(false);
-  const [paidFeesList, setPaidFeesList] = useState([]);
+  const [feesList, setFeesList] = useState([]);
 
   useEffect(() => {
     getFeeList();
@@ -14,11 +14,11 @@ const PaidFees = () => {
 
   const getFeeList = async () => {
     const getFeesResponse = await postRequest("fees/history", {
-      schoolCode: "5555555",
-      sid: "1",
-      sessionCode: "2021",
+      schoolCode: getSchoolData().school_code,
+      sid: getSessionData().code,
+      sessionCode: getSessionData().code,
     });
-    setPaidFeesList(getFeesResponse.data.feesHistoryArray);
+    setFeesList(getFeesResponse.data.feesHistoryArray);
   };
 
   return (
@@ -119,10 +119,7 @@ const PaidFees = () => {
                   </tr>
                   <tr>
                     <td colspan="2">
-                      <span
-                        className="btn btn-block btn-warning htn-sm"
-                        
-                      >
+                      <span className="btn btn-block btn-warning htn-sm">
                         Print Receipt
                       </span>
                     </td>

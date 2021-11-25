@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import { Input, Row, Col, Select, Form, Upload, Button } from "antd";
+import {
+  Input,
+  Row,
+  Col,
+  Select,
+  Form,
+  Upload,
+  Button,
+  DatePicker,
+  Space,
+} from "antd";
 import { postRequest } from "../../axios";
 import { UploadOutlined } from "@ant-design/icons";
 
@@ -10,31 +20,32 @@ import {
   SuccessNotificationMsg,
   ErrorNotificationMsg,
 } from "../../utils/NotificationHelper";
-import { getSessionData, getUserData, getSchoolData } from "../../utils/Helpers";
+import { getSessionData, getUserData } from "../../utils/Helpers";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-const CreateNoticeBoard = (props) => {
+const CreateHomeWorkBySubject = (props) => {
+  const dateFormat = "YYYY-MM-DD";
   const [state, setState] = useState({
-    edit_mode: "",
-    posted_on: null,
-    category: null,
-    subject: null,
-    description: null,
-    comment_enable: 0,
-    school_code: null,
-    is_draft: null,
     class_code: null,
     student_list: [],
+    assignment_date: moment().format("YYYY-MM-DD"),
+    submission_date: moment().format("YYYY-MM-DD"),
+    subject: null,
+    page_no: null,
+    chapter_no: null,
+    comment_enable: 0,
+    topic: "",
+    description: null,
   });
   const [btnLoading, setBtnLoading] = useState(false);
-  const [categoryList, setCategoryList] = useState([]);
   const [classList, setClassList] = useState([]);
   const [studentList, setStudentList] = useState([]);
+  const [sectionList, setSectionList] = useState([]);
+  const [subjectList, setSubjectList] = useState([]);
 
   useEffect(() => {
-    getCategoryList();
     getClassList();
   }, []);
 
@@ -46,9 +57,17 @@ const CreateNoticeBoard = (props) => {
     setState({ ...state, [field]: value });
   };
 
-  const getCategoryList = async () => {
-    const response = await postRequest("get-notice-board-category");
-    setCategoryList(response.data.response);
+  const handleChangeAssignmentDate = (date, dateString) => {
+    setState({ ...state, assignment_date: dateString });
+  };
+
+  const handleChangeSubmissionDate = (date, dateString) => {
+    setState({ ...state, submission_date: dateString });
+  };
+
+  const disablePastDate = (current) => {
+    let customDate = moment().format("YYYY-MM-DD");
+    return current && current < moment(customDate, "YYYY-MM-DD");
   };
 
   const getClassList = async () => {
@@ -71,11 +90,39 @@ const CreateNoticeBoard = (props) => {
 
     setState({ ...state, [field]: classCode[0] });
 
-    const studentRes = await postRequest("get-student-list-by-class", {
-      sid: getSessionData().code,
-      sclass: classCode[0],
-      sections: classCode[1],
+    const sectionRes = await postRequest("get-section-by-class", {
+      session_code: getSessionData().code,
+      class_code: classCode[0],
     });
+
+    setSectionList(sectionRes.data.response);
+  };
+
+  const handleSectionChange = async (field, value) => {
+    setState({ ...state, sections: [value] });
+
+    const subjectRes = await postRequest("get-subject-by-class-multi-section", {
+      session_code: getSessionData().code,
+      class_code: state.class_code,
+      sections: [value],
+      tid: getUserData().tid,
+    });
+
+    setSubjectList(subjectRes.data.response);
+  };
+
+  const handleSubjectChange = async (field, value) => {
+    setState({ ...state, subject: value });
+
+    const studentRes = await postRequest(
+      "get-student-by-class-section-subject",
+      {
+        session_code: getSessionData().code,
+        class_code: state.class_code,
+        sections: state.sections,
+        subject_id: value,
+      }
+    );
 
     setStudentList(studentRes.data.response);
   };
@@ -90,20 +137,20 @@ const CreateNoticeBoard = (props) => {
     });
 
     const payload = {
-      edit_mode: "",
-      session_id: getSessionData().code,
-      posted_on: moment().format("YYYY-MM-DD"),
-      category: state.category,
+      session_code: getSessionData().code,
       subject: state.subject,
+      topic: state.topic,
       description: state.description,
+      page_no: state.page_no,
+      chapter_no: state.chapter_no,
+      class_code: state.class_code,
+      sections: state.sections,
       comment_enable: state.comment_enable,
-      school_code:  getSchoolData().school_code,
+      assignment_date: state.assignment_date,
+      submission_date: state.submission_date,
       is_draft: "0",
       sdata: {
-        class_code: state.class_code,
-        edit_student_list: [],
         student_list: studentsArr,
-        staff_list: [],
       },
       // "multifile": [
       //   {
@@ -117,14 +164,14 @@ const CreateNoticeBoard = (props) => {
     //console.log(payload);
 
     try {
-      const createNoticeBoardResponse = await postRequest(
-        "add-notice-board",
+      const createHomeCreateHomeWorkResponse = await postRequest(
+        "add-homework-by-subject",
         payload
       );
 
-      SuccessNotificationMsg("Success", "Notice Board created successfully");
+      SuccessNotificationMsg("Success", "Homework created successfully");
       setBtnLoading(false);
-      props.history.push("/notice-board");
+      props.history.push("/home-work");
     } catch (error) {
       setBtnLoading(false);
       ErrorNotificationMsg(error.errmsg);
@@ -143,20 +190,28 @@ const CreateNoticeBoard = (props) => {
     <>
       <main id="js-page-content" role="main" className="page-content">
         <div id="content">
-          <PageHeader pageTitle="Notice Board" />
+          <PageHeader pageTitle="Home Work" />
           <div className="row">
             <div className="col-md-12">
               <div id="panel-1" className="panel">
                 <div className="panel-hdr">
-                  <h2>Notice Board</h2>
+                  <h2>Home Work</h2>
                   <div className="panel-toolbar">
-                    <Link
-                      to="/notice-board"
-                      className="btn btn-sm btn-info waves-effect waves-themed"
-                    >
-                      <i className="fal fa-clipboard-list"></i> View Notice
-                      Board
-                    </Link>
+                    <Space>
+                      <Link
+                        to="/create-home-work"
+                        className="btn btn-sm btn-primary waves-effect waves-themed"
+                      >
+                        <i className="fal fa-plus"></i> Create By Class &
+                        Section
+                      </Link>
+                      <Link
+                        to="/home-work"
+                        className="btn btn-sm btn-info waves-effect waves-themed"
+                      >
+                        <i className="fal fa-clipboard-list"></i> View Home Work
+                      </Link>
+                    </Space>
                   </div>
                 </div>
                 <div className="panel-container show">
@@ -194,8 +249,60 @@ const CreateNoticeBoard = (props) => {
                               </Select>
                             </Form.Item>
                           </Col>
-
                           <Col xs={24} sm={12} lg={8}>
+                            <Form.Item
+                              label="Section"
+                              name="sections"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Please select section!",
+                                },
+                              ]}
+                            >
+                              <Select
+                                placeholder="Select Section"
+                                onChange={(value) =>
+                                  handleSectionChange("sections", value)
+                                }
+                              >
+                                {!!sectionList &&
+                                  sectionList.map((s) => (
+                                    <Option key={s} value={s}>
+                                      {s}
+                                    </Option>
+                                  ))}
+                              </Select>
+                            </Form.Item>
+                          </Col>
+                          <Col xs={24} sm={12} lg={8}>
+                            <Form.Item
+                              label="Subject"
+                              name="subject"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Please select subject!",
+                                },
+                              ]}
+                            >
+                              <Select
+                                placeholder="Select Subject"
+                                onChange={(value) =>
+                                  handleSubjectChange("subject", value)
+                                }
+                              >
+                                {!!subjectList &&
+                                  subjectList.map((s) => (
+                                    <Option key={s.id} value={s.id}>
+                                      {s.subject_name}
+                                    </Option>
+                                  ))}
+                              </Select>
+                            </Form.Item>
+                          </Col>
+
+                          <Col xs={24} sm={12} lg={16}>
                             <Form.Item
                               name="student_list"
                               label="Roll(s)"
@@ -233,30 +340,91 @@ const CreateNoticeBoard = (props) => {
                         <hr />
 
                         <Row gutter={[15]}>
-                          <Col xs={24} sm={12} lg={8}>
+                          <Col xs={24} sm={12} lg={12}>
                             <Form.Item
-                              name="category"
-                              label="Category"
+                              name="assignment_date"
+                              label="Assignment Date"
+                            >
+                              <DatePicker
+                                defaultValue={moment()}
+                                format={dateFormat}
+                                disabledDate={disablePastDate}
+                                onChange={handleChangeAssignmentDate}
+                                style={{ width: "100%" }}
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col xs={24} sm={12} lg={12}>
+                            <Form.Item
+                              name="submission_date"
+                              label="Submission Date"
+                            >
+                              <DatePicker
+                                defaultValue={moment()}
+                                format={dateFormat}
+                                disabledDate={disablePastDate}
+                                onChange={handleChangeSubmissionDate}
+                                style={{ width: "100%" }}
+                              />
+                            </Form.Item>
+                          </Col>
+
+                          <Col xs={24} sm={12} lg={24}>
+                            <Form.Item
+                              label="Subject"
+                              name="subject"
                               rules={[
                                 {
                                   required: true,
-                                  message: "Please select category!",
+                                  whitespace: true,
+                                  message: "Please enter subject",
                                 },
                               ]}
                             >
-                              <Select
-                                placeholder="Select Category"
+                              <Input
                                 onChange={(value) =>
-                                  handleSelectChange("category", value)
+                                  handleChange("subject", value)
                                 }
-                              >
-                                {!!categoryList &&
-                                  categoryList.map((s) => (
-                                    <Option key={s.id} value={s.id}>
-                                      {s.name}
-                                    </Option>
-                                  ))}
-                              </Select>
+                              />
+                            </Form.Item>
+                          </Col>
+
+                          <Col xs={24} sm={12} lg={8}>
+                            <Form.Item
+                              label="Page No."
+                              name="page_no"
+                              rules={[
+                                {
+                                  required: true,
+                                  whitespace: true,
+                                  message: "Please enter page no",
+                                },
+                              ]}
+                            >
+                              <Input
+                                onChange={(value) =>
+                                  handleChange("page_no", value)
+                                }
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col xs={24} sm={12} lg={8}>
+                            <Form.Item
+                              label="Chapter No."
+                              name="chapter_no"
+                              rules={[
+                                {
+                                  required: true,
+                                  whitespace: true,
+                                  message: "Please enter chapter no",
+                                },
+                              ]}
+                            >
+                              <Input
+                                onChange={(value) =>
+                                  handleChange("chapter_no", value)
+                                }
+                              />
                             </Form.Item>
                           </Col>
                           <Col xs={24} sm={12} lg={8}>
@@ -278,18 +446,19 @@ const CreateNoticeBoard = (props) => {
 
                           <Col xs={24} sm={12} lg={24}>
                             <Form.Item
-                              label="Subject"
-                              name="subject"
+                              label="Topic"
+                              name="topic"
                               rules={[
                                 {
                                   required: true,
-                                  message: "Please enter subject",
+                                  whitespace: true,
+                                  message: "Please enter topic",
                                 },
                               ]}
                             >
                               <Input
                                 onChange={(value) =>
-                                  handleChange("subject", value)
+                                  handleChange("topic", value)
                                 }
                               />
                             </Form.Item>
@@ -351,4 +520,4 @@ const CreateNoticeBoard = (props) => {
   );
 };
 
-export default CreateNoticeBoard;
+export default CreateHomeWorkBySubject;

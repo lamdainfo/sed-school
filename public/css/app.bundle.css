@@ -8083,3 +8083,7 @@ body:not(.mobile-detected)::-webkit-scrollbar-thumb:vertical:hover {
 .ant-modal {
     width: 800px !important;
 }
+
+.pagination {
+    justify-content: flex-end !important;
+}

@@ -3,7 +3,7 @@ import { Modal } from "antd";
 
 import { postRequest } from "../../axios";
 import HomeWorkComment from "./HomeWorkComment";
-import { getSessionData } from "../../utils/Helpers";
+import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
 
 const HomeWorkDetail = (props) => {
   const [showModel, setShowModel] = useState(false);
@@ -26,7 +26,15 @@ const HomeWorkDetail = (props) => {
   };
 
   const approveHomeWork = async () => {
-    alert("call api")
+    const approveRes = await postRequest("approve-homework", {
+      hid: props.homeWorkDetail.id,
+      status: "1",
+    });
+    SuccessNotificationMsg("Success", "Approved successfully");
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   };
 
   return (

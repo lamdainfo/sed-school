@@ -1,8 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { getSchoolData, getUserData, logout } from "../../utils/Helpers";
+import {
+  getSchoolData,
+  getUserData,
+  getUserType,
+  logout,
+} from "../../utils/Helpers";
 import Sidebar from "../common/Sidebar";
+import SidebarStudent from "../common/SidebarStudent";
 import ChangePassword from "../authentication/ChangePassword";
 
 import "antd/dist/antd.css";
@@ -11,7 +17,7 @@ const AdminLayout = (props) => {
   return (
     <div className="page-wrapper mod-nav-link">
       <div className="page-inner">
-        <Sidebar />
+        {getUserType() === "staff" ? <Sidebar /> : <SidebarStudent />}
         <div className="page-content-wrapper">
           <header className="page-header">
             <div className="ml-auto d-flex">

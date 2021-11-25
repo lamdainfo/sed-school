@@ -71,14 +71,26 @@ const NoticeBoardDetail = (props) => {
             </div>
             <span className="text-primary ">
               {noticeBoardDetail?.total_like}{" "}
-              <i className="fal fa-thumbs-up"></i>
+              <i
+                className={
+                  noticeBoardDetail?.total_like > 0
+                    ? "fas fa-thumbs-up"
+                    : "fal fa-thumbs-up"
+                }
+              ></i>
             </span>{" "}
             &nbsp;&nbsp; 0{" "}
             <NoticeBoardComment hideParentModel={() => hideModelFunction()} />
             &nbsp;&nbsp;
             <span className="text-primary">
-              {noticeBoardDetail?.documents_count}{" "}
-              <i className="fal fa-paperclip"></i>
+              {noticeBoardDetail?.documents_count}
+              <i
+                className={
+                  noticeBoardDetail?.documents_count > 0
+                    ? "fas fa-paperclip"
+                    : "fal fa-paperclip"
+                }
+              ></i>
             </span>
           </div>
         </div>

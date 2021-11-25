@@ -1,39 +1,44 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { Input, Modal } from "antd";
+import { postRequest } from "../../axios";
 
 const { TextArea } = Input;
 
-export default class HomeWorkComment extends Component {
-  state = {
-    showModel: false,
+const HomeWorkComment = (props) => {
+  const [showModel, setShowModel] = useState(false);
+  const [likeList, setLikeList] = useState(null);
+
+  const hideModelFunction = () => {
+    setShowModel(false);
   };
 
-  hideModel = () => {
-    this.setState({ showModel: false });
+  const showModelFunction = () => {
+    setShowModel(true);
   };
 
-  showModel = () => {
-    this.setState({ showModel: true }, () => {
-      this.props.hideParentModel();
+  const getLikeList = async () => {
+    const response = await postRequest("get-student-like-by-type", {
+      object_id: props.homeWorkDetail.id,
+      type: "hw",
     });
+    setLikeList(response.data.response);
   };
 
-  render() {
-    const { showModel } = this.state;
-    return (
-      <>
-        <span onClick={() => this.showModel()} className="text-primary">
-          <i className="fal fa-comment"></i>
-        </span>
+  return (
+    <>
+      <span onClick={() => showModelFunction()} className="text-primary">
+        {props.htmlText}
+      </span>
 
-        <Modal title="Comment" visible={showModel} onCancel={this.hideModel}>
-          <div className="row">
-            <div className="col-md-12">
-              <TextArea rows={4} />
-            </div>
+      <Modal title="Comment" visible={showModel} onCancel={hideModelFunction}>
+        <div className="row">
+          <div className="col-md-12">
+            <TextArea rows={4} />
           </div>
-        </Modal>
-      </>
-    );
-  }
-}
+        </div>
+      </Modal>
+    </>
+  );
+};
+
+export default HomeWorkComment;

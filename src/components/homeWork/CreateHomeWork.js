@@ -10,6 +10,7 @@ import {
   Upload,
   Button,
   DatePicker,
+  Space,
 } from "antd";
 import { postRequest } from "../../axios";
 import { UploadOutlined } from "@ant-design/icons";
@@ -19,7 +20,7 @@ import {
   SuccessNotificationMsg,
   ErrorNotificationMsg,
 } from "../../utils/NotificationHelper";
-import { getSessionData, getUserData } from "../../utils/Helpers";
+import { getSessionData, getUserData, getSchoolData } from "../../utils/Helpers";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -118,7 +119,7 @@ const CreateHomeWork = (props) => {
       comment_enable: state.comment_enable,
       assignment_date: state.assignment_date,
       submission_date: state.submission_date,
-      school_code: "5555555",
+      school_code: getSchoolData().school_code,
       is_draft: "0",
       tclass: state.class_code,
       hid: "",
@@ -174,12 +175,20 @@ const CreateHomeWork = (props) => {
                 <div className="panel-hdr">
                   <h2>Home Work</h2>
                   <div className="panel-toolbar">
-                    <Link
-                      to="/home-work"
-                      className="btn btn-sm btn-info waves-effect waves-themed"
-                    >
-                      <i className="fal fa-clipboard-list"></i> View Home Work
-                    </Link>
+                    <Space>
+                      <Link
+                        to="/create-home-work-by-subject"
+                        className="btn btn-sm btn-primary waves-effect waves-themed"
+                      >
+                        <i className="fal fa-plus"></i> Create By Subject
+                      </Link>
+                      <Link
+                        to="/home-work"
+                        className="btn btn-sm btn-info waves-effect waves-themed"
+                      >
+                        <i className="fal fa-clipboard-list"></i> View Home Work
+                      </Link>
+                    </Space>
                   </div>
                 </div>
                 <div className="panel-container show">

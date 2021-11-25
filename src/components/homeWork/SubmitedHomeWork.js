@@ -1,141 +1,201 @@
-import React, { Component } from "react";
-import { Layout } from "antd";
-import SubmitedHomeWorkBlock from "./SubmitedHomeWorkBlock";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import qs from "query-string";
+import { postRequest } from "../../axios";
 
-const { Content } = Layout;
+import SubmitedHomeWorkBlock from "./SubmitedHomeWorkBlock";
+import HomeWorkLikeList from "./HomeWorkLikeList";
+import { getSessionData, getSchoolData } from "../../utils/Helpers";
 
-export default class SubmitedHomeWork extends Component {
-  state = {};
+const SubmitedHomeWork = (props) => {
+  const queryString = qs.parse(props.history.location.search);
+  if (queryString.hid === undefined) {
+    props.history.push("/dashboard");
+  }
 
-  render() {
-    return (
-      <main id="js-page-content" role="main" className="page-content">
-        <div id="content">
-          <div className="subheader">
-            <h1 className="subheader-title">
-              <i className="subheader-icon fal fa-clipboard"></i> Homework
-              <span className="fw-300"> Submit</span>
-            </h1>
-          </div>
-          <div className="row">
-            <div className="col-md-12">
-              <div id="panel-1" className="panel">
-                <div className="panel-hdr">
-                  <h2>Homework Submit</h2>
-                  <div class="panel-toolbar">
-                    <Link to="/home-work"
-                      class="btn btn-sm btn-default waves-effect waves-themed"
-                    >
-                      <i class="fal fa-arrow-left"></i> Back
-                    </Link>
-                  </div>
+  const [btnLoading, setBtnLoading] = useState(false);
+  const [apiLoading, setApiLoading] = useState(false);
+
+  const [homeWorkDetail, setHomeWorkDetail] = useState([]);
+  const [homeWorkList, setHomeWorkList] = useState([]);
+  const [paginationData, setPaginationData] = useState({
+    page: 1,
+  });
+
+  useEffect(() => {
+    getHomeWork();
+  }, [props]);
+
+  const getHomeWork = async (hid) => {
+    const response = await postRequest("get-single-homework", {
+      hid: queryString.hid,
+    });
+    setHomeWorkDetail(response.data.response);
+    getHomeWorkList(1);
+  };
+
+  const getHomeWorkList = async (page) => {
+    const response = await postRequest("get-all-submitted-homework", {
+      session_code: getSessionData().code,
+      hid: queryString.hid,
+      page: page,
+    });
+    setHomeWorkList(response.data.response.homework_list);
+    setPaginationData(response.data.paginationData);
+  };
+
+  const handlePrevPage = () => {
+    getHomeWorkList(paginationData.current - 1);
+  };
+
+  const handleNextPage = () => {
+    getHomeWorkList(paginationData.current + 1);
+  };
+
+  return (
+    <main id="js-page-content" role="main" className="page-content">
+      <div id="content">
+        <div className="subheader">
+          <h1 className="subheader-title">
+            <i className="subheader-icon fal fa-clipboard"></i> Homework
+            <span className="fw-300"> Submit</span>
+            <span id="filterBtn" style={{ float: "right" }}>
+              <button className="btn btn-sm btn-primary waves-effect waves-themed">
+                <i className="fal fa-filter"></i> Filter
+              </button>
+            </span>
+          </h1>
+        </div>
+        <div className="row">
+          <div className="col-md-12">
+            <div id="panel-1" className="panel">
+              <div className="panel-hdr">
+                <h2>Homework Submit</h2>
+                <div class="panel-toolbar">
+                  <Link
+                    to="/home-work"
+                    class="btn btn-sm btn-default waves-effect waves-themed"
+                  >
+                    <i class="fal fa-arrow-left"></i> Back
+                  </Link>
                 </div>
-                <h4>
-                  <img
-                    src="https://dev.lamdainfotech.com/parentlogin/img/ajax-loader.gif"
-                    id="loadingStuff"
-                    style={{ marginLeft: "41%", display: "none" }}
-                    width="100"
-                  />
-                </h4>
-                <div className="panel-container show" id="loadData">
-                  <div className="panel-content" id="loadData">
-                    <div className="card border mb-2">
-                      <div className="card-body">
-                        <img
-                          src="https://schoolonweb-private.s3.ap-south-1.amazonaws.com/uploads/2222222/image/52c08ac4b46b504749e57e15ce1112ad2ed50a68.jpeg?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIA5FCGLRFPOLTY3PA5%2F20211111%2Fap-south-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20211111T153605Z&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Expires=3600&amp;X-Amz-Signature=3c92ee0ec0fa653f46e3321ab5118b6f1b01f7a1070b2769d35a8b1727439a5b"
-                          className="profile-image rounded-circle"
-                        />
+              </div>
+              <div className="panel-container show">
+                <div className="panel-content">
+                  <div className="card border mb-2" key={homeWorkDetail.id}>
+                    <div class="card-body">
+                      <img
+                        src={homeWorkDetail?.created_by_image}
+                        class="profile-image rounded-circle"
+                      />
 
-                        <span className="badge card-title">
-                          {" "}
-                          <strong> MATHEMATICS</strong>
+                      <span class="badge card-title">
+                        {" "}
+                        <strong> {homeWorkDetail?.subject}</strong>
+                      </span>
+                      <br />
+                      <span class="badge badge-primary">
+                        {" "}
+                        {homeWorkDetail?.class_code}
+                      </span>
+                      <span class="d-block">
+                        <strong>{homeWorkDetail?.topic}</strong>
+                      </span>
+
+                      <div class="frame-wrap mb-2">
+                        <span class="d-block text-muted">
+                          Posted By : {homeWorkDetail?.created_by}
                         </span>
-                        <br />
-                        <span className="badge badge-primary"> II-A</span>
-                        <span className="d-block">
-                          <strong>More addition and subtraction</strong>
+
+                        {homeWorkDetail?.approved ? (
+                          <span class="d-block text-muted">
+                            Approved By : {homeWorkDetail?.approve_by}
+                          </span>
+                        ) : (
+                          <span class="badge border border-danger text-danger badge-pill">
+                            NOT APPROVED
+                          </span>
+                        )}
+
+                        <span class="d-block text-muted">
+                          <i class="fal fa-sm fa-angle-double-right text-warning"></i>
+                          Assigned On : {homeWorkDetail?.assignment_date} &nbsp;
+                          <i class="fal fa-sm fa-angle-double-right  text-warning ml-2"></i>
+                          Submit By : {homeWorkDetail?.submission_date}
                         </span>
-
-                        <div className="frame-wrap mb-2">
-                          <span className="d-block text-muted">
-                            Posted By : CHANDRANI SEN
-                          </span>
-
-                          <span className="d-block text-muted">
-                            Approved By : PRIDE ADMIN
-                          </span>
-
-                          <span className="d-block text-muted">
-                            <i className="fal fa-sm fa-angle-double-right text-warning"></i>
-                            Assigned On : 04 August &nbsp;
-                            <i className="fal fa-sm fa-angle-double-right  text-warning ml-2"></i>
-                            Submit By : 04 August
-                          </span>
-                        </div>
-                      </div>
-                      <div className="card-footer text-muted py-2">
-                        <a
-                          href="#"
-                          className="text-primary mr-2"
-                          onclick="showHWLikes('b0ZJbUdXV1NVQUZMMEVrbFplYVAyUT09')"
-                        >
-                          2<i className="fal fa-thumbs-up "></i>
-                        </a>
-
-                        <a href="#" className="text-primary mr-2">
-                          0<i className="fal fa-comment ml-1"></i>
-                        </a>
-
-                        <a href="#" className="text-primary mr-2">
-                          2<i className="fal fa-paperclip"></i>
-                        </a>
                       </div>
                     </div>
+                    <div class="card-footer text-muted py-2">
+                      <HomeWorkLikeList homeWorkDetail={homeWorkDetail} />
+                      <a href="#" class="text-primary mr-2 ml-2">
+                        {homeWorkDetail?.comment_count}
+                        <i class="fal fa-comment ml-1"></i>
+                      </a>
 
-                    <SubmitedHomeWorkBlock />
+                      <a href="#" class="text-primary mr-2">
+                        {homeWorkDetail?.documents_count}
+                        <i class="fal fa-paperclip ml-1"></i>
+                      </a>
+                    </div>
+                  </div>
 
+                  {homeWorkList &&
+                    homeWorkList.map((homeWork) => {
+                      return <SubmitedHomeWorkBlock homeWorkDetail={homeWork} />
+                    })}
+
+                  {homeWorkList && homeWorkList.length === 0 && (
+                    <div className="alert alert-warning ">
+                      No Submited Home Work Found!
+                    </div>
+                  )}
+
+                  {homeWorkList && homeWorkList.length > 0 && (
                     <div>
-                      <div className="dataTables_wrapper">
+                      <div className="dataTables_wrapper mt-3">
                         <div className="row">
                           <div className="col-md-5">
-                            <div
-                              className="dataTables_info"
-                              id="dt_basic_info"
-                              role="status"
-                              style={{ paddingLeft: "10px" }}
-                              aria-live="polite"
-                            >
-                              Showing 1 to 10 of 29 entries
+                            <div className="dataTables_info">
+                              Showing{" "}
+                              {paginationData.current === 1
+                                ? "1"
+                                : (paginationData.current - 1) * 10 + 1}{" "}
+                              to{" "}
+                              {paginationData.current *
+                                paginationData.record_per_page}{" "}
+                              of {paginationData.total_record} entries
                             </div>
                           </div>
-                          <div className="col-md-7">
-                            <div
-                              className="dataTables_paginate paging_simple_numbers"
-                              id="dt_basic_paginate"
-                            >
-                              <ul
-                                className="pagination"
-                                style={{ paddingRight: "10px" }}
-                              >
+                          <div className="col-md-7 right">
+                            <div className="dataTables_paginate paging_simple_numbers">
+                              <ul className="pagination">
                                 <li
-                                  className="paginate_button page-item previous disabled"
-                                  id="prevBtn"
+                                  className={
+                                    paginationData.prev === ""
+                                      ? "paginate_button page-item previous disabled"
+                                      : "paginate_button page-item previous"
+                                  }
                                 >
-                                  {" "}
-                                  <a href="#" className="page-link">
+                                  <a
+                                    onClick={handlePrevPage}
+                                    className="page-link"
+                                  >
                                     <i className="fal fa-chevron-left"></i>
-                                  </a>{" "}
+                                  </a>
                                 </li>
                                 <li
-                                  className="paginate_button page-item next"
-                                  id="nextBtn"
+                                  className={
+                                    paginationData.next === ""
+                                      ? "paginate_button page-item next disabled"
+                                      : "paginate_button page-item next"
+                                  }
                                 >
-                                  {" "}
-                                  <a href="#" className="page-link">
+                                  <a
+                                    onClick={handleNextPage}
+                                    className="page-link"
+                                  >
                                     <i className="fal fa-chevron-right"></i>
-                                  </a>{" "}
+                                  </a>
                                 </li>
                               </ul>
                             </div>
@@ -143,13 +203,15 @@ export default class SubmitedHomeWork extends Component {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </main>
-    );
-  }
-}
+      </div>
+    </main>
+  );
+};
+
+export default SubmitedHomeWork;

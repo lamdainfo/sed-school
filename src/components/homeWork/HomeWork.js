@@ -1,35 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { Layout } from "antd";
 import { postRequest } from "../../axios";
 
 import HomeWorkDetail from "./HomeWorkDetail";
 import HomeWorkLikeList from "./HomeWorkLikeList";
-import { getSessionData } from "../../utils/Helpers";
-
-const { Content } = Layout;
+import { getSessionData, getSchoolData } from "../../utils/Helpers";
+import { Link } from "react-router-dom";
 
 const HomeWork = () => {
   const [btnLoading, setBtnLoading] = useState(false);
   const [apiLoading, setApiLoading] = useState(false);
   const [homeWorkList, setHomeWorkList] = useState([]);
-  const [paginationData, setPaginationData] = useState([]);
+  const [paginationData, setPaginationData] = useState({
+    page: 1,
+  });
 
   useEffect(() => {
-    getHomeWorkList();
+    getHomeWorkList(1);
   }, []);
 
-  const getHomeWorkList = async () => {
+  const getHomeWorkList = async (page) => {
     const response = await postRequest("get-all-homework", {
       sid: getSessionData().code,
-      school_code: "2222222",
+      school_code: getSchoolData().school_code,
       class_code: "",
       filter_date: "",
       subject: "",
       is_assignment: 0,
       is_submission: 0,
+      page: page,
     });
     setHomeWorkList(response.data.response.homework_list);
     setPaginationData(response.data.paginationData);
+  };
+
+  const handlePrevPage = () => {
+    getHomeWorkList(paginationData.current - 1);
+  };
+
+  const handleNextPage = () => {
+    getHomeWorkList(paginationData.current + 1);
   };
 
   return (
@@ -57,7 +66,7 @@ const HomeWork = () => {
                   {homeWorkList &&
                     homeWorkList.map((homeWork) => {
                       return (
-                        <div className="card border mb-2">
+                        <div className="card border mb-2" key={homeWork.id}>
                           <div class="card-body">
                             <img
                               src={homeWork?.created_by_image}
@@ -101,18 +110,17 @@ const HomeWork = () => {
                             </div>
 
                             <HomeWorkDetail homeWorkDetail={homeWork} />
-
-                            <a
-                              href="#"
-                              target="_blank"
+                            <Link
+                              to="/submitted-home-work?hid=T1B4MTVsWkhoMnk1MnlEOEN4Sk5JZz09"
                               class="btn btn-sm btn-success ml-2"
+                              target="_blank"
                             >
                               VIEW SUBMITTED HOMEWORK
-                            </a>
+                            </Link>
                           </div>
                           <div class="card-footer text-muted py-2">
                             <HomeWorkLikeList homeWorkDetail={homeWork} />
-                            <a href="#" class="text-primary mr-2">
+                            <a href="#" class="text-primary mr-2 ml-2">
                               {homeWork?.comment_count}
                               <i class="fal fa-comment ml-1"></i>
                             </a>
@@ -125,53 +133,67 @@ const HomeWork = () => {
                         </div>
                       );
                     })}
-                  <div>
-                    <div className="dataTables_wrapper">
-                      <div className="row">
-                        <div className="col-md-5">
-                          <div
-                            className="dataTables_info"
-                            id="dt_basic_info"
-                            role="status"
-                            style={{ paddingLeft: "10px" }}
-                            aria-live="polite"
-                          >
-                            Showing 1 to 10 of 29 entries
+
+                  {homeWorkList && homeWorkList.length === 0 && (
+                    <div className="alert alert-warning ">
+                      No Home Work List Found!
+                    </div>
+                  )}
+
+                  {homeWorkList && homeWorkList.length > 0 && (
+                    <div>
+                      <div className="dataTables_wrapper mt-3">
+                        <div className="row">
+                          <div className="col-md-5">
+                            <div className="dataTables_info">
+                              Showing{" "}
+                              {paginationData.current === 1
+                                ? "1"
+                                : (paginationData.current - 1) * 10 + 1}{" "}
+                              to{" "}
+                              {paginationData.current *
+                                paginationData.record_per_page}{" "}
+                              of {paginationData.total_record} entries
+                            </div>
                           </div>
-                        </div>
-                        <div className="col-md-7">
-                          <div
-                            className="dataTables_paginate paging_simple_numbers"
-                            id="dt_basic_paginate"
-                          >
-                            <ul
-                              className="pagination"
-                              style={{ paddingRight: "10px" }}
-                            >
-                              <li
-                                className="paginate_button page-item previous disabled"
-                                id="prevBtn"
-                              >
-                                {" "}
-                                <a href="#" className="page-link">
-                                  <i className="fal fa-chevron-left"></i>
-                                </a>{" "}
-                              </li>
-                              <li
-                                className="paginate_button page-item next"
-                                id="nextBtn"
-                              >
-                                {" "}
-                                <a href="#" className="page-link">
-                                  <i className="fal fa-chevron-right"></i>
-                                </a>{" "}
-                              </li>
-                            </ul>
+                          <div className="col-md-7 right">
+                            <div className="dataTables_paginate paging_simple_numbers">
+                              <ul className="pagination">
+                                <li
+                                  className={
+                                    paginationData.prev === ""
+                                      ? "paginate_button page-item previous disabled"
+                                      : "paginate_button page-item previous"
+                                  }
+                                >
+                                  <a
+                                    onClick={handlePrevPage}
+                                    className="page-link"
+                                  >
+                                    <i className="fal fa-chevron-left"></i>
+                                  </a>
+                                </li>
+                                <li
+                                  className={
+                                    paginationData.next === ""
+                                      ? "paginate_button page-item next disabled"
+                                      : "paginate_button page-item next"
+                                  }
+                                >
+                                  <a
+                                    onClick={handleNextPage}
+                                    className="page-link"
+                                  >
+                                    <i className="fal fa-chevron-right"></i>
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import { Input, Button, Form } from "antd";
-import { postRequest } from "../../axios";
 import Password from "antd/lib/input/Password";
+import { postRequest } from "../../axios";
 
+import Config from "../../Config";
 import {
   SuccessNotificationMsg,
   ErrorNotificationMsg,
@@ -41,7 +43,16 @@ const Login = () => {
         localStorage.setItem("restoken", loginResponse.data.response.restoken);
         localStorage.setItem("userType", loginResponse.data.response.userType);
 
-        const userDetailResponse = await postRequest("login-user-info", state);
+        const userDetailResponse = await axios.post(
+          Config.API_URL + "login-user-info",
+          state,
+          {
+            headers: {
+              DBAuth: loginResponse.data.response.dbtoken,
+              Authorization: `Bearer ${loginResponse.data.response.restoken}`,
+            },
+          }
+        );
 
         let userData = {
           name: userDetailResponse.data.response.name,
@@ -58,6 +69,7 @@ const Login = () => {
           district:
             userDetailResponse.data.response.school_information.district,
           sch_img: userDetailResponse.data.response.school_image.school_logo,
+          school_code: state.code,
         };
 
         localStorage.setItem(
