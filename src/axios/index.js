@@ -23,6 +23,24 @@ if (dbToken && dbToken !== null && dbToken !== undefined) {
 // axiosClient.defaults.timeout = 5000;
 // axiosClient.defaults.withCredentials = true;
 
+axiosClient.interceptors.response.use(
+  (response) => {
+    if (response.status === 401) {
+      return Promise.reject(response?.data);
+    }
+    if (response?.data?.errmsg !== "") {
+      return Promise.reject(response?.data);
+    }
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.data) {
+      return Promise.reject(error.response.data);
+    }
+    return Promise.reject(error.message);
+  }
+);
+
 export function getRequest(URL) {
   return axiosClient.get(`/${URL}`).then((response) => response);
 }

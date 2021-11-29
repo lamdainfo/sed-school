@@ -2874,7 +2874,7 @@ html body a:hover {
     font-variant: normal;
     font-weight: 400;
     line-height: 1;
-    font-family: Font Awesome\5 Pro;
+    font-family: Font awesome\5 Pro;
 }
 .breadcrumb-seperator-1 .breadcrumb-item + .breadcrumb-item:before {
     content: "\f105";
@@ -8079,7 +8079,6 @@ body:not(.mobile-detected)::-webkit-scrollbar-thumb:vertical:hover {
     }
 }
 
-
 .ant-modal {
     width: 800px !important;
 }
@@ -8087,3 +8086,41 @@ body:not(.mobile-detected)::-webkit-scrollbar-thumb:vertical:hover {
 .pagination {
     justify-content: flex-end !important;
 }
+
+.ant-btn-primary {
+    color: #fff !important;
+    background-color: #886ab5 !important;
+    border-color: #886ab5 !important;
+    box-shadow: 0 2px 6px 0 rgb(136 106 181 / 50%) !important;
+}
+
+.ant-btn-primary:hover {
+    color: #fff !important;
+    background-color: #7453a6 !important;
+    border-color: #6e4e9e !important;
+}
+
+.ant-btn {
+    font-weight: 400 !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    border: 1px solid transparent !important;
+    font-size: 0.8125rem !important;
+    border-radius: 4px !important;
+    height: 38px !important;
+    border: 1px solid transparent !important;
+}
+/* 
+.ant-input {
+    width: 100% !important;
+    height: calc(1.47em + 1rem + 2px) !important;
+    padding: 0.5rem 0.875rem !important;
+    font-size: .8125rem !important;
+    font-weight: 400 !important;
+    line-height: 1.47 !important;
+    color: #495057 !important;
+    background-color: #fff !important;
+    background-clip: padding-box !important;
+    border: 1px solid #e5e5e5 !important;
+    border-radius: 4px !important;
+} */

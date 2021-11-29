@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import { Input, Button, Form } from "antd";
 import Password from "antd/lib/input/Password";
@@ -86,7 +85,7 @@ const Login = () => {
         );
         localStorage.setItem("userData", JSON.stringify(userData));
       }
-
+      
       SuccessNotificationMsg("Success", "Succesfully logged in!");
       setBtnLoading(false);
       window.location.href = "/dashboard";
@@ -157,11 +156,11 @@ const Login = () => {
           </Button>
         </Form>
       </div>
-      <div className="blankpage-footer text-center">
+      {/* <div className="blankpage-footer text-center">
         <Link to="/forgot-password">
           <strong>Forgot Password?</strong>
         </Link>
-      </div>
+      </div> */}
     </>
   );
 };

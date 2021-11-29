@@ -113,9 +113,7 @@ const CreateNoticeBoard = (props) => {
       //   }
       // ]
     };
-
-    //console.log(payload);
-
+  
     try {
       const createNoticeBoardResponse = await postRequest(
         "add-notice-board",
@@ -125,6 +123,7 @@ const CreateNoticeBoard = (props) => {
       SuccessNotificationMsg("Success", "Notice Board created successfully");
       setBtnLoading(false);
       props.history.push("/notice-board");
+
     } catch (error) {
       setBtnLoading(false);
       ErrorNotificationMsg(error.errmsg);

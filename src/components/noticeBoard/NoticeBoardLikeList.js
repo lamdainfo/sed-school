@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Modal } from "antd";
+
 import { postRequest } from "../../axios";
+import { getUserType } from "../../utils/Helpers";
+import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
 
 const NoticeBoardLikeList = (props) => {
   const [showModel, setShowModel] = useState(false);
@@ -23,11 +26,38 @@ const NoticeBoardLikeList = (props) => {
     setLikeList(response.data.response);
   };
 
+  const likeNoticeBoard = async () => {
+    const likeResponse = await postRequest("add-notice-board-like", {
+      nid: props.noticeBoardDetail.id,
+      status: props?.noticeBoardDetail?.total_like > 0 ? "1" : "0",
+    });
+
+    if (likeResponse.data.errmsg === "") {
+      SuccessNotificationMsg("Success", "you like updated successfully!");
+      if (props.hideParent) {
+        props?.hideParentModel();
+      }
+    }
+  };
+
   return (
     <>
-      <span className="text-primary" onClick={() => showModelFunction()}>
-        {props.noticeBoardDetail.total_like}{" "}
-        <i className={props.noticeBoardDetail.total_like > 0 ? "fas fa-thumbs-up" : "fal fa-thumbs-up"}></i>
+      <span
+        className="text-primary mr-2"
+        onClick={
+          getUserType() === "staff"
+            ? () => showModelFunction()
+            : () => likeNoticeBoard()
+        }
+      >
+        {getUserType() === "staff" ? props?.noticeBoardDetail?.total_like : ""}{" "}
+        <i
+          className={
+            props?.noticeBoardDetail?.total_like > 0
+              ? "fas fa-thumbs-up"
+              : "fal fa-thumbs-up"
+          }
+        ></i>
       </span>
 
       <Modal
@@ -75,7 +105,7 @@ const NoticeBoardLikeList = (props) => {
                     likeList.map((student, id) => {
                       return (
                         <tr key={id}>
-                          <td>{id+1}</td>
+                          <td>{id + 1}</td>
                           <td>
                             <i
                               className={

@@ -3,7 +3,7 @@ import { postRequest } from "../../axios";
 
 import NoticeBoardDetail from "./NoticeBoardDetail";
 import NoticeBoardLikeList from "./NoticeBoardLikeList";
-import { getSessionData } from "../../utils/Helpers";
+import { getSessionData, getUserType } from "../../utils/Helpers";
 
 const NoticeBoard = () => {
   const [noticeBoardList, setNoticeBoardList] = useState([]);
@@ -103,16 +103,31 @@ const NoticeBoard = () => {
                           <div className="card-footer text-muted py-2">
                             <NoticeBoardLikeList
                               noticeBoardDetail={noticeBoard}
+                              hideParent={false}
                             />
-                            &nbsp;&nbsp;{" "}
-                            <span className="text-primary">
-                              {noticeBoard.comment_count}{" "}
-                              <i className="fal fa-comment"></i>
-                            </span>{" "}
-                            &nbsp;&nbsp;{" "}
-                            <span className="text-primary">
-                              {noticeBoard.documents_count}{" "}
-                              <i className="fal fa-paperclip"></i>
+                            <span className="text-primary mr-2">
+                              {getUserType() === "staff"
+                                ? noticeBoard.comment_count
+                                : ""}
+                              <i
+                                className={
+                                  noticeBoard.comment_count > 0
+                                    ? "fas fa-comment"
+                                    : "fal fa-comment"
+                                }
+                              ></i>
+                            </span>
+                            <span className="text-primary mr-2">
+                              {getUserType() === "staff"
+                                ? noticeBoard.documents_count
+                                : ""}{" "}
+                              <i
+                                className={
+                                  noticeBoard.documents_count > 0
+                                    ? "fas fa-paperclip"
+                                    : "fal fa-paperclip"
+                                }
+                              ></i>
                             </span>{" "}
                           </div>
                         </div>

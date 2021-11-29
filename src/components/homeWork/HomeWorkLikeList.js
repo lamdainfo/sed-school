@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Modal } from "antd";
+
 import { postRequest } from "../../axios";
+import { getUserType } from "../../utils/Helpers";
+import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
 
 const HomeWorkLikeList = (props) => {
   const [showModel, setShowModel] = useState(false);
@@ -23,13 +26,33 @@ const HomeWorkLikeList = (props) => {
     setLikeList(response.data.response);
   };
 
+  const likeHomeWork = async () => {
+    const likeResponse = await postRequest("add-homework-like", {
+      hid: props.homeWorkDetail.id,
+    });
+
+    if (likeResponse.data.errmsg === "") {
+      SuccessNotificationMsg("Success", "you like updated successfully!");
+      if (props.hideParent) {
+        props?.hideParentModel();
+      }
+    }
+  };
+
   return (
     <>
-      <span className="text-primary" onClick={() => showModelFunction()}>
-        {props.homeWorkDetail.total_like}{" "}
+      <span
+        className="text-primary mr-2"
+        onClick={
+          getUserType() === "staff"
+            ? () => showModelFunction()
+            : () => likeHomeWork()
+        }
+      >
+        {getUserType() === "staff" ? props?.homeWorkDetail?.total_like : ""}{" "}
         <i
           className={
-            props.homeWorkDetail.total_like > 0
+            props?.homeWorkDetail?.total_like > 0
               ? "fas fa-thumbs-up"
               : "fal fa-thumbs-up"
           }

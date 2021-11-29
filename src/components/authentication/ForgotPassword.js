@@ -1,11 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Row, Col, Input, Button, Form, Space } from "antd";
-import { MailOutlined } from "@ant-design/icons";
-import {
-  SuccessNotificationMsg,
-  ErrorNotificationMsg,
-} from "../../utils/NotificationHelper";
 
 class ForgotPassword extends React.Component {
   state = {
@@ -25,11 +19,7 @@ class ForgotPassword extends React.Component {
       <>
         <div className="card p-4 border-top-left-radius-0 border-top-right-radius-0">
           <form id="cdComment" method="post" role="form">
-            <input
-              type="hidden"
-              name="_token"
-              value="Je0YbOykAQt0qg8XVs72uRhtPdheZRmZK0S6UoUg"
-            />
+         
 
             <div class="form-row">
               <div class="col-md-12 mb-3">

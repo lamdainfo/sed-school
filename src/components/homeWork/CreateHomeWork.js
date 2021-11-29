@@ -139,8 +139,6 @@ const CreateHomeWork = (props) => {
       // ]
     };
 
-    //console.log(payload);
-
     try {
       const createHomeCreateHomeWorkResponse = await postRequest(
         "add-homework",

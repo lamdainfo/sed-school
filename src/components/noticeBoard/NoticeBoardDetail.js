@@ -3,7 +3,8 @@ import { Modal } from "antd";
 
 import { postRequest } from "../../axios";
 import NoticeBoardComment from "./NoticeBoardComment";
-import { getSessionData } from "../../utils/Helpers";
+import NoticeBoardLikeList from "./NoticeBoardLikeList";
+import { getSessionData, getUserType } from "../../utils/Helpers";
 
 const NoticeBoardDetail = (props) => {
   const [showModel, setShowModel] = useState(false);
@@ -69,21 +70,16 @@ const NoticeBoardDetail = (props) => {
                 Approved By : <strong>{noticeBoardDetail?.approved_by}</strong>
               </span>
             </div>
-            <span className="text-primary ">
-              {noticeBoardDetail?.total_like}{" "}
-              <i
-                className={
-                  noticeBoardDetail?.total_like > 0
-                    ? "fas fa-thumbs-up"
-                    : "fal fa-thumbs-up"
-                }
-              ></i>
-            </span>{" "}
-            &nbsp;&nbsp; 0{" "}
-            <NoticeBoardComment hideParentModel={() => hideModelFunction()} />
-            &nbsp;&nbsp;
+
+            <NoticeBoardLikeList noticeBoardDetail={noticeBoardDetail} hideParentModel={() => hideModelFunction()} />
+            <NoticeBoardComment
+              noticeBoardDetail={noticeBoardDetail}
+              hideParentModel={() => hideModelFunction()}
+            />
             <span className="text-primary">
-              {noticeBoardDetail?.documents_count}
+              {getUserType() === "staff"
+                ? noticeBoardDetail?.documents_count
+                : ""}{" "}
               <i
                 className={
                   noticeBoardDetail?.documents_count > 0

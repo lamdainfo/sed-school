@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { postRequest } from "../../axios";
 
 import HomeWorkDetail from "./HomeWorkDetail";
 import HomeWorkLikeList from "./HomeWorkLikeList";
-import { getSessionData, getSchoolData } from "../../utils/Helpers";
-import { Link } from "react-router-dom";
+import {
+  getSessionData,
+  getSchoolData,
+  getUserType,
+} from "../../utils/Helpers";
 
 const HomeWork = () => {
   const [btnLoading, setBtnLoading] = useState(false);
@@ -110,25 +114,45 @@ const HomeWork = () => {
                             </div>
 
                             <HomeWorkDetail homeWorkDetail={homeWork} />
-                            <Link
-                              to="/submitted-home-work?hid=T1B4MTVsWkhoMnk1MnlEOEN4Sk5JZz09"
-                              class="btn btn-sm btn-success ml-2"
-                              target="_blank"
-                            >
-                              VIEW SUBMITTED HOMEWORK
-                            </Link>
+                            {getUserType() === "staff" && (
+                              <Link
+                                to="/submitted-home-work?hid=T1B4MTVsWkhoMnk1MnlEOEN4Sk5JZz09"
+                                class="btn btn-sm btn-success ml-2"
+                                target="_blank"
+                              >
+                                VIEW SUBMITTED HOMEWORK
+                              </Link>
+                            )}
                           </div>
                           <div class="card-footer text-muted py-2">
-                            <HomeWorkLikeList homeWorkDetail={homeWork} />
-                            <a href="#" class="text-primary mr-2 ml-2">
-                              {homeWork?.comment_count}
-                              <i class="fal fa-comment ml-1"></i>
-                            </a>
-
-                            <a href="#" class="text-primary mr-2">
-                              {homeWork?.documents_count}
-                              <i class="fal fa-paperclip ml-1"></i>
-                            </a>
+                            <HomeWorkLikeList
+                              homeWorkDetail={homeWork}
+                              hideParent={false}
+                            />
+                            <span className="text-primary mr-2">
+                              {getUserType() === "staff"
+                                ? homeWork.comment_count
+                                : ""}&nbsp;
+                              <i
+                                className={
+                                  homeWork.comment_count > 0
+                                    ? "fas fa-comment"
+                                    : "fal fa-comment"
+                                }
+                              ></i>
+                            </span>
+                            <span className="text-primary mr-2">
+                              {getUserType() === "staff"
+                                ? homeWork.documents_count
+                                : ""}&nbsp;
+                              <i
+                                className={
+                                  homeWork.documents_count > 0
+                                    ? "fas fa-paperclip"
+                                    : "fal fa-paperclip"
+                                }
+                              ></i>
+                            </span>{" "}
                           </div>
                         </div>
                       );

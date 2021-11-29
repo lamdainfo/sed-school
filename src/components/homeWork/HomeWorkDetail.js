@@ -3,6 +3,8 @@ import { Modal } from "antd";
 
 import { postRequest } from "../../axios";
 import HomeWorkComment from "./HomeWorkComment";
+import HomeWorkLikeList from "./HomeWorkLikeList";
+import { getSessionData, getUserType } from "../../utils/Helpers";
 import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
 
 const HomeWorkDetail = (props) => {
@@ -84,15 +86,20 @@ const HomeWorkDetail = (props) => {
                 </button>
               )}
             </div>
-            <span className="text-primary ">
-              {homeWorkDetail?.total_like} <i className="fal fa-thumbs-up"></i>
-            </span>{" "}
-            &nbsp;&nbsp; 0{" "}
+            <HomeWorkLikeList
+              homeWorkDetail={homeWorkDetail}
+              hideParentModel={() => hideModelFunction()}
+            />
             <HomeWorkComment hideParentModel={() => hideModelFunction()} />
-            &nbsp;&nbsp;
             <span className="text-primary">
-              {homeWorkDetail?.documents_count}{" "}
-              <i className="fal fa-paperclip"></i>
+              {getUserType() === "staff" ? homeWorkDetail?.documents_count : ""}{" "}
+              <i
+                className={
+                  homeWorkDetail?.documents_count > 0
+                    ? "fas fa-paperclip"
+                    : "fal fa-paperclip"
+                }
+              ></i>
             </span>
           </div>
         </div>

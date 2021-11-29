@@ -100,7 +100,6 @@ const CreateLiveClass = (props) => {
 
     try {
       const createClassResponse = await postRequest("live-class-create", state);
-
       SuccessNotificationMsg("Success", "Live class created successfully");
       setBtnLoading(false);
       props.history.push("/live-class");
@@ -315,7 +314,7 @@ const CreateLiveClass = (props) => {
                         type="reset"
                         loading={btnLoading}
                         onClick={() => props.history.push("/dashboard")}
-                        className="btn btn-primary ml-auto waves-effect waves-themed"
+                        className="btn btn-danger waves-effect waves-themed"
                       >
                         Cancel
                       </Button>
