@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { Tabs } from "antd";
 import { postRequest } from "../../axios";
 
-import { getSessionData } from "../../utils/Helpers";
+import { getSchoolData, getSessionData } from "../../utils/Helpers";
+
+const { TabPane } = Tabs;
 
 const DueFees = () => {
   const [apiLoading, setApiLoading] = useState(false);
@@ -16,12 +19,16 @@ const DueFees = () => {
 
   const getFeeList = async () => {
     const getFeesResponse = await postRequest("fees-due", {
-      schoolCode: "2222222",
+      schoolCode: getSchoolData().school_code,
       sid: "1",
-      sessionCode: "2021",
+      sessionCode: getSessionData().rcode,
     });
     setFeesList(getFeesResponse.data.response.feesDueArray);
   };
+
+  function callback(key) {
+    console.log(key);
+  }
 
   return (
     <div className="panel">
@@ -30,35 +37,11 @@ const DueFees = () => {
       </div>
       <div className="panel-container show">
         <div className="panel-content">
-          <ul className="nav nav-tabs" role="tablist">
+          <Tabs defaultActiveKey="1" onChange={callback} className="nav-link">
             {feesList &&
               feesList.map((fees, id) => {
                 return (
-                  <li className="nav-item" key={id}>
-                    <a
-                      className="nav-link active"
-                      data-toggle="tab"
-                      href="#fees-info-category-1"
-                      role="tab"
-                      aria-selected="true"
-                    >
-                      {fees.categoryName}
-                    </a>
-                  </li>
-                );
-              })}
-          </ul>
-
-          <div className="tab-content border border-top-0 p-3">
-            {feesList &&
-              feesList.map((fees, id) => {
-                return (
-                  <div
-                    className="tab-pane fade active show"
-                    id="fees-info-category-1"
-                    role="tabpanel"
-                    key={id}
-                  >
+                  <TabPane tab={fees.categoryName} key={id + 1}>
                     {fees.nameArray && fees.nameArray.length > 0 && (
                       <table className="table table-sm table-bordered table-hover">
                         <thead className="thead-themed text-center">
@@ -176,10 +159,10 @@ const DueFees = () => {
                         </tr>
                       </tbody>
                     </table>
-                  </div>
+                  </TabPane>
                 );
               })}
-          </div>
+          </Tabs>
         </div>
       </div>
     </div>

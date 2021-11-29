@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { Modal, Col, Row, Button, Form, Space } from "antd";
 import Password from "antd/lib/input/Password";
+import { postRequest } from "../../axios";
 
-const ChangePassword = (props) => {
+import {
+  SuccessNotificationMsg
+} from "../../utils/NotificationHelper";
+import { getUserData, getSchoolData, logout } from "../../utils/Helpers";
+
+const ChangePassword = () => {
   const [state, setStatus] = useState({
     currentPassword: "",
     newPassword: "",
@@ -25,13 +31,26 @@ const ChangePassword = (props) => {
 
   const onFinish = async () => {
     setBtnLoading(true);
+    const changePassResponse = await postRequest("update-password", {
+      login_id: getUserData().unique_id,
+      code: getSchoolData().school_code,
+      password: state.newPassword,
+    });
+
+    setBtnLoading(false);
+    if (changePassResponse.data.errmsg === "") {
+      SuccessNotificationMsg("Success", "Password changed successfully!");
+      setTimeout(() => {
+        logout();
+      }, 2000);
+    }
   };
 
   return (
     <>
-      <a className="dropdown-item" onClick={() => showModelFunction()}>
+      <span className="dropdown-item" onClick={() => showModelFunction()}>
         <span>Change Password</span>
-      </a>
+      </span>
 
       <Modal
         title="Change Password"
@@ -41,24 +60,6 @@ const ChangePassword = (props) => {
       >
         <Form onFinish={onFinish} autoComplete="off" layout="vertical">
           <Row gutter={[15]}>
-            <Col xs={24} sm={24} lg={24}>
-              <Form.Item
-                name="currentPassword"
-                label="Current Password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input current password!",
-                  },
-                ]}
-              >
-                <Password
-                  name="currentPassword"
-                  onChange={(value) => handleChange("currentPassword", value)}
-                  placeholder="Current Password"
-                />
-              </Form.Item>
-            </Col>
             <Col xs={24} sm={24} lg={24}>
               <Form.Item
                 name="newPassword"

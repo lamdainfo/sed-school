@@ -29,9 +29,10 @@ const SidebarStudent = () => {
                 </span>
               </a>
               <span className="d-inline-block text-truncate text-truncate-sm">
-                Class : II-A
+                Class :{" "}
+                {getUserData().stdClass + " - " + getUserData().stdSection}
                 <br />
-                Roll No. : 1
+                Roll No. : {getUserData().stdRoll}
               </span>
             </div>
             <img src={coverBG} className="cover" alt="cover" />

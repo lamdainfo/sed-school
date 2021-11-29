@@ -60,6 +60,9 @@ const Login = () => {
           image_url: userDetailResponse.data.response.image_url,
           unique_id: state.username,
           tid: userDetailResponse.data.response.id,
+          stdClass: userDetailResponse.data.response?.stdClass,
+          stdSection: userDetailResponse.data.response?.stdSection,
+          stdRoll: userDetailResponse.data.response?.stdRoll,
         };
 
         let schoolData = {

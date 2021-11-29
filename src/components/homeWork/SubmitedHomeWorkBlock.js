@@ -51,6 +51,8 @@ const SubmitedHomeWorkBlock = (props) => {
                 Re-Submit
               </button>
             }
+            stu_sub_hid={props.homeWorkDetail.id}
+            status={2}
           />
           <HomeWorkComment
             htmlText={
@@ -58,6 +60,8 @@ const SubmitedHomeWorkBlock = (props) => {
                 Add Comment
               </button>
             }
+            stu_sub_hid={props.homeWorkDetail.id}
+            status={1}
           />
         </div>
       </div>

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import LogoSmall from "../../styles/LogoSmall";
-import { validateToken, logout } from "../../utils/Helpers";
+import { validateToken } from "../../utils/Helpers";
 import { AUTH_USER_TOKEN_KEY } from "../../utils/constants";
 
 import "antd/dist/antd.css";

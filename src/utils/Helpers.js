@@ -3,6 +3,8 @@ import moment from "moment";
 export const validateToken = (token) => {
   if (!token) {
     return false;
+  } else {
+    return true;
   }
 };
 
@@ -36,28 +38,21 @@ export const getSchoolMenu = () => {
   return schoolMenu !== "" ? schoolMenu.split(",") : [];
 };
 
-// export const redirectIfNotAdmin = () => {
-//   let authData = authUserData();
-
-//   if (authData === null) {
-//     window.location.href = "/login";
-//   }
-
-//   if (authData.userType === "admin" && authData.appusersId !== "") {
-//     window.location.href = "/admin-dashboard";
-//   }
-
-//   if (authData.userType === "student" && authData.appusersId !== "") {
-//     window.location.href = "/student-dashboard";
-//   }
-// };
-
 export const redirectIfLoggedIn = () => {
   let token = localStorage.getItem("restoken");
   let userType = getUserType();
 
   if (token !== null && token !== undefined && userType !== null) {
     window.location.href = "/dashboard";
+  }
+};
+
+export const redirectIfNotLoggedIn = () => {
+  let token = localStorage.getItem("restoken");
+  let authData = getUserType();
+
+  if (authData === null || token === "") {
+    window.location.href = "/login";
   }
 };
 

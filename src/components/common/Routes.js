@@ -7,7 +7,6 @@ import PrivateRoute from "./PrivateRoute";
 
 /* open Route Components */
 import Login from "../authentication/Login";
-import Register from "../authentication/Register";
 import ForgotPassword from "../authentication/ForgotPassword";
 import ForgotPasswordVerification from "../authentication/ForgotPasswordVerification";
 
@@ -42,8 +41,7 @@ export default class Routes extends Component {
     return (
       <Switch>
         <OpenRoute exact path="/" component={Login} />       
-        <OpenRoute exact path="/login" component={Login} />
-        <OpenRoute exact path="/register" component={Register} />       
+        <OpenRoute exact path="/login" component={Login} />      
         <OpenRoute exact path="/forgot-password" component={ForgotPassword} />
         <OpenRoute
           exact

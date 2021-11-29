@@ -71,77 +71,77 @@ const SubmitedHomeWork = (props) => {
             <div id="panel-1" className="panel">
               <div className="panel-hdr">
                 <h2>Homework Submit</h2>
-                <div class="panel-toolbar">
+                <div className="panel-toolbar">
                   <Link
                     to="/home-work"
-                    class="btn btn-sm btn-default waves-effect waves-themed"
+                    className="btn btn-sm btn-default waves-effect waves-themed"
                   >
-                    <i class="fal fa-arrow-left"></i> Back
+                    <i className="fal fa-arrow-left"></i> Back
                   </Link>
                 </div>
               </div>
               <div className="panel-container show">
                 <div className="panel-content">
                   <div className="card border mb-2" key={homeWorkDetail.id}>
-                    <div class="card-body">
+                    <div className="card-body">
                       <img
                         src={homeWorkDetail?.created_by_image}
-                        class="profile-image rounded-circle"
+                        className="profile-image rounded-circle"
                       />
 
-                      <span class="badge card-title">
+                      <span className="badge card-title">
                         {" "}
                         <strong> {homeWorkDetail?.subject}</strong>
                       </span>
                       <br />
-                      <span class="badge badge-primary">
+                      <span className="badge badge-primary">
                         {" "}
                         {homeWorkDetail?.class_code}
                       </span>
-                      <span class="d-block">
+                      <span className="d-block">
                         <strong>{homeWorkDetail?.topic}</strong>
                       </span>
 
-                      <div class="frame-wrap mb-2">
-                        <span class="d-block text-muted">
+                      <div className="frame-wrap mb-2">
+                        <span className="d-block text-muted">
                           Posted By : {homeWorkDetail?.created_by}
                         </span>
 
                         {homeWorkDetail?.approved ? (
-                          <span class="d-block text-muted">
+                          <span className="d-block text-muted">
                             Approved By : {homeWorkDetail?.approve_by}
                           </span>
                         ) : (
-                          <span class="badge border border-danger text-danger badge-pill">
+                          <span className="badge border border-danger text-danger badge-pill">
                             NOT APPROVED
                           </span>
                         )}
 
-                        <span class="d-block text-muted">
-                          <i class="fal fa-sm fa-angle-double-right text-warning"></i>
+                        <span className="d-block text-muted">
+                          <i className="fal fa-sm fa-angle-double-right text-warning"></i>
                           Assigned On : {homeWorkDetail?.assignment_date} &nbsp;
-                          <i class="fal fa-sm fa-angle-double-right  text-warning ml-2"></i>
+                          <i className="fal fa-sm fa-angle-double-right  text-warning ml-2"></i>
                           Submit By : {homeWorkDetail?.submission_date}
                         </span>
                       </div>
                     </div>
-                    <div class="card-footer text-muted py-2">
+                    <div className="card-footer text-muted py-2">
                       <HomeWorkLikeList homeWorkDetail={homeWorkDetail} />
-                      <a href="#" class="text-primary mr-2 ml-2">
+                      <a href="#" className="text-primary mr-2 ml-2">
                         {homeWorkDetail?.comment_count}
-                        <i class="fal fa-comment ml-1"></i>
+                        <i className="fal fa-comment ml-1"></i>
                       </a>
 
-                      <a href="#" class="text-primary mr-2">
+                      <a href="#" className="text-primary mr-2">
                         {homeWorkDetail?.documents_count}
-                        <i class="fal fa-paperclip ml-1"></i>
+                        <i className="fal fa-paperclip ml-1"></i>
                       </a>
                     </div>
                   </div>
 
                   {homeWorkList &&
-                    homeWorkList.map((homeWork) => {
-                      return <SubmitedHomeWorkBlock homeWorkDetail={homeWork} />
+                    homeWorkList.map((homeWork, lid) => {
+                      return <SubmitedHomeWorkBlock homeWorkDetail={homeWork} key={lid} />
                     })}
 
                   {homeWorkList && homeWorkList.length === 0 && (
