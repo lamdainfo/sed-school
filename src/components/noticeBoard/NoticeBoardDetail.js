@@ -4,7 +4,11 @@ import { Modal } from "antd";
 import { postRequest } from "../../axios";
 import NoticeBoardComment from "./NoticeBoardComment";
 import NoticeBoardLikeList from "./NoticeBoardLikeList";
-import { getSessionData, getUserType } from "../../utils/Helpers";
+import {
+  getSessionData,
+  getUserType,
+  ShowDocumentPreview,
+} from "../../utils/Helpers";
 
 const NoticeBoardDetail = (props) => {
   const [showModel, setShowModel] = useState(false);
@@ -39,7 +43,10 @@ const NoticeBoardDetail = (props) => {
       <Modal
         title="Notice Board Details"
         visible={showModel}
+        onOk={hideModelFunction}
+        okText="Close"
         onCancel={hideModelFunction}
+        cancelButtonProps={{ style: { display: "none" } }}
       >
         <div className="row">
           <div className="col-md-4">
@@ -55,7 +62,9 @@ const NoticeBoardDetail = (props) => {
               Category :
               <span
                 className="badge text-white"
-                style={{ backgroundColor: "#0025FF" }}
+                style={{
+                  backgroundColor: noticeBoardDetail?.category_bg_color,
+                }}
               >
                 {noticeBoardDetail?.category}
               </span>
@@ -71,7 +80,10 @@ const NoticeBoardDetail = (props) => {
               </span>
             </div>
 
-            <NoticeBoardLikeList noticeBoardDetail={noticeBoardDetail} hideParentModel={() => hideModelFunction()} />
+            <NoticeBoardLikeList
+              noticeBoardDetail={noticeBoardDetail}
+              hideParentModel={() => hideModelFunction()}
+            />
             <NoticeBoardComment
               noticeBoardDetail={noticeBoardDetail}
               hideParentModel={() => hideModelFunction()}
@@ -108,11 +120,7 @@ const NoticeBoardDetail = (props) => {
             noticeBoardDetail.document.map((doc) => {
               return (
                 <div class="col-md-2">
-                  {doc.ext !== ".jpeg" ? (
-                    <iframe src={doc.file_url} height="400px"></iframe>
-                  ) : (
-                    <img src={doc.file_url} alt="attchment" width="100" />
-                  )}
+                  {ShowDocumentPreview(doc.file_url, doc.ext)}
                 </div>
               );
             })}

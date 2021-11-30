@@ -99,7 +99,7 @@ const CreateLiveClass = (props) => {
     setBtnLoading(true);
 
     try {
-      const createClassResponse = await postRequest("live-class-create", state);
+      await postRequest("live-class-create", state);
       SuccessNotificationMsg("Success", "Live class created successfully");
       setBtnLoading(false);
       props.history.push("/live-class");

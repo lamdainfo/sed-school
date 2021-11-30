@@ -5,8 +5,6 @@ import HomeWorkDetail from "./HomeWorkDetail";
 import { getSessionData } from "../../utils/Helpers";
 
 const ApprovalHomeWork = () => {
-  const [btnLoading, setBtnLoading] = useState(false);
-  const [apiLoading, setApiLoading] = useState(false);
   const [homeWorkList, setHomeWorkList] = useState([]);
   const [paginationData, setPaginationData] = useState({
     page: 1,
@@ -70,6 +68,7 @@ const ApprovalHomeWork = () => {
                           <div class="card-body">
                             <img
                               src={homeWork?.created_by_image}
+                              alt="created-by-img"
                               class="profile-image rounded-circle"
                             />
 

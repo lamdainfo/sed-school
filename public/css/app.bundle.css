@@ -8124,3 +8124,7 @@ body:not(.mobile-detected)::-webkit-scrollbar-thumb:vertical:hover {
     border: 1px solid #e5e5e5 !important;
     border-radius: 4px !important;
 } */
+
+.break-text {
+    white-space: initial;
+}

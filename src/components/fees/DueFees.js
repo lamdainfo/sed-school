@@ -7,7 +7,7 @@ import { getSchoolData, getSessionData } from "../../utils/Helpers";
 const { TabPane } = Tabs;
 
 const DueFees = () => {
-  const [apiLoading, setApiLoading] = useState(false);
+  // const [apiLoading, setApiLoading] = useState(false);
   const [feesList, setFeesList] = useState([]);
 
   var totalPrevDue = 0;

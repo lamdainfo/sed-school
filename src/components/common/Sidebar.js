@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 import LogoSmall from "../../styles/LogoSmall";
@@ -6,6 +6,10 @@ import coverBG from "../../images/cover-2-lg.png";
 import { getUserData, getSchoolData } from "../../utils/Helpers";
 
 const Sidebar = () => {
+  const [menu1, setmenu1] = useState(false);
+  const [menu2, setmenu2] = useState(false);
+  const [menu3, setmenu3] = useState(false);
+
   return (
     <>
       <aside className="page-sidebar">
@@ -24,16 +28,10 @@ const Sidebar = () => {
             />
             <div className="info-card-text">
               <a className="d-flex align-items-center text-white">
-                <span className="text-truncate text-truncate-sm d-inline-block">
-                  {getUserData().name}
-                </span>
+                {getUserData().name}
               </a>
             </div>
-            <img
-              src={coverBG}
-              className="cover"
-              alt="cover"
-            />
+            <img src={coverBG} className="cover" alt="cover" />
           </div>
 
           <ul id="js-nav-menu" className="nav-menu">
@@ -44,7 +42,10 @@ const Sidebar = () => {
               </Link>
             </li>
 
-            <li className="active">
+            <li
+              className={menu1 ? "active" : ""}
+              onClick={() => setmenu1(!menu1)}
+            >
               <a title="Form Stuff">
                 <i className="fal fa-file-edit"></i>
                 <span className="nav-link-text">Notice Board</span>
@@ -63,7 +64,10 @@ const Sidebar = () => {
               </ul>
             </li>
 
-            <li className="active">
+            <li
+              className={menu2 ? "active" : ""}
+              onClick={() => setmenu2(!menu2)}
+            >
               <a title="Form Stuff">
                 <i className="fal fa-book-reader"></i>
                 <span className="nav-link-text">Homework</span>
@@ -87,7 +91,10 @@ const Sidebar = () => {
               </ul>
             </li>
 
-            <li className="active">
+            <li
+              className={menu3 ? "active" : ""}
+              onClick={() => setmenu3(!menu3)}
+            >
               <a title="Form Stuff">
                 <i className="fal fa-camcorder"></i>
                 <span className="nav-link-text">Live Classes</span>

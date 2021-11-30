@@ -9,7 +9,7 @@ import { getSchoolData, getSessionData } from "../../utils/Helpers";
 const { TabPane } = Tabs;
 
 const PaidFees = () => {
-  const [apiLoading, setApiLoading] = useState(false);
+  // const [apiLoading, setApiLoading] = useState(false);
   const [feesList, setFeesList] = useState([]);
 
   useEffect(() => {

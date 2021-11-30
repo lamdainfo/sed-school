@@ -105,7 +105,7 @@ const Login = () => {
             rules={[
               {
                 required: true,
-                whitespace: true,
+                pattern: new RegExp("^[0-9+]{0,7}$"),
                 message: "Please enter school code",
               },
             ]}
@@ -123,7 +123,7 @@ const Login = () => {
             rules={[
               {
                 required: true,
-                whitespace: true,
+                pattern: new RegExp("^[0-9+]{0,7}$"),
                 message: "Please enter username",
               },
             ]}
@@ -131,6 +131,7 @@ const Login = () => {
             <Input
               onChange={(value) => handleChange("username", value)}
               placeholder="Enter username"
+              maxLength="7"
             />
           </Form.Item>
 

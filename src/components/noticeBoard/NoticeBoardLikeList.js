@@ -42,8 +42,8 @@ const NoticeBoardLikeList = (props) => {
 
   return (
     <>
-      <span
-        className="text-primary mr-2"
+      <a
+        className="text-primary mr-2 pointer"
         onClick={
           getUserType() === "staff"
             ? () => showModelFunction()
@@ -58,12 +58,15 @@ const NoticeBoardLikeList = (props) => {
               : "fal fa-thumbs-up"
           }
         ></i>
-      </span>
+      </a>
 
       <Modal
         title="Assigned Student List"
         visible={showModel}
+        onOk={hideModelFunction}
+        okText="Close"
         onCancel={hideModelFunction}
+        cancelButtonProps={{ style: { display: "none" } }}
       >
         <div className="modal-body">
           <div className="row">

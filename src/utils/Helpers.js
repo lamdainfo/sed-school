@@ -74,3 +74,13 @@ export const ImageUploadValidation = (file) => {
 export const ToDateTime = (dateTimeValue) => {
   return moment(dateTimeValue).format("Do MMMM YYYY, H:mm");
 };
+
+export const ShowDocumentPreview = (docURL, docType) => {
+  const imgTypeArr = [".jpeg", ".jpg", ".png", ".gif"];
+
+  if (imgTypeArr.includes(docType)) {
+    return <img src={docURL} alt="attchment" width="150" />;
+  } else {
+    return <iframe src={docURL} title="doc-view" height="400px"></iframe>;
+  }
+};

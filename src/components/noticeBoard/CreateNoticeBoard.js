@@ -10,7 +10,11 @@ import {
   SuccessNotificationMsg,
   ErrorNotificationMsg,
 } from "../../utils/NotificationHelper";
-import { getSessionData, getUserData, getSchoolData } from "../../utils/Helpers";
+import {
+  getSessionData,
+  getUserData,
+  getSchoolData,
+} from "../../utils/Helpers";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -97,7 +101,7 @@ const CreateNoticeBoard = (props) => {
       subject: state.subject,
       description: state.description,
       comment_enable: state.comment_enable,
-      school_code:  getSchoolData().school_code,
+      school_code: getSchoolData().school_code,
       is_draft: "0",
       sdata: {
         class_code: state.class_code,
@@ -113,7 +117,7 @@ const CreateNoticeBoard = (props) => {
       //   }
       // ]
     };
-  
+
     try {
       const createNoticeBoardResponse = await postRequest(
         "add-notice-board",
@@ -123,7 +127,6 @@ const CreateNoticeBoard = (props) => {
       SuccessNotificationMsg("Success", "Notice Board created successfully");
       setBtnLoading(false);
       props.history.push("/notice-board");
-
     } catch (error) {
       setBtnLoading(false);
       ErrorNotificationMsg(error.errmsg);
@@ -132,6 +135,9 @@ const CreateNoticeBoard = (props) => {
 
   const uploadProps = {
     name: "file",
+    multiple: true,
+    accept: ".jpg,.png,.jpeg",
+    maxCount: 10,
     action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
     headers: {
       authorization: "authorization-text",
@@ -316,7 +322,7 @@ const CreateNoticeBoard = (props) => {
                           </Col>
 
                           <Col xs={24} sm={12} lg={24}>
-                            <label>Attachment(s) [Attach up to 4 files.]</label>
+                            <label>Attachment(s) [Attach up to 10 files.]</label>
                             <br />
                             <Upload {...uploadProps}>
                               <Button icon={<UploadOutlined />}>

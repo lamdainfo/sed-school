@@ -4,7 +4,7 @@ import { Modal } from "antd";
 import { postRequest } from "../../axios";
 import HomeWorkComment from "./HomeWorkComment";
 import HomeWorkLikeList from "./HomeWorkLikeList";
-import { getSessionData, getUserType } from "../../utils/Helpers";
+import { ShowDocumentPreview, getUserType } from "../../utils/Helpers";
 import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
 
 const HomeWorkDetail = (props) => {
@@ -28,7 +28,7 @@ const HomeWorkDetail = (props) => {
   };
 
   const approveHomeWork = async () => {
-    const approveRes = await postRequest("approve-homework", {
+    await postRequest("approve-homework", {
       hid: props.homeWorkDetail.id,
       status: "1",
     });
@@ -133,11 +133,7 @@ const HomeWorkDetail = (props) => {
             homeWorkDetail.documents.map((doc) => {
               return (
                 <div class="col-md-2">
-                  {doc.ext !== ".jpeg" ? (
-                    <iframe src={doc.file_url} height="400px"></iframe>
-                  ) : (
-                    <img src={doc.file_url} alt="attchment" width="100" />
-                  )}
+                  {ShowDocumentPreview(doc.file_url, doc.ext)}
                 </div>
               );
             })}

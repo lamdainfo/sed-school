@@ -3,7 +3,7 @@ import { Input, Modal, Form, Button } from "antd";
 
 import { postRequest } from "../../axios";
 import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
-import { getSessionData, getUserType } from "../../utils/Helpers";
+import { getSessionData } from "../../utils/Helpers";
 
 const { TextArea } = Input;
 

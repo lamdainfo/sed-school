@@ -5,17 +5,14 @@ import { postRequest } from "../../axios";
 
 import SubmitedHomeWorkBlock from "./SubmitedHomeWorkBlock";
 import HomeWorkLikeList from "./HomeWorkLikeList";
-import { getSessionData, getSchoolData } from "../../utils/Helpers";
+import { getSessionData } from "../../utils/Helpers";
 
 const SubmitedHomeWork = (props) => {
   const queryString = qs.parse(props.history.location.search);
   if (queryString.hid === undefined) {
     props.history.push("/dashboard");
   }
-
-  const [btnLoading, setBtnLoading] = useState(false);
-  const [apiLoading, setApiLoading] = useState(false);
-
+  
   const [homeWorkDetail, setHomeWorkDetail] = useState([]);
   const [homeWorkList, setHomeWorkList] = useState([]);
   const [paginationData, setPaginationData] = useState({
@@ -86,6 +83,7 @@ const SubmitedHomeWork = (props) => {
                     <div className="card-body">
                       <img
                         src={homeWorkDetail?.created_by_image}
+                        alt="created-by-img"
                         className="profile-image rounded-circle"
                       />
 

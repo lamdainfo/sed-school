@@ -11,8 +11,6 @@ import {
 } from "../../utils/Helpers";
 
 const HomeWorkDashboard = () => {
-  const [btnLoading, setBtnLoading] = useState(false);
-  const [apiLoading, setApiLoading] = useState(false);
   const [homeWorkList, setHomeWorkList] = useState([]);
 
   useEffect(() => {
@@ -49,6 +47,7 @@ const HomeWorkDashboard = () => {
                       <div class="card-body">
                         <img
                           src={homeWork?.created_by_image}
+                          alt="created-by-img"
                           class="profile-image rounded-circle"
                         />
 
@@ -107,7 +106,8 @@ const HomeWorkDashboard = () => {
                         <span className="text-primary mr-2">
                           {getUserType() === "staff"
                             ? homeWork.comment_count
-                            : ""}&nbsp;
+                            : ""}
+                          &nbsp;
                           <i
                             className={
                               homeWork.comment_count > 0
@@ -119,7 +119,8 @@ const HomeWorkDashboard = () => {
                         <span className="text-primary mr-2">
                           {getUserType() === "staff"
                             ? homeWork.documents_count
-                            : ""}&nbsp;
+                            : ""}
+                          &nbsp;
                           <i
                             className={
                               homeWork.documents_count > 0

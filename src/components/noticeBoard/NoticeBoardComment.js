@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Input, Modal, Form, Button } from "antd";
 import { postRequest } from "../../axios";
-import { getSessionData, getUserType } from "../../utils/Helpers";
+import { getUserType } from "../../utils/Helpers";
 import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
 
 const { TextArea } = Input;
@@ -50,8 +50,8 @@ const NoticeBoardComment = (props) => {
         className="text-primary mr-2"
       >
         {getUserType() === "staff"
-          ? props?.noticeBoardDetail?.comment_count
-          : ""}
+          ? props?.noticeBoardDetail?.comment_count 
+          : ""}&nbsp;
         <i
           className={
             props?.noticeBoardDetail?.comment_count > 0

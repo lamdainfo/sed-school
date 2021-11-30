@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { Popconfirm } from "antd";
-import moment from "moment";
 
 import { postRequest } from "../../axios";
 import { getUserType } from "../../utils/Helpers";
 import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
 
 const LiveClass = () => {
-  const [btnLoading, setBtnLoading] = useState(false);
-  const [apiLoading, setApiLoading] = useState(false);
   const [popConfirmShowStatus, setPopConfirmShowStatus] = useState(false);
   const [editIndexStatus, setEditIndexStatus] = useState(null);
 
@@ -32,7 +28,7 @@ const LiveClass = () => {
   };
 
   const deleteLiveClass = async (id) => {
-    const deleteClassRes = await postRequest("live-class-delete", {
+    await postRequest("live-class-delete", {
       id: id,
     });
     SuccessNotificationMsg("Success", "Live Class deleted successfully");
@@ -86,6 +82,7 @@ const LiveClass = () => {
                           <div className="card-body">
                             <img
                               src={liveClass.teacher_img}
+                              alt="teacher-pic"
                               className="profile-image rounded-circle"
                             />{" "}
                             <span className="badge card-title">

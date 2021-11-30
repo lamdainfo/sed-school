@@ -15,7 +15,10 @@ const AdminLayout = (props) => {
   return (
     <div className="page-wrapper mod-nav-link">
       <div className="page-inner">
+        
         {getUserType() === "staff" ? <Sidebar /> : <SidebarStudent />}
+
+
         <div className="page-content-wrapper">
           <header className="page-header">
             <div className="ml-auto d-flex">
@@ -43,10 +46,10 @@ const AdminLayout = (props) => {
                         />
                       </span>
                       <div className="info-card-text">
-                        <div className="fs-lg text-truncate text-truncate-lg">
+                        <div className="fs-lg break-text">
                           {getUserData()?.name}{" "}
                         </div>
-                        <span className="text-truncate text-truncate-md opacity-80">
+                        <span className="break-text opacity-80">
                           {getSchoolData()?.sch_name}
                         </span>
                       </div>

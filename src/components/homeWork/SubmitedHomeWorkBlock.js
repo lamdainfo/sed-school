@@ -1,5 +1,4 @@
 import React from "react";
-import { postRequest } from "../../axios";
 import HomeWorkComment from "./HomeWorkComment";
 
 const SubmitedHomeWorkBlock = (props) => {
@@ -9,6 +8,7 @@ const SubmitedHomeWorkBlock = (props) => {
         <div className="card-body">
           <img
             src={props.homeWorkDetail?.student_image_url}
+            alt="student-img"
             className="profile-image rounded-circle"
           />
           <span className="card-title mb-2">
@@ -33,6 +33,7 @@ const SubmitedHomeWorkBlock = (props) => {
                     <a href="" key={did}>
                       <img
                         src={docs.file_url}
+                        alt="doc-img"
                         className="img-thumbnail align-text-top"
                         width="100"
                       />

@@ -54,7 +54,7 @@ const NoticeBoardDashboard = () => {
                         <br />{" "}
                         <span
                           className="badge text-white "
-                          style={{ backgroundColor: "#0025FF" }}
+                          style={{ backgroundColor: noticeBoard.category_bg_color }}
                         >
                           {noticeBoard.category}
                         </span>{" "}
@@ -81,7 +81,7 @@ const NoticeBoardDashboard = () => {
                         <span className="text-primary mr-2">
                           {getUserType() === "staff"
                             ? noticeBoard.comment_count
-                            : ""}
+                            : ""}&nbsp;
                           <i
                             className={
                               noticeBoard.comment_count > 0
