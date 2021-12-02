@@ -11,7 +11,6 @@ import {
   TimePicker,
   Button,
 } from "antd";
-
 import PageHeader from "../common/PageHeader";
 import {
   SuccessNotificationMsg,
@@ -20,9 +19,10 @@ import {
 import { getSessionData, getUserData } from "../../utils/Helpers";
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 const CreateLiveClass = (props) => {
-  const dateFormat = "YYYY-MM-DD";
+  const dateFormat = "DD-MM-YYYY";
   const timeFormat = "HH:mm";
 
   const [state, setState] = useState({
@@ -63,32 +63,32 @@ const CreateLiveClass = (props) => {
     let classArr = classRes.data.response.as_class_teacher.concat(
       classRes.data.response.as_subject_teacher
     );
-    let uniqueClassList = classArr.filter(
-      (item, pos) => classArr.indexOf(item) === pos
-    );
-    setClassList(uniqueClassList);
+
+    let uniqueClassList = [];
+    classArr.map((cls) => {
+      let clsname = cls.split("-");
+      uniqueClassList.push(clsname[0]);
+    });
+
+    let uniqueClasses = uniqueClassList.filter((v, i, a) => a.indexOf(v) === i);
+    setClassList(uniqueClasses);
   };
 
   const handleClassChange = async (field, value) => {
-    let classCode = value.split("-");
-
-    setState({ ...state, [field]: classCode[0] });
-
+    setState({ ...state, [field]: value });
     const sectionRes = await postRequest("get-section-by-class", {
       session_code: getSessionData().code,
-      class_code: classCode[0],
+      class_code: value,
     });
-
     setSectionList(sectionRes.data.response);
   };
 
   const handleSectionChange = async (field, value) => {
-    setState({ ...state, sections: [value] });
-
+    setState({ ...state, sections: value });
     const subjectRes = await postRequest("get-subject-by-class-multi-section", {
       session_code: getSessionData().code,
       class_code: state.class_code,
-      sections: [value],
+      sections: value,
       tid: getUserData().tid,
     });
 
@@ -99,8 +99,8 @@ const CreateLiveClass = (props) => {
     setBtnLoading(true);
 
     try {
-      await postRequest("live-class-create", state);
-      SuccessNotificationMsg("Success", "Live class created successfully");
+      let res = await postRequest("live-class-create", state);
+      SuccessNotificationMsg("Success", res.data.message);
       setBtnLoading(false);
       props.history.push("/live-class");
     } catch (error) {
@@ -179,6 +179,7 @@ const CreateLiveClass = (props) => {
                             ]}
                           >
                             <Select
+                              mode="multiple"
                               placeholder="Select Section"
                               onChange={(value) =>
                                 handleSectionChange("sections", value)
@@ -271,31 +272,16 @@ const CreateLiveClass = (props) => {
                           </Form.Item>
                         </Col>
 
-                        <Col xs={24} sm={12} lg={16}>
+                        <Col xs={24} sm={12} lg={24}>
                           <label>Remarks</label>
                           <Form.Item name="remarks">
-                            <Input
+                            <TextArea
                               placeholder="Enter Remarks"
+                              rows={2}
                               onChange={(value) =>
                                 handleChange("remarks", value)
                               }
                             />
-                          </Form.Item>
-                        </Col>
-
-                        <Col xs={24} sm={12} lg={8}>
-                          <label>Status *</label>
-                          <Form.Item name="status">
-                            <Select
-                              placeholder="Select Status"
-                              defaultValue={1}
-                              onChange={(value) =>
-                                handleSelectChange("status", value)
-                              }
-                            >
-                              <Option value={1}>Active</Option>
-                              <Option value={0}>Inactive</Option>
-                            </Select>
                           </Form.Item>
                         </Col>
                       </Row>
@@ -312,7 +298,6 @@ const CreateLiveClass = (props) => {
 
                       <Button
                         type="reset"
-                        loading={btnLoading}
                         onClick={() => props.history.push("/dashboard")}
                         className="btn btn-danger waves-effect waves-themed"
                       >

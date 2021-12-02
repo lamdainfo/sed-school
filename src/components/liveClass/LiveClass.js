@@ -4,6 +4,7 @@ import { Popconfirm } from "antd";
 import { postRequest } from "../../axios";
 import { getUserType } from "../../utils/Helpers";
 import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
+import LiveClassAttendentList from "./LiveClassAttendentList";
 
 const LiveClass = () => {
   const [popConfirmShowStatus, setPopConfirmShowStatus] = useState(false);
@@ -20,7 +21,7 @@ const LiveClass = () => {
 
   const getLiveClassList = async (page) => {
     const getClassResponse = await postRequest("live-class-list-staff", {
-      filterDate: "25/11/2021", //moment().format("DD/MM/YYYY"),
+      filterDate: "03/12/2021", //moment().format("DD/MM/YYYY"),
       page: page,
     });
     setLiveClassList(getClassResponse.data.response.live_classes);
@@ -28,11 +29,16 @@ const LiveClass = () => {
   };
 
   const deleteLiveClass = async (id) => {
-    await postRequest("live-class-delete", {
+    let res = await postRequest("live-class-delete", {
       id: id,
     });
-    SuccessNotificationMsg("Success", "Live Class deleted successfully");
-    getLiveClassList(paginationData.current);
+    SuccessNotificationMsg("Success", res.data.message);
+    setPopConfirmShowStatus(false);
+    setEditIndexStatus(null);
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
+    //getLiveClassList(paginationData.current);
   };
 
   const handlePrevPage = () => {
@@ -96,13 +102,13 @@ const LiveClass = () => {
                             >
                               {liveClass.class_code}
                             </span>{" "}
-                            <div className="frame-wrap mb-2">
+                            <div className="frame-wrap mb-0">
                               <span className="d-block text-muted">
                                 <i className="fal fa-sm fa-angle-double-right text-warning"></i>
                                 Teacher Name : {liveClass.teacher_name}
                               </span>
                             </div>
-                            <div className="frame-wrap mb-2">
+                            <div className="frame-wrap mb-0">
                               <span className="d-block text-muted">
                                 <i className="fal fa-sm fa-angle-double-right text-warning"></i>
                                 Class Scheduled At :{" "}
@@ -124,50 +130,69 @@ const LiveClass = () => {
                                     ? liveClass.teacher_start_url
                                     : liveClass.join_url
                                 }
-                                className="btn btn-sm btn-default"
+                                className="btn btn-sm btn-success text-white"
                               >
-                                Join Class
+                                {getUserType() === "staff"
+                                  ? "Start Class"
+                                  : "Join Class"}
                               </a>
                             ) : (
-                              <a className="btn btn-sm btn-default">
+                              <a className="btn btn-sm btn-danger text-white">
                                 Class Not Ready{" "}
                               </a>
                             )}
                           </div>
 
-                          <div className="card-footer text-muted py-2">
-                            {liveClass.totalAttend} / {liveClass.total_students}
-                            &nbsp;
-                            <i className="fal fa-user-alt mr-2"></i>
-                            &nbsp;|&nbsp;&nbsp;
-                            {editIndexStatus === liveClass.id ? (
-                              <Popconfirm
-                                className="action"
-                                title="Are you sure ? If a Zoom class is deleted then all other information related this will be delete. Do you really want to delete?"
-                                onConfirm={() => deleteLiveClass(liveClass.id)}
-                                onCancel={() => handleCancelPopConfirmStatus()}
-                                okText="Yes"
-                                placement="right"
-                                visible={popConfirmShowStatus}
-                              >
-                                <span
-                                  onClick={() =>
-                                    showStatusPopconfirm(liveClass.id)
-                                  }
-                                >
-                                  <i className="fas fa-trash-alt text-danger mr-2"></i>
-                                </span>
-                              </Popconfirm>
-                            ) : (
-                              <span
-                                onClick={() =>
-                                  showStatusPopconfirm(liveClass.id)
-                                }
-                              >
-                                <i className="fas fa-trash-alt text-danger mr-2"></i>
-                              </span>
-                            )}
-                          </div>
+                          {getUserType() === "staff" && (
+                            <div className="card-footer text-muted py-2">
+                              {liveClass.totalAttend} /{" "}
+                              {liveClass.total_students}
+                              <LiveClassAttendentList
+                                liveClassDetail={liveClass}
+                              />
+                              {liveClass.totalAttend <= 0 ? (
+                                editIndexStatus === liveClass.id ? (
+                                  <>
+                                    &nbsp;|&nbsp;&nbsp;
+                                    <Popconfirm
+                                      className="action"
+                                      title="Are you sure ? If a Zoom class is deleted then all other information related this will be delete. Do you really want to delete?"
+                                      onConfirm={() =>
+                                        deleteLiveClass(liveClass.id)
+                                      }
+                                      onCancel={() =>
+                                        handleCancelPopConfirmStatus()
+                                      }
+                                      okText="Yes"
+                                      placement="right"
+                                      visible={popConfirmShowStatus}
+                                    >
+                                      <span
+                                        onClick={() =>
+                                          showStatusPopconfirm(liveClass.id)
+                                        }
+                                      >
+                                        <i className="fas fa-trash-alt text-danger mr-2"></i>
+                                      </span>
+                                    </Popconfirm>
+                                  </>
+                                ) : (
+                                  <>
+                                    &nbsp;|&nbsp;&nbsp;
+                                    <span
+                                      onClick={() =>
+                                        showStatusPopconfirm(liveClass.id)
+                                      }
+                                    >
+                                      <i className="fas fa-trash-alt text-danger mr-2"></i>
+                                    </span>
+                                  </>
+                                )
+                              ) : (
+                                ""
+                              )}
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -190,7 +215,11 @@ const LiveClass = () => {
                                 : (paginationData.current - 1) * 10 + 1}{" "}
                               to{" "}
                               {paginationData.current *
-                                paginationData.record_per_page}{" "}
+                                paginationData.record_per_page >
+                              paginationData.total_record
+                                ? paginationData.total_record
+                                : paginationData.current *
+                                  paginationData.record_per_page}{" "}
                               of {paginationData.total_record} entries
                             </div>
                           </div>

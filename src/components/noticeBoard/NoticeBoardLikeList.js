@@ -29,7 +29,7 @@ const NoticeBoardLikeList = (props) => {
   const likeNoticeBoard = async () => {
     const likeResponse = await postRequest("add-notice-board-like", {
       nid: props.noticeBoardDetail.id,
-      status: props?.noticeBoardDetail?.total_like > 0 ? "1" : "0",
+      status: props?.noticeBoardDetail?.is_user_liked ? "0" : "1",
     });
 
     if (likeResponse.data.errmsg === "") {
