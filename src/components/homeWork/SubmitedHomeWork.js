@@ -12,7 +12,7 @@ const SubmitedHomeWork = (props) => {
   if (queryString.hid === undefined) {
     props.history.push("/dashboard");
   }
-  
+
   const [homeWorkDetail, setHomeWorkDetail] = useState([]);
   const [homeWorkList, setHomeWorkList] = useState([]);
   const [paginationData, setPaginationData] = useState({
@@ -139,7 +139,12 @@ const SubmitedHomeWork = (props) => {
 
                   {homeWorkList &&
                     homeWorkList.map((homeWork, lid) => {
-                      return <SubmitedHomeWorkBlock homeWorkDetail={homeWork} key={lid} />
+                      return (
+                        <SubmitedHomeWorkBlock
+                          homeWorkDetail={homeWork}
+                          key={lid}
+                        />
+                      );
                     })}
 
                   {homeWorkList && homeWorkList.length === 0 && (
@@ -160,7 +165,11 @@ const SubmitedHomeWork = (props) => {
                                 : (paginationData.current - 1) * 10 + 1}{" "}
                               to{" "}
                               {paginationData.current *
-                                paginationData.record_per_page}{" "}
+                                paginationData.record_per_page >
+                              paginationData.total_record
+                                ? paginationData.total_record
+                                : paginationData.current *
+                                  paginationData.record_per_page}{" "}
                               of {paginationData.total_record} entries
                             </div>
                           </div>

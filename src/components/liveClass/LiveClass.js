@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import moment from "moment";
 import { Popconfirm } from "antd";
 
 import { postRequest } from "../../axios";
 import { getUserType } from "../../utils/Helpers";
 import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
 import LiveClassAttendentList from "./LiveClassAttendentList";
+import LiveClassFilter from "./LiveClassFilter";
 
 const LiveClass = () => {
   const [popConfirmShowStatus, setPopConfirmShowStatus] = useState(false);
@@ -15,16 +17,25 @@ const LiveClass = () => {
     page: 1,
   });
 
+  const [filterData, setFilterData] = useState({
+    filterDate: moment().format("DD/MM/YYYY"),
+  });
+
   useEffect(() => {
     getLiveClassList(1);
   }, []);
 
   const getLiveClassList = async (page) => {
     const getClassResponse = await postRequest("live-class-list-staff", {
-      filterDate: "03/12/2021", //moment().format("DD/MM/YYYY"),
       page: page,
+      ...filterData,
     });
-    setLiveClassList(getClassResponse.data.response.live_classes);
+    setLiveClassList(
+      getClassResponse.data.response &&
+        getClassResponse.data.response.live_classes
+        ? getClassResponse.data.response.live_classes
+        : []
+    );
     setPaginationData(getClassResponse.data.paginationData);
   };
 
@@ -59,6 +70,18 @@ const LiveClass = () => {
     setEditIndexStatus(null);
   };
 
+  const handleFilterChangeFilterDate = (date, dateString) => {
+    setFilterData({ ...filterData, filterDate: dateString });
+  };
+
+  const handleFilterSelectChange = (field, value) => {
+    setFilterData({ ...filterData, [field]: value });
+  };
+
+  const applyFilter = () => {
+    getLiveClassList(1);
+  };
+
   return (
     <main id="js-page-content" role="main" className="page-content">
       <div id="content">
@@ -66,11 +89,11 @@ const LiveClass = () => {
           <h1 className="subheader-title">
             <i className="subheader-icon fal fa-clipboard"></i>{" "}
             <span className="fw-300">Live Classes</span>
-            <span id="filterBtn" style={{ float: "right" }}>
-              <button className="btn btn-sm btn-primary waves-effect waves-themed">
-                <i className="fal fa-filter"></i> Filter
-              </button>
-            </span>
+            <LiveClassFilter
+              handleFilterChangeFilterDate={handleFilterChangeFilterDate}
+              handleFilterSelectChange={handleFilterSelectChange}
+              applyFilter={applyFilter}
+            />
           </h1>
         </div>
         <div className="row">
@@ -125,6 +148,7 @@ const LiveClass = () => {
                             </div>
                             {liveClass.is_meeting_ready ? (
                               <a
+                                target="_blank"
                                 href={
                                   getUserType() === "staff"
                                     ? liveClass.teacher_start_url

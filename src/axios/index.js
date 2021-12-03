@@ -28,10 +28,6 @@ axiosClient.interceptors.response.use(
     if (response.status === 401) {
       return Promise.reject(response?.data);
     }
-
-    if (response.data && response.data.errmsg && response.data.errmsg !== "") {
-      return Promise.reject(response?.data);
-    }
     return response;
   },
   (error) => {

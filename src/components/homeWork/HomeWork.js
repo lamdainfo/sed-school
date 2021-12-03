@@ -131,7 +131,8 @@ const HomeWork = () => {
                             <span className="text-primary mr-2">
                               {getUserType() === "staff"
                                 ? homeWork.comment_count
-                                : ""}&nbsp;
+                                : ""}
+                              &nbsp;
                               <i
                                 className={
                                   homeWork.comment_count > 0
@@ -143,7 +144,8 @@ const HomeWork = () => {
                             <span className="text-primary mr-2">
                               {getUserType() === "staff"
                                 ? homeWork.documents_count
-                                : ""}&nbsp;
+                                : ""}
+                              &nbsp;
                               <i
                                 className={
                                   homeWork.documents_count > 0
@@ -175,7 +177,11 @@ const HomeWork = () => {
                                 : (paginationData.current - 1) * 10 + 1}{" "}
                               to{" "}
                               {paginationData.current *
-                                paginationData.record_per_page}{" "}
+                                paginationData.record_per_page >
+                              paginationData.total_record
+                                ? paginationData.total_record
+                                : paginationData.current *
+                                  paginationData.record_per_page}{" "}
                               of {paginationData.total_record} entries
                             </div>
                           </div>

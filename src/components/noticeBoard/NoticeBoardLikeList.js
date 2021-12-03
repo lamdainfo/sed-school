@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal } from "antd";
 
 import { postRequest } from "../../axios";
@@ -8,6 +8,13 @@ import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
 const NoticeBoardLikeList = (props) => {
   const [showModel, setShowModel] = useState(false);
   const [likeList, setLikeList] = useState(null);
+  const [studentLikeStatus, setStudentLikeStatus] = useState(false);
+
+  useEffect(() => {
+    if (props.noticeBoardDetail) {
+      setStudentLikeStatus(props.noticeBoardDetail.is_user_liked);
+    }
+  }, [props.noticeBoardDetail]);
 
   const hideModelFunction = () => {
     setShowModel(false);
@@ -29,11 +36,12 @@ const NoticeBoardLikeList = (props) => {
   const likeNoticeBoard = async () => {
     const likeResponse = await postRequest("add-notice-board-like", {
       nid: props.noticeBoardDetail.id,
-      status: props?.noticeBoardDetail?.is_user_liked ? "0" : "1",
+      status: studentLikeStatus ? "0" : "1",
     });
 
     if (likeResponse.data.errmsg === "") {
-      SuccessNotificationMsg("Success", "you like updated successfully!");
+      SuccessNotificationMsg("Success", "Like updated successfully!");
+      setStudentLikeStatus(studentLikeStatus ? false : true);
       if (props.hideParent) {
         props?.hideParentModel();
       }
@@ -50,14 +58,23 @@ const NoticeBoardLikeList = (props) => {
             : () => likeNoticeBoard()
         }
       >
-        {getUserType() === "staff" ? props?.noticeBoardDetail?.total_like : ""}{" "}
-        <i
-          className={
-            props?.noticeBoardDetail?.total_like > 0
-              ? "fas fa-thumbs-up"
-              : "fal fa-thumbs-up"
-          }
-        ></i>
+        {getUserType() === "staff" ? props?.noticeBoardDetail?.total_like : ""}
+
+        {getUserType() === "staff" ? (
+          <i
+            className={
+              props?.noticeBoardDetail?.total_like > 0
+                ? "fas fa-thumbs-up"
+                : "fal fa-thumbs-up"
+            }
+          ></i>
+        ) : (
+          <i
+            className={
+              studentLikeStatus ? "fas fa-thumbs-up" : "fal fa-thumbs-up"
+            }
+          ></i>
+        )}
       </a>
 
       <Modal

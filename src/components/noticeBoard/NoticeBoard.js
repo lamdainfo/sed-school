@@ -3,12 +3,17 @@ import { postRequest } from "../../axios";
 
 import NoticeBoardDetail from "./NoticeBoardDetail";
 import NoticeBoardLikeList from "./NoticeBoardLikeList";
+import NoticeBoardFilter from "./NoticeBoardFilter";
 import { getSessionData, getUserType } from "../../utils/Helpers";
 
 const NoticeBoard = () => {
   const [noticeBoardList, setNoticeBoardList] = useState([]);
   const [paginationData, setPaginationData] = useState({
     page: 1,
+  });
+  const [filterData, setFilterData] = useState({
+    filter_date: "",
+    category: "",
   });
 
   useEffect(() => {
@@ -19,8 +24,13 @@ const NoticeBoard = () => {
     const response = await postRequest("get-all-notice-board-information", {
       scode: getSessionData().code,
       page: page,
+      ...filterData,
     });
-    setNoticeBoardList(response.data.response.noticeinfo);
+    setNoticeBoardList(
+      response.data.response && response.data.response.noticeinfo
+        ? response.data.response.noticeinfo
+        : []
+    );
     setPaginationData(response.data.paginationData);
   };
 
@@ -32,6 +42,18 @@ const NoticeBoard = () => {
     getNoticeBoardList(paginationData.current + 1);
   };
 
+  const handleFilterChangeFilterDate = (date, dateString) => {
+    setFilterData({ ...filterData, filter_date: dateString });
+  };
+
+  const handleFilterSelectChange = (field, value) => {
+    setFilterData({ ...filterData, [field]: value });
+  };
+
+  const applyFilter = () => {
+    getNoticeBoardList(1);
+  };
+
   return (
     <main id="js-page-content" role="main" className="page-content">
       <div id="content">
@@ -39,11 +61,11 @@ const NoticeBoard = () => {
           <h1 className="subheader-title">
             <i className="subheader-icon fal fa-clipboard"></i>
             <span className="fw-300"> Notice Board</span>
-            <span id="filterBtn" style={{ float: "right" }}>
-              <button className="btn btn-sm btn-primary waves-effect waves-themed">
-                <i className="fal fa-filter"></i> Filter
-              </button>
-            </span>
+            <NoticeBoardFilter
+              handleFilterChangeFilterDate={handleFilterChangeFilterDate}
+              handleFilterSelectChange={handleFilterSelectChange}
+              applyFilter={applyFilter}
+            />
           </h1>
         </div>
         <div className="row">
@@ -79,7 +101,9 @@ const NoticeBoard = () => {
                             <br />{" "}
                             <span
                               className="badge text-white "
-                              style={{ backgroundColor: noticeBoard.category_bg_color }}
+                              style={{
+                                backgroundColor: noticeBoard.category_bg_color,
+                              }}
                             >
                               {noticeBoard.category}
                             </span>{" "}
@@ -108,7 +132,8 @@ const NoticeBoard = () => {
                             <span className="text-primary mr-2">
                               {getUserType() === "staff"
                                 ? noticeBoard.comment_count
-                                : ""}&nbsp;
+                                : ""}
+                              &nbsp;
                               <i
                                 className={
                                   noticeBoard.comment_count > 0
@@ -152,7 +177,11 @@ const NoticeBoard = () => {
                                 : (paginationData.current - 1) * 10 + 1}{" "}
                               to{" "}
                               {paginationData.current *
-                                paginationData.record_per_page}{" "}
+                                paginationData.record_per_page >
+                              paginationData.total_record
+                                ? paginationData.total_record
+                                : paginationData.current *
+                                  paginationData.record_per_page}{" "}
                               of {paginationData.total_record} entries
                             </div>
                           </div>
