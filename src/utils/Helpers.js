@@ -1,4 +1,5 @@
 import moment from "moment";
+import { Image } from 'antd';
 
 export const validateToken = (token) => {
   if (!token) {
@@ -79,7 +80,7 @@ export const ShowDocumentPreview = (docURL, docType) => {
   const imgTypeArr = [".jpeg", ".jpg", ".png", ".gif"];
 
   if (imgTypeArr.includes(docType)) {
-    return <img src={docURL} alt="attchment" width="150" />;
+    return <Image src={docURL} alt="attchment" width={200} />;
   } else {
     return <iframe src={docURL} title="doc-view" height="400px"></iframe>;
   }

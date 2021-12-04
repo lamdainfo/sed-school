@@ -8128,3 +8128,7 @@ body:not(.mobile-detected)::-webkit-scrollbar-thumb:vertical:hover {
 .break-text {
     white-space: initial;
 }
+
+.pointer {
+    cursor: pointer;
+}

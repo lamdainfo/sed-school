@@ -4,7 +4,10 @@ import { Popconfirm } from "antd";
 
 import { postRequest } from "../../axios";
 import { getUserType } from "../../utils/Helpers";
-import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
+import {
+  SuccessNotificationMsg,
+  ErrorNotificationMsg,
+} from "../../utils/NotificationHelper";
 import LiveClassAttendentList from "./LiveClassAttendentList";
 import LiveClassFilter from "./LiveClassFilter";
 
@@ -26,7 +29,12 @@ const LiveClass = () => {
   }, []);
 
   const getLiveClassList = async (page) => {
-    const getClassResponse = await postRequest("live-class-list-staff", {
+    let apiName =
+      getUserType() === "staff"
+        ? "live-class-list-staff"
+        : "live-class-list-student";
+
+    const getClassResponse = await postRequest(apiName, {
       page: page,
       ...filterData,
     });
@@ -40,16 +48,24 @@ const LiveClass = () => {
   };
 
   const deleteLiveClass = async (id) => {
-    let res = await postRequest("live-class-delete", {
-      id: id,
-    });
-    SuccessNotificationMsg("Success", res.data.message);
-    setPopConfirmShowStatus(false);
-    setEditIndexStatus(null);
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
-    //getLiveClassList(paginationData.current);
+    try {
+      let res = await postRequest("live-class-delete", {
+        id: id,
+      });
+
+      if (res.data.error === 0) {
+        SuccessNotificationMsg("Success", res.data.errmsg);
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      } else {
+        ErrorNotificationMsg("Error in delete live class");
+        setPopConfirmShowStatus(false);
+        setEditIndexStatus(null);
+      }
+    } catch (error) {
+      ErrorNotificationMsg(error.message);
+    }
   };
 
   const handlePrevPage = () => {
@@ -89,11 +105,6 @@ const LiveClass = () => {
           <h1 className="subheader-title">
             <i className="subheader-icon fal fa-clipboard"></i>{" "}
             <span className="fw-300">Live Classes</span>
-            <LiveClassFilter
-              handleFilterChangeFilterDate={handleFilterChangeFilterDate}
-              handleFilterSelectChange={handleFilterSelectChange}
-              applyFilter={applyFilter}
-            />
           </h1>
         </div>
         <div className="row">
@@ -101,6 +112,13 @@ const LiveClass = () => {
             <div id="panel-1" className="panel">
               <div className="panel-hdr">
                 <h2>Live Classes List</h2>
+                <div className="panel-toolbar">
+                  <LiveClassFilter
+                    handleFilterChangeFilterDate={handleFilterChangeFilterDate}
+                    handleFilterSelectChange={handleFilterSelectChange}
+                    applyFilter={applyFilter}
+                  />
+                </div>
               </div>
               <div className="panel-container show">
                 <div className="panel-content">
@@ -180,7 +198,14 @@ const LiveClass = () => {
                                     &nbsp;|&nbsp;&nbsp;
                                     <Popconfirm
                                       className="action"
-                                      title="Are you sure ? If a Zoom class is deleted then all other information related this will be delete. Do you really want to delete?"
+                                      title={
+                                        <div>
+                                          Do you really want to delete ?<br />
+                                          If a Zoom class is deleted then all
+                                          other information related this will be
+                                          delete.
+                                        </div>
+                                      }
                                       onConfirm={() =>
                                         deleteLiveClass(liveClass.id)
                                       }
@@ -208,7 +233,7 @@ const LiveClass = () => {
                                         showStatusPopconfirm(liveClass.id)
                                       }
                                     >
-                                      <i className="fas fa-trash-alt text-danger mr-2"></i>
+                                      <i className="fas fa-trash-alt pointer text-danger mr-2"></i>
                                     </span>
                                   </>
                                 )

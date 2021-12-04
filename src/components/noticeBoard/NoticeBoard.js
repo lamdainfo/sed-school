@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import moment from "moment";
 import { postRequest } from "../../axios";
 
 import NoticeBoardDetail from "./NoticeBoardDetail";
@@ -6,7 +7,7 @@ import NoticeBoardLikeList from "./NoticeBoardLikeList";
 import NoticeBoardFilter from "./NoticeBoardFilter";
 import { getSessionData, getUserType } from "../../utils/Helpers";
 
-const NoticeBoard = () => {
+const NoticeBoard = (props) => {
   const [noticeBoardList, setNoticeBoardList] = useState([]);
   const [paginationData, setPaginationData] = useState({
     page: 1,
@@ -43,11 +44,17 @@ const NoticeBoard = () => {
   };
 
   const handleFilterChangeFilterDate = (date, dateString) => {
-    setFilterData({ ...filterData, filter_date: dateString });
+    setFilterData({
+      ...filterData,
+      filter_date: date !== null ? moment(date).format("YYYY-MM-DD") : "",
+    });
   };
 
   const handleFilterSelectChange = (field, value) => {
-    setFilterData({ ...filterData, [field]: value });
+    setFilterData({
+      ...filterData,
+      [field]: value !== undefined && value !== "" ? value : "",
+    });
   };
 
   const applyFilter = () => {
@@ -61,11 +68,6 @@ const NoticeBoard = () => {
           <h1 className="subheader-title">
             <i className="subheader-icon fal fa-clipboard"></i>
             <span className="fw-300"> Notice Board</span>
-            <NoticeBoardFilter
-              handleFilterChangeFilterDate={handleFilterChangeFilterDate}
-              handleFilterSelectChange={handleFilterSelectChange}
-              applyFilter={applyFilter}
-            />
           </h1>
         </div>
         <div className="row">
@@ -73,15 +75,14 @@ const NoticeBoard = () => {
             <div id="panel-1" className="panel">
               <div className="panel-hdr">
                 <h2>Notice Board</h2>{" "}
+                <div className="panel-toolbar">
+                  <NoticeBoardFilter
+                    handleFilterChangeFilterDate={handleFilterChangeFilterDate}
+                    handleFilterSelectChange={handleFilterSelectChange}
+                    applyFilter={applyFilter}
+                  />
+                </div>
               </div>
-              <h4>
-                <img
-                  src="https://dev.lamdainfotech.com/parentlogin/img/ajax-loader.gif"
-                  alt="loadingStuff"
-                  style={{ marginLeft: "41%", display: "none" }}
-                  width="100"
-                />
-              </h4>
               <div className="panel-container">
                 <div className="panel-content">
                   {noticeBoardList &&
@@ -122,6 +123,7 @@ const NoticeBoard = () => {
                             </div>
                             <NoticeBoardDetail
                               noticeBoardDetail={noticeBoard}
+                              history={props.history}
                             />
                           </div>
                           <div className="card-footer text-muted py-2">
@@ -129,23 +131,38 @@ const NoticeBoard = () => {
                               noticeBoardDetail={noticeBoard}
                               hideParent={false}
                             />
-                            <span className="text-primary mr-2">
+                            <span
+                              className="text-primary mr-2 pointer"
+                              onClick={() =>
+                                props.history.push(
+                                  "/notice-board-comment/" + noticeBoard.id
+                                )
+                              }
+                            >
                               {getUserType() === "staff"
                                 ? noticeBoard.comment_count
                                 : ""}
                               &nbsp;
-                              <i
-                                className={
-                                  noticeBoard.comment_count > 0
-                                    ? "fas fa-comment"
-                                    : "fal fa-comment"
-                                }
-                              ></i>
+                              {getUserType() === "staff" ? (
+                                <i
+                                  className={
+                                    noticeBoard.comment_count > 0
+                                      ? "fas fa-comment"
+                                      : "fal fa-comment"
+                                  }
+                                ></i>
+                              ) : (
+                                <i
+                                  className={
+                                    noticeBoard.is_user_comment
+                                      ? "fas fa-comment"
+                                      : "fal fa-comment"
+                                  }
+                                ></i>
+                              )}
                             </span>
                             <span className="text-primary mr-2">
-                              {getUserType() === "staff"
-                                ? noticeBoard.documents_count
-                                : ""}{" "}
+                              {noticeBoard.documents_count}&nbsp;
                               <i
                                 className={
                                   noticeBoard.documents_count > 0
@@ -172,17 +189,17 @@ const NoticeBoard = () => {
                           <div className="col-md-5">
                             <div className="dataTables_info">
                               Showing{" "}
-                              {paginationData.current === 1
+                              {paginationData?.current === 1
                                 ? "1"
-                                : (paginationData.current - 1) * 10 + 1}{" "}
+                                : (paginationData?.current - 1) * 10 + 1}{" "}
                               to{" "}
-                              {paginationData.current *
-                                paginationData.record_per_page >
-                              paginationData.total_record
-                                ? paginationData.total_record
-                                : paginationData.current *
-                                  paginationData.record_per_page}{" "}
-                              of {paginationData.total_record} entries
+                              {paginationData?.current *
+                                paginationData?.record_per_page >
+                              paginationData?.total_record
+                                ? paginationData?.total_record
+                                : paginationData?.current *
+                                  paginationData?.record_per_page}{" "}
+                              of {paginationData?.total_record} entries
                             </div>
                           </div>
                           <div className="col-md-7 right">
@@ -190,7 +207,7 @@ const NoticeBoard = () => {
                               <ul className="pagination">
                                 <li
                                   className={
-                                    paginationData.prev === ""
+                                    paginationData?.prev === ""
                                       ? "paginate_button page-item previous disabled"
                                       : "paginate_button page-item previous"
                                   }
@@ -204,7 +221,7 @@ const NoticeBoard = () => {
                                 </li>
                                 <li
                                   className={
-                                    paginationData.next === ""
+                                    paginationData?.next === ""
                                       ? "paginate_button page-item next disabled"
                                       : "paginate_button page-item next"
                                   }

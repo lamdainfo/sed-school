@@ -4,6 +4,7 @@ import { postRequest } from "../../axios";
 
 import HomeWorkDetail from "./HomeWorkDetail";
 import HomeWorkLikeList from "./HomeWorkLikeList";
+import HomeWorkFilter from "./HomeWorkFilter";
 import {
   getSessionData,
   getSchoolData,
@@ -50,18 +51,20 @@ const HomeWork = () => {
           <h1 className="subheader-title">
             <i className="subheader-icon fal fa-clipboard"></i>{" "}
             <span class="fw-300">Homework</span>
-            <span id="filterBtn" style={{ float: "right" }}>
-              <button className="btn btn-sm btn-primary waves-effect waves-themed">
-                <i className="fal fa-filter"></i> Filter
-              </button>
-            </span>
           </h1>
         </div>
         <div className="row">
           <div className="col-md-12">
             <div id="panel-1" className="panel">
               <div className="panel-hdr">
-                <h2>Homework</h2>{" "}
+                <h2>Homework</h2>
+                <div className="panel-toolbar">
+                  <HomeWorkFilter
+                    // handleFilterChangeFilterDate={handleFilterChangeFilterDate}
+                    // handleFilterSelectChange={handleFilterSelectChange}
+                    // applyFilter={applyFilter}
+                  />
+                </div>
               </div>
               <div className="panel-container show">
                 <div className="panel-content">

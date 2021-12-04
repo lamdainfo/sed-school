@@ -59,7 +59,7 @@ const NoticeBoardLikeList = (props) => {
         }
       >
         {getUserType() === "staff" ? props?.noticeBoardDetail?.total_like : ""}
-
+        &nbsp;
         {getUserType() === "staff" ? (
           <i
             className={

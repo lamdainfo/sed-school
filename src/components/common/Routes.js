@@ -15,6 +15,7 @@ import Dashboard from "../dashboard/Dashboard";
 
 import NoticeBoard from "../noticeBoard/NoticeBoard";
 import CreateNoticeBoard from "../noticeBoard/CreateNoticeBoard";
+import NoticeBoardComment from "../noticeBoard/NoticeBoardComment";
 
 import HomeWork from "../homeWork/HomeWork";
 import ApprovalHomeWork from "../homeWork/ApprovalHomeWork";
@@ -40,8 +41,8 @@ export default class Routes extends Component {
 
     return (
       <Switch>
-        <OpenRoute exact path="/" component={Login} />       
-        <OpenRoute exact path="/login" component={Login} />      
+        <OpenRoute exact path="/" component={Login} />
+        <OpenRoute exact path="/login" component={Login} />
         <OpenRoute exact path="/forgot-password" component={ForgotPassword} />
         <OpenRoute
           exact
@@ -52,19 +53,48 @@ export default class Routes extends Component {
         <PrivateRoute exact path="/dashboard" component={Dashboard} />
 
         <PrivateRoute exact path="/notice-board" component={NoticeBoard} />
-        <PrivateRoute exact path="/create-notice-board" component={CreateNoticeBoard} />
+        <PrivateRoute
+          exact
+          path="/create-notice-board"
+          component={CreateNoticeBoard}
+        />
+        <PrivateRoute
+          exact
+          path="/notice-board-comment/:nid"
+          component={NoticeBoardComment}
+        />
 
         <PrivateRoute exact path="/home-work" component={HomeWork} />
-        <PrivateRoute exact path="/create-home-work" component={CreateHomeWork} />
-        <PrivateRoute exact path="/create-home-work-by-subject" component={CreateHomeWorkBySubject} />
-        <PrivateRoute exact path="/approval-home-work" component={ApprovalHomeWork} />
-        <PrivateRoute exact path="/submitted-home-work" component={SubmitedHomeWork} />
+        <PrivateRoute
+          exact
+          path="/create-home-work"
+          component={CreateHomeWork}
+        />
+        <PrivateRoute
+          exact
+          path="/create-home-work-by-subject"
+          component={CreateHomeWorkBySubject}
+        />
+        <PrivateRoute
+          exact
+          path="/approval-home-work"
+          component={ApprovalHomeWork}
+        />
+        <PrivateRoute
+          exact
+          path="/submitted-home-work"
+          component={SubmitedHomeWork}
+        />
 
         <PrivateRoute exact path="/live-class" component={LiveClass} />
-        <PrivateRoute exact path="/create-live-class" component={CreateLiveClass} />
+        <PrivateRoute
+          exact
+          path="/create-live-class"
+          component={CreateLiveClass}
+        />
 
         <PrivateRoute exact path="/fees" component={Fees} />
-        
+
         <OpenRoute exact path="/logout" component={Logout} />
         <OpenRoute path="*" component={Notfound} />
       </Switch>

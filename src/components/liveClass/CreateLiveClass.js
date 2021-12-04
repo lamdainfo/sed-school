@@ -100,12 +100,18 @@ const CreateLiveClass = (props) => {
 
     try {
       let res = await postRequest("live-class-create", state);
-      SuccessNotificationMsg("Success", res.data.message);
-      setBtnLoading(false);
-      props.history.push("/live-class");
+
+      if (res.data.status === "success") {
+        SuccessNotificationMsg("Success", res.data.message);
+        setBtnLoading(false);
+        props.history.push("/live-class");
+      } else {
+        setBtnLoading(false);
+        ErrorNotificationMsg("Error in live class create.");
+      }
     } catch (error) {
       setBtnLoading(false);
-      ErrorNotificationMsg(error.errmsg);
+      ErrorNotificationMsg(error.message);
     }
   };
 

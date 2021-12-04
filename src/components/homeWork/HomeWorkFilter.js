@@ -1,23 +1,14 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import moment from "moment";
-import { Modal, Form, Button, DatePicker, Select, Col, Row } from "antd";
-import { postRequest } from "../../axios";
+import { Modal, Form, Button, DatePicker, Col, Row } from "antd";
 
-const { Option } = Select;
-
-const NoticeBoardFilter = (props) => {
+const HomeWorkFilter = (props) => {
   const dateFormat = "DD/MM/YYYY";
   const formRef = useRef();
   const [state, setState] = useState({
     comment: null,
   });
   const [showModel, setShowModel] = useState(false);
-  const [btnLoading, setBtnLoading] = useState(false);
-  const [categoryList, setCategoryList] = useState([]);
-
-  useEffect(() => {
-    getCategoryList();
-  }, []);
 
   const hideModelFunction = () => {
     setShowModel(false);
@@ -25,11 +16,6 @@ const NoticeBoardFilter = (props) => {
 
   const showModelFunction = () => {
     setShowModel(true);
-  };
-  
-  const getCategoryList = async () => {
-    const response = await postRequest("get-notice-board-category");
-    setCategoryList(response.data.response);
   };
 
   const onFinish = async () => {
@@ -46,7 +32,7 @@ const NoticeBoardFilter = (props) => {
       </span>
 
       <Modal
-        title="Notice Board Filter"
+        title="Homework Filter"
         visible={showModel}
         onCancel={hideModelFunction}
         footer={false}
@@ -59,30 +45,13 @@ const NoticeBoardFilter = (props) => {
         >
           <Row gutter={[15]}>
             <Col xs={24} sm={12} lg={12}>
-              <Form.Item name="posted_date" label="Posted Date">
+              <Form.Item name="filterDate" label="Date">
                 <DatePicker
+                  defaultValue={moment()}
                   format={dateFormat}
                   onChange={props.handleFilterChangeFilterDate}
                   style={{ width: "100%" }}
                 />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} lg={12}>
-              <Form.Item name="category" label="Category">
-                <Select
-                  placeholder="Select Category"
-                  allowClear
-                  onChange={(value) =>
-                    props.handleFilterSelectChange("category", value)
-                  }
-                >
-                  {!!categoryList &&
-                    categoryList.map((s) => (
-                      <Option key={s.id} value={s.name}>
-                        {s.name}
-                      </Option>
-                    ))}
-                </Select>
               </Form.Item>
             </Col>
           </Row>
@@ -91,7 +60,6 @@ const NoticeBoardFilter = (props) => {
             <Button
               type="primary"
               htmlType="submit"
-              loading={btnLoading}
               className="btn btn-primary ml-auto waves-effect waves-themed"
             >
               Apply Filter
@@ -103,4 +71,4 @@ const NoticeBoardFilter = (props) => {
   );
 };
 
-export default NoticeBoardFilter;
+export default HomeWorkFilter;

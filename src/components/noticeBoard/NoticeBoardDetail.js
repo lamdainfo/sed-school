@@ -84,10 +84,38 @@ const NoticeBoardDetail = (props) => {
               noticeBoardDetail={noticeBoardDetail}
               hideParentModel={() => hideModelFunction()}
             />
-            <NoticeBoardComment
-              noticeBoardDetail={noticeBoardDetail}
-              hideParentModel={() => hideModelFunction()}
-            />
+
+            <span
+              className="text-primary mr-2 pointer"
+              onClick={() =>
+                props.history.push(
+                  "/notice-board-comment/" + noticeBoardDetail?.id
+                )
+              }
+            >
+              {getUserType() === "staff"
+                ? noticeBoardDetail?.comment_count
+                : ""}
+              &nbsp;
+              {getUserType() === "staff" ? (
+                <i
+                  className={
+                    noticeBoardDetail?.comment_count > 0
+                      ? "fas fa-comment"
+                      : "fal fa-comment"
+                  }
+                ></i>
+              ) : (
+                <i
+                  className={
+                    noticeBoardDetail?.is_user_comment
+                      ? "fas fa-comment"
+                      : "fal fa-comment"
+                  }
+                ></i>
+              )}
+            </span>
+
             <span className="text-primary">
               {getUserType() === "staff"
                 ? noticeBoardDetail?.documents_count
