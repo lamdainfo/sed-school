@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import moment from "moment";
 import { postRequest } from "../../axios";
 
 import HomeWorkDetail from "./HomeWorkDetail";
@@ -11,10 +12,18 @@ import {
   getUserType,
 } from "../../utils/Helpers";
 
-const HomeWork = () => {
+const HomeWork = (props) => {
   const [homeWorkList, setHomeWorkList] = useState([]);
   const [paginationData, setPaginationData] = useState({
     page: 1,
+  });
+
+  const [filterData, setFilterData] = useState({
+    class_code: "",
+    filter_date: "",
+    subject: "",
+    is_assignment: 0,
+    is_submission: 0,
   });
 
   useEffect(() => {
@@ -25,14 +34,14 @@ const HomeWork = () => {
     const response = await postRequest("get-all-homework", {
       sid: getSessionData().code,
       school_code: getSchoolData().school_code,
-      class_code: "",
-      filter_date: "",
-      subject: "",
-      is_assignment: 0,
-      is_submission: 0,
       page: page,
+      ...filterData,
     });
-    setHomeWorkList(response.data.response.homework_list);
+    setHomeWorkList(
+      response.data.response && response.data.response.homework_list
+        ? response.data.response.homework_list
+        : []
+    );
     setPaginationData(response.data.paginationData);
   };
 
@@ -44,13 +53,39 @@ const HomeWork = () => {
     getHomeWorkList(paginationData.current + 1);
   };
 
+  const handleFilterChangeFilterDate = (date, dateString) => {
+    setFilterData({
+      ...filterData,
+      filter_date: date !== null ? moment(date).format("YYYY-MM-DD") : "",
+    });
+  };
+
+  const handleFilterChangeDateType = (e) => {
+    setFilterData({
+      ...filterData,
+      is_assignment: e.target.value === "is_assignment" ? "1" : "0",
+      is_submission: e.target.value === "is_submission" ? "1" : "0",
+    });
+  };
+
+  const handleFilterSelectChange = (field, value) => {
+    setFilterData({
+      ...filterData,
+      [field]: value !== undefined && value !== "" ? value : "",
+    });
+  };
+
+  const applyFilter = () => {
+    getHomeWorkList(1);
+  };
+
   return (
     <main id="js-page-content" role="main" className="page-content">
       <div id="content">
         <div className="subheader">
           <h1 className="subheader-title">
             <i className="subheader-icon fal fa-clipboard"></i>{" "}
-            <span class="fw-300">Homework</span>
+            <span className="fw-300">Homework</span>
           </h1>
         </div>
         <div className="row">
@@ -60,9 +95,10 @@ const HomeWork = () => {
                 <h2>Homework</h2>
                 <div className="panel-toolbar">
                   <HomeWorkFilter
-                    // handleFilterChangeFilterDate={handleFilterChangeFilterDate}
-                    // handleFilterSelectChange={handleFilterSelectChange}
-                    // applyFilter={applyFilter}
+                    handleFilterChangeFilterDate={handleFilterChangeFilterDate}
+                    handleFilterSelectChange={handleFilterSelectChange}
+                    handleFilterChangeDateType={handleFilterChangeDateType}
+                    applyFilter={applyFilter}
                   />
                 </div>
               </div>
@@ -72,77 +108,94 @@ const HomeWork = () => {
                     homeWorkList.map((homeWork) => {
                       return (
                         <div className="card border mb-2" key={homeWork.id}>
-                          <div class="card-body">
+                          <div className="card-body">
                             <img
                               src={homeWork?.created_by_image}
                               alt="created-by-img"
-                              class="profile-image rounded-circle"
+                              className="profile-image rounded-circle"
                             />
 
-                            <span class="badge card-title">
+                            <span className="badge card-title">
                               {" "}
                               <strong> {homeWork?.subject}</strong>
                             </span>
                             <br />
-                            <span class="badge badge-primary">
+                            <span className="badge badge-primary">
                               {" "}
                               {homeWork?.class_code}
                             </span>
-                            <span class="d-block">
+                            <span className="d-block">
                               <strong>{homeWork?.topic}</strong>
                             </span>
 
-                            <div class="frame-wrap mb-2">
-                              <span class="d-block text-muted">
+                            <div className="frame-wrap mb-2">
+                              <span className="d-block text-muted">
                                 Posted By : {homeWork?.created_by}
                               </span>
 
                               {homeWork?.approved ? (
-                                <span class="d-block text-muted">
+                                <span className="d-block text-muted">
                                   Approved By : {homeWork?.approve_by}
                                 </span>
                               ) : (
-                                <span class="badge border border-danger text-danger badge-pill">
+                                <span className="badge border border-danger text-danger badge-pill">
                                   NOT APPROVED
                                 </span>
                               )}
 
-                              <span class="d-block text-muted">
-                                <i class="fal fa-sm fa-angle-double-right text-warning"></i>
+                              <span className="d-block text-muted">
+                                <i className="fal fa-sm fa-angle-double-right text-warning"></i>
                                 Assigned On : {homeWork?.assignment_date} &nbsp;
-                                <i class="fal fa-sm fa-angle-double-right  text-warning ml-2"></i>
+                                <i className="fal fa-sm fa-angle-double-right  text-warning ml-2"></i>
                                 Submit By : {homeWork?.submission_date}
                               </span>
                             </div>
 
-                            <HomeWorkDetail homeWorkDetail={homeWork} />
+                            <HomeWorkDetail
+                              homeWorkDetail={homeWork}
+                              history={props.history}
+                            />
+
                             {getUserType() === "staff" && (
                               <Link
-                                to="/submitted-home-work?hid=T1B4MTVsWkhoMnk1MnlEOEN4Sk5JZz09"
-                                class="btn btn-sm btn-success ml-2"
-                                target="_blank"
+                                className="btn btn-sm btn-success ml-2"
+                                to={{
+                                  pathname: "/submitted-home-work",
+                                  query: { hid: homeWork?.id },
+                                }}
                               >
                                 VIEW SUBMITTED HOMEWORK
                               </Link>
                             )}
                           </div>
-                          <div class="card-footer text-muted py-2">
+
+                          <div className="card-footer text-muted py-2">
                             <HomeWorkLikeList
                               homeWorkDetail={homeWork}
                               hideParent={false}
                             />
-                            <span className="text-primary mr-2">
+                            <span className="text-primary mr-2 pointer">
                               {getUserType() === "staff"
                                 ? homeWork.comment_count
                                 : ""}
                               &nbsp;
-                              <i
-                                className={
-                                  homeWork.comment_count > 0
-                                    ? "fas fa-comment"
-                                    : "fal fa-comment"
-                                }
-                              ></i>
+                              {getUserType() === "staff" ? (
+                                <i
+                                  className={
+                                    homeWork.comment_count > 0
+                                      ? "fas fa-comment"
+                                      : "fal fa-comment"
+                                  }
+                                ></i>
+                              ) : (
+                                <i
+                                  className={
+                                    homeWork.is_user_comment
+                                      ? "fas fa-comment"
+                                      : "fal fa-comment"
+                                  }
+                                ></i>
+                              )}
                             </span>
                             <span className="text-primary mr-2">
                               {getUserType() === "staff"

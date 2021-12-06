@@ -20,7 +20,11 @@ import {
   SuccessNotificationMsg,
   ErrorNotificationMsg,
 } from "../../utils/NotificationHelper";
-import { getSessionData, getUserData, getSchoolData } from "../../utils/Helpers";
+import {
+  getSessionData,
+  getUserData,
+  getSchoolData,
+} from "../../utils/Helpers";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -140,14 +144,16 @@ const CreateHomeWork = (props) => {
     };
 
     try {
-      const createHomeCreateHomeWorkResponse = await postRequest(
-        "add-homework",
-        payload
-      );
+      const res = await postRequest("add-homework", payload);
 
-      SuccessNotificationMsg("Success", "Homework created successfully");
-      setBtnLoading(false);
-      props.history.push("/home-work");
+      if (res.data.status === "success") {
+        SuccessNotificationMsg("Success", res.data.message);
+        setBtnLoading(false);
+        props.history.push("/home-work");
+      } else {
+        setBtnLoading(false);
+        ErrorNotificationMsg("Error in Homework create.");
+      }
     } catch (error) {
       setBtnLoading(false);
       ErrorNotificationMsg(error.errmsg);

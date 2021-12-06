@@ -51,7 +51,10 @@ const HomeWorkDetail = (props) => {
       <Modal
         title="Homework Details"
         visible={showModel}
+        onOk={hideModelFunction}
+        okText="Close"
         onCancel={hideModelFunction}
+        cancelButtonProps={{ style: { display: "none" } }}
       >
         <div className="row">
           <div className="col-md-4">
@@ -79,10 +82,10 @@ const HomeWorkDetail = (props) => {
               ) : (
                 <button
                   type="button"
-                  class="btn btn-sm btn-danger"
+                  className="btn btn-sm btn-danger"
                   onClick={approveHomeWork}
                 >
-                  <i class="fal fa-hand-paper"></i> Approve Now
+                  <i className="fal fa-hand-paper"></i> Approve Now
                 </button>
               )}
             </div>
@@ -132,14 +135,14 @@ const HomeWorkDetail = (props) => {
             homeWorkDetail.documents &&
             homeWorkDetail.documents.map((doc) => {
               return (
-                <div class="col-md-2">
+                <div className="col-md-2">
                   {ShowDocumentPreview(doc.file_url, doc.ext)}
                 </div>
               );
             })}
 
           {homeWorkDetail?.documents?.length === 0 && (
-            <div class="col-md-12">No attachment found.</div>
+            <div className="col-md-12">No attachment found.</div>
           )}
         </div>
       </Modal>

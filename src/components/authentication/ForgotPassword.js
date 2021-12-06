@@ -21,53 +21,53 @@ class ForgotPassword extends React.Component {
           <form id="cdComment" method="post" role="form">
          
 
-            <div class="form-row">
-              <div class="col-md-12 mb-3">
-                <label class="form-label required" for="school_code">
+            <div className="form-row">
+              <div className="col-md-12 mb-3">
+                <label className="form-label required" for="school_code">
                   School Code
                 </label>{" "}
-                <span class="text-danger">*</span>
+                <span className="text-danger">*</span>
                 <input
                   type="text"
                   name="school_code"
                   id="school_code"
                   required
-                  class="form-control"
+                  className="form-control"
                   maxlength="7"
                   minlength="7"
                 />
-                <div class="invalid-feedback"></div>
+                <div className="invalid-feedback"></div>
               </div>
 
-              <div class="col-md-12 mb-3">
-                <label class="form-label required" for="unique_id">
+              <div className="col-md-12 mb-3">
+                <label className="form-label required" for="unique_id">
                   Username / Unique ID
                 </label>{" "}
-                <span class="text-danger">*</span>
+                <span className="text-danger">*</span>
                 <input
                   type="text"
                   name="unique_id"
                   id="unique_id"
                   required
-                  class="form-control"
+                  className="form-control"
                   maxlength="7"
                   minlength="7"
                 />
-                <div class="invalid-feedback"></div>
+                <div className="invalid-feedback"></div>
               </div>
             </div>
             <button
-              class="btn btn-primary ml-auto waves-effect waves-themed"
+              className="btn btn-primary ml-auto waves-effect waves-themed"
               type="submit"
             >
-              <i class="fal fa-check"></i> Submit
+              <i className="fal fa-check"></i> Submit
             </button>
             <button
               type="button"
-              class="btn btn-default ml-2 waves-effect waves-themed"
+              className="btn btn-default ml-2 waves-effect waves-themed"
               data-dismiss="modal"
             >
-              <i class="fal fa-times"></i> Close
+              <i className="fal fa-times"></i> Close
             </button>
           </form>
         </div>

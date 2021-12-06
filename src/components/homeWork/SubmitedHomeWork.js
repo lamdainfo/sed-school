@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import qs from "query-string";
 import { postRequest } from "../../axios";
 
 import SubmitedHomeWorkBlock from "./SubmitedHomeWorkBlock";
@@ -8,7 +7,7 @@ import HomeWorkLikeList from "./HomeWorkLikeList";
 import { getSessionData } from "../../utils/Helpers";
 
 const SubmitedHomeWork = (props) => {
-  const queryString = qs.parse(props.history.location.search);
+  const queryString = props.history.location.query;
   if (queryString.hid === undefined) {
     props.history.push("/dashboard");
   }
@@ -56,11 +55,6 @@ const SubmitedHomeWork = (props) => {
           <h1 className="subheader-title">
             <i className="subheader-icon fal fa-clipboard"></i> Homework
             <span className="fw-300"> Submit</span>
-            <span id="filterBtn" style={{ float: "right" }}>
-              <button className="btn btn-sm btn-primary waves-effect waves-themed">
-                <i className="fal fa-filter"></i> Filter
-              </button>
-            </span>
           </h1>
         </div>
         <div className="row">
@@ -122,18 +116,6 @@ const SubmitedHomeWork = (props) => {
                           Submit By : {homeWorkDetail?.submission_date}
                         </span>
                       </div>
-                    </div>
-                    <div className="card-footer text-muted py-2">
-                      <HomeWorkLikeList homeWorkDetail={homeWorkDetail} />
-                      <a href="#" className="text-primary mr-2 ml-2">
-                        {homeWorkDetail?.comment_count}
-                        <i className="fal fa-comment ml-1"></i>
-                      </a>
-
-                      <a href="#" className="text-primary mr-2">
-                        {homeWorkDetail?.documents_count}
-                        <i className="fal fa-paperclip ml-1"></i>
-                      </a>
                     </div>
                   </div>
 

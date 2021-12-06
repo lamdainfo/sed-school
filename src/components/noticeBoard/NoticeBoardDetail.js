@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Modal } from "antd";
 
 import { postRequest } from "../../axios";
-import NoticeBoardComment from "./NoticeBoardComment";
 import NoticeBoardLikeList from "./NoticeBoardLikeList";
 import {
   getSessionData,
@@ -147,14 +146,14 @@ const NoticeBoardDetail = (props) => {
             noticeBoardDetail.document &&
             noticeBoardDetail.document.map((doc, key) => {
               return (
-                <div class="col-md-2" key={key}>
+                <div className="col-md-2" key={key}>
                   {ShowDocumentPreview(doc.file_url, doc.ext)}
                 </div>
               );
             })}
 
           {noticeBoardDetail?.document?.length === 0 && (
-            <div class="col-md-12">No attachment found.</div>
+            <div className="col-md-12">No attachment found.</div>
           )}
         </div>
       </Modal>

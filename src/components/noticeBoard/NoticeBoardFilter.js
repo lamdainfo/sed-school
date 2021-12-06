@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import moment from "moment";
 import { Modal, Form, Button, DatePicker, Select, Col, Row } from "antd";
 import { postRequest } from "../../axios";
 
@@ -8,9 +7,6 @@ const { Option } = Select;
 const NoticeBoardFilter = (props) => {
   const dateFormat = "DD/MM/YYYY";
   const formRef = useRef();
-  const [state, setState] = useState({
-    comment: null,
-  });
   const [showModel, setShowModel] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
   const [categoryList, setCategoryList] = useState([]);

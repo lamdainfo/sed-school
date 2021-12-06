@@ -164,14 +164,16 @@ const CreateHomeWorkBySubject = (props) => {
     //console.log(payload);
 
     try {
-      const createHomeCreateHomeWorkResponse = await postRequest(
-        "add-homework-by-subject",
-        payload
-      );
+      const res = await postRequest("add-homework-by-subject", payload);
 
-      SuccessNotificationMsg("Success", "Homework created successfully");
-      setBtnLoading(false);
-      props.history.push("/home-work");
+      if (res.data.status === "success") {
+        SuccessNotificationMsg("Success", res.data.message);
+        setBtnLoading(false);
+        props.history.push("/home-work");
+      } else {
+        setBtnLoading(false);
+        ErrorNotificationMsg("Error in Homework create.");
+      }
     } catch (error) {
       setBtnLoading(false);
       ErrorNotificationMsg(error.errmsg);

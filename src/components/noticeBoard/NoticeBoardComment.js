@@ -27,8 +27,8 @@ const CommentUI = ({ time, comment, userImg }) => {
 
 const CommentReplyUI = (props) => {
   return (
-    <div class="row justify-content-end">
-      <div class="col-10">
+    <div className="row justify-content-end">
+      <div className="col-10">
         <div className="alert alert-success fade show px-3 py-2" role="alert">
           <div className="row">
             <div className="col-md-1">
