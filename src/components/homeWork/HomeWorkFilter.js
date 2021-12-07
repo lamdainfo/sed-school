@@ -83,7 +83,6 @@ const HomeWorkFilter = (props) => {
             <Col xs={24} sm={12} lg={12}>
               <Form.Item name="filterDate" label="Date">
                 <DatePicker
-                  defaultValue={moment()}
                   format={dateFormat}
                   onChange={props.handleFilterChangeFilterDate}
                   style={{ width: "100%" }}

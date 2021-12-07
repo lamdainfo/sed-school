@@ -1,5 +1,6 @@
 import React from "react";
 import HomeWorkComment from "./HomeWorkComment";
+import { ShowDocumentPreview } from "../../utils/Helpers";
 
 const SubmitedHomeWorkBlock = (props) => {
   return (
@@ -28,16 +29,11 @@ const SubmitedHomeWorkBlock = (props) => {
           <div className="row">
             <div className="col-md-12">
               <div className="lightgallery">
-                {props.homeWorkDetail?.documents.map((docs, did) => {
+                {props.homeWorkDetail?.documents.map((doc, key) => {
                   return (
-                    <a href="" key={did}>
-                      <img
-                        src={docs.file_url}
-                        alt="doc-img"
-                        className="img-thumbnail align-text-top"
-                        width="100"
-                      />
-                    </a>
+                    <div className="col-md-2" key={key}>
+                      {ShowDocumentPreview(doc.file_url, doc.ext)}
+                    </div>
                   );
                 })}
               </div>

@@ -11,7 +11,7 @@ const HomeWorkLikeList = (props) => {
   const [studentLikeStatus, setStudentLikeStatus] = useState(false);
 
   useEffect(() => {
-    if (props.noticeBoardDetail) {
+    if (props.homeWorkDetail) {
       setStudentLikeStatus(props.homeWorkDetail.is_user_liked);
     }
   }, [props.homeWorkDetail]);
@@ -36,7 +36,6 @@ const HomeWorkLikeList = (props) => {
   const likeHomeWork = async () => {
     const likeResponse = await postRequest("add-homework-like", {
       hid: props.homeWorkDetail.id,
-      status: studentLikeStatus ? "0" : "1",
     });
 
     if (likeResponse.data.errmsg === "") {

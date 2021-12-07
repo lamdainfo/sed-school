@@ -54,10 +54,19 @@ const HomeWork = (props) => {
   };
 
   const handleFilterChangeFilterDate = (date, dateString) => {
-    setFilterData({
-      ...filterData,
-      filter_date: date !== null ? moment(date).format("YYYY-MM-DD") : "",
-    });
+    if (date === null) {
+      setFilterData({
+        ...filterData,
+        filter_date: "",
+        is_assignment: 0,
+        is_submission: 0,
+      });
+    } else {
+      setFilterData({
+        ...filterData,
+        filter_date: date !== null ? moment(date).format("YYYY-MM-DD") : "",
+      });
+    }
   };
 
   const handleFilterChangeDateType = (e) => {
@@ -158,13 +167,25 @@ const HomeWork = (props) => {
 
                             {getUserType() === "staff" && (
                               <Link
-                                className="btn btn-sm btn-success ml-2"
+                                className="btn btn-sm btn-outline-success ml-2"
                                 to={{
                                   pathname: "/submitted-home-work",
                                   query: { hid: homeWork?.id },
                                 }}
                               >
                                 VIEW SUBMITTED HOMEWORK
+                              </Link>
+                            )}
+
+                            {getUserType() !== "staff" && (
+                              <Link
+                                className="btn btn-sm btn-outline-danger ml-2"
+                                to={{
+                                  pathname: "/submitted-home-work",
+                                  query: { hid: homeWork?.id },
+                                }}
+                              >
+                                SUBMIT HOMEWORK
                               </Link>
                             )}
                           </div>
