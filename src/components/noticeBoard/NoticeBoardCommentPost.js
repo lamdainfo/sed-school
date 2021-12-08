@@ -63,7 +63,7 @@ const NoticeBoardCommentPost = (props) => {
         title={
           props.commentType && props.commentType === "reply"
             ? "Reply"
-            : "comment"
+            : "Comment"
         }
         visible={showModel}
         onCancel={hideModelFunction}
@@ -81,7 +81,7 @@ const NoticeBoardCommentPost = (props) => {
                 label={
                   props.commentType && props.commentType === "reply"
                     ? "Reply"
-                    : "comment"
+                    : "Comment"
                 }
                 name="comment"
                 rules={[

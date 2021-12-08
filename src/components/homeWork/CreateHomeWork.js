@@ -30,12 +30,12 @@ const { Option } = Select;
 const { TextArea } = Input;
 
 const CreateHomeWork = (props) => {
-  const dateFormat = "YYYY-MM-DD";
+  const dateFormat = "DD-MM-YYYY";
   const [state, setState] = useState({
     class_code: null,
     student_list: [],
-    assignment_date: moment().format("YYYY-MM-DD"),
-    submission_date: moment().format("YYYY-MM-DD"),
+    assignment_date: moment().format("DD-MM-YYYY"),
+    submission_date: moment().format("DD-MM-YYYY"),
     subject: null,
     page_no: null,
     chapter_no: null,
@@ -46,6 +46,7 @@ const CreateHomeWork = (props) => {
   const [btnLoading, setBtnLoading] = useState(false);
   const [classList, setClassList] = useState([]);
   const [studentList, setStudentList] = useState([]);
+  const [subjectList, setSubjectList] = useState([]);
 
   useEffect(() => {
     getClassList();
@@ -60,16 +61,16 @@ const CreateHomeWork = (props) => {
   };
 
   const handleChangeAssignmentDate = (date, dateString) => {
-    setState({ ...state, assignment_date: dateString });
+    setState({ ...state, assignment_date: date });
   };
 
   const handleChangeSubmissionDate = (date, dateString) => {
-    setState({ ...state, submission_date: dateString });
+    setState({ ...state, submission_date: date });
   };
 
   const disablePastDate = (current) => {
-    let customDate = moment().format("YYYY-MM-DD");
-    return current && current < moment(customDate, "YYYY-MM-DD");
+    let customDate = moment().format("DD-MM-YYYY");
+    return current && current < moment(customDate, "DD-MM-YYYY");
   };
 
   const getClassList = async () => {
@@ -99,10 +100,19 @@ const CreateHomeWork = (props) => {
     });
 
     setStudentList(studentRes.data.response);
+
+    const subjectRes = await postRequest("get-subject-by-class-multi-section", {
+      session_code: getSessionData().code,
+      class_code: classCode[0],
+      sections: [classCode[1]],
+      tid: getUserData().tid,
+    });
+
+    setSubjectList(subjectRes.data.response);
   };
 
   const onFinish = async () => {
-    // setBtnLoading(true);
+    setBtnLoading(true);
 
     let studentsArr = [];
     state.student_list.map((student) => {
@@ -113,16 +123,14 @@ const CreateHomeWork = (props) => {
     const payload = {
       edit_mode: "",
       sid: getSessionData().code,
-      posted_on: moment().format("YYYY-MM-DD"),
-      category: state.category,
       subject: state.subject,
       topic: state.topic,
       description: state.description,
       page_no: state.page_no,
       chapter_no: state.chapter_no,
       comment_enable: state.comment_enable,
-      assignment_date: state.assignment_date,
-      submission_date: state.submission_date,
+      assignment_date: moment(state.assignment_date).format("YYYY-MM-DD"),
+      submission_date: moment(state.submission_date).format("YYYY-MM-DD"),
       school_code: getSchoolData().school_code,
       is_draft: "0",
       tclass: state.class_code,
@@ -146,8 +154,8 @@ const CreateHomeWork = (props) => {
     try {
       const res = await postRequest("add-homework", payload);
 
-      if (res.data.status === "success") {
-        SuccessNotificationMsg("Success", res.data.message);
+      if (res.data.response === "success") {
+        SuccessNotificationMsg("Success", "Homework created successfully.");
         setBtnLoading(false);
         props.history.push("/home-work");
       } else {
@@ -305,16 +313,23 @@ const CreateHomeWork = (props) => {
                               rules={[
                                 {
                                   required: true,
-                                  whitespace: true,
-                                  message: "Please enter subject",
+                                  message: "Please select subject!",
                                 },
                               ]}
                             >
-                              <Input
+                              <Select
+                                placeholder="Select Subject"
                                 onChange={(value) =>
-                                  handleChange("subject", value)
+                                  handleSelectChange("subject", value)
                                 }
-                              />
+                              >
+                                {!!subjectList &&
+                                  subjectList.map((s) => (
+                                    <Option key={s.id} value={s.id}>
+                                      {s.subject_name}
+                                    </Option>
+                                  ))}
+                              </Select>
                             </Form.Item>
                           </Col>
 

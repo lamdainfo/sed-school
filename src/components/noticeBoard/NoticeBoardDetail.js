@@ -74,46 +74,52 @@ const NoticeBoardDetail = (props) => {
               <span className="d-block">
                 Posted By : <strong>{noticeBoardDetail?.published_by}</strong>
               </span>
-              <span className="d-block">
-                Approved By : <strong>{noticeBoardDetail?.approved_by}</strong>
-              </span>
+              {getUserType() === "staff" && (
+                <span className="d-block">
+                  Approved By :{" "}
+                  <strong>{noticeBoardDetail?.approved_by}</strong>
+                </span>
+              )}
             </div>
 
             <NoticeBoardLikeList
               noticeBoardDetail={noticeBoardDetail}
               hideParentModel={() => hideModelFunction()}
             />
-
-            <span
-              className="text-primary mr-2 pointer"
-              onClick={() =>
-                props.history.push(
-                  "/notice-board-comment/" + noticeBoardDetail?.id
-                )
-              }
-            >
-              {getUserType() === "staff"
-                ? noticeBoardDetail?.comment_count
-                : ""}
-              &nbsp;
-              {getUserType() === "staff" ? (
-                <i
-                  className={
-                    noticeBoardDetail?.comment_count > 0
-                      ? "fas fa-comment"
-                      : "fal fa-comment"
-                  }
-                ></i>
-              ) : (
-                <i
-                  className={
-                    noticeBoardDetail?.is_user_comment
-                      ? "fas fa-comment"
-                      : "fal fa-comment"
-                  }
-                ></i>
-              )}
-            </span>
+            {noticeBoardDetail?.comment_enable ? (
+              <span
+                className="text-primary mr-2 pointer"
+                onClick={() =>
+                  props.history.push(
+                    "/notice-board-comment/" + noticeBoardDetail?.id
+                  )
+                }
+              >
+                {getUserType() === "staff"
+                  ? noticeBoardDetail?.comment_count
+                  : ""}
+                &nbsp;
+                {getUserType() === "staff" ? (
+                  <i
+                    className={
+                      noticeBoardDetail?.comment_count > 0
+                        ? "fas fa-comment"
+                        : "fal fa-comment"
+                    }
+                  ></i>
+                ) : (
+                  <i
+                    className={
+                      noticeBoardDetail?.is_user_comment
+                        ? "fas fa-comment"
+                        : "fal fa-comment"
+                    }
+                  ></i>
+                )}
+              </span>
+            ) : (
+              ""
+            )}
 
             <span className="text-primary">
               {getUserType() === "staff"

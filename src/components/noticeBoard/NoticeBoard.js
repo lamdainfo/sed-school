@@ -111,9 +111,11 @@ const NoticeBoard = (props) => {
                             <span className="d-block text-muted">
                               Posted By : {noticeBoard.published_by}
                             </span>
-                            <span className="d-block text-muted">
-                              Approved By : {noticeBoard.approved_by}
-                            </span>
+                            {getUserType() === "staff" && (
+                              <span className="d-block text-muted">
+                                Approved By : {noticeBoard.approved_by}
+                              </span>
+                            )}
                             <div className="frame-wrap mb-2">
                               {" "}
                               <span className="d-block text-muted">
@@ -131,36 +133,40 @@ const NoticeBoard = (props) => {
                               noticeBoardDetail={noticeBoard}
                               hideParent={false}
                             />
-                            <span
-                              className="text-primary mr-2 pointer"
-                              onClick={() =>
-                                props.history.push(
-                                  "/notice-board-comment/" + noticeBoard.id
-                                )
-                              }
-                            >
-                              {getUserType() === "staff"
-                                ? noticeBoard.comment_count
-                                : ""}
-                              &nbsp;
-                              {getUserType() === "staff" ? (
-                                <i
-                                  className={
-                                    noticeBoard.comment_count > 0
-                                      ? "fas fa-comment"
-                                      : "fal fa-comment"
-                                  }
-                                ></i>
-                              ) : (
-                                <i
-                                  className={
-                                    noticeBoard.is_user_comment
-                                      ? "fas fa-comment"
-                                      : "fal fa-comment"
-                                  }
-                                ></i>
-                              )}
-                            </span>
+                            {noticeBoard.comment_enable ? (
+                              <span
+                                className="text-primary mr-2 pointer"
+                                onClick={() =>
+                                  props.history.push(
+                                    "/notice-board-comment/" + noticeBoard.id
+                                  )
+                                }
+                              >
+                                {getUserType() === "staff"
+                                  ? noticeBoard.comment_count
+                                  : ""}
+                                &nbsp;
+                                {getUserType() === "staff" ? (
+                                  <i
+                                    className={
+                                      noticeBoard.comment_count > 0
+                                        ? "fas fa-comment"
+                                        : "fal fa-comment"
+                                    }
+                                  ></i>
+                                ) : (
+                                  <i
+                                    className={
+                                      noticeBoard.is_user_comment
+                                        ? "fas fa-comment"
+                                        : "fal fa-comment"
+                                    }
+                                  ></i>
+                                )}
+                              </span>
+                            ) : (
+                              ""
+                            )}
                             <span className="text-primary mr-2">
                               {noticeBoard.documents_count}&nbsp;
                               <i

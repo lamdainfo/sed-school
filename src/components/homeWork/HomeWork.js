@@ -6,11 +6,13 @@ import { postRequest } from "../../axios";
 import HomeWorkDetail from "./HomeWorkDetail";
 import HomeWorkLikeList from "./HomeWorkLikeList";
 import HomeWorkFilter from "./HomeWorkFilter";
+import SubmitedHomeWorkDetail from "./SubmitedHomeWorkDetail";
 import {
   getSessionData,
   getSchoolData,
   getUserType,
 } from "../../utils/Helpers";
+import { Space } from "antd";
 
 const HomeWork = (props) => {
   const [homeWorkList, setHomeWorkList] = useState([]);
@@ -125,14 +127,14 @@ const HomeWork = (props) => {
                             />
 
                             <span className="badge card-title">
-                              {" "}
                               <strong> {homeWork?.subject}</strong>
                             </span>
                             <br />
-                            <span className="badge badge-primary">
-                              {" "}
-                              {homeWork?.class_code}
-                            </span>
+                            {getUserType() === "staff" && (
+                              <span className="badge badge-primary">
+                                {homeWork?.class_code}
+                              </span>
+                            )}
                             <span className="d-block">
                               <strong>{homeWork?.topic}</strong>
                             </span>
@@ -142,14 +144,18 @@ const HomeWork = (props) => {
                                 Posted By : {homeWork?.created_by}
                               </span>
 
-                              {homeWork?.approved ? (
-                                <span className="d-block text-muted">
-                                  Approved By : {homeWork?.approve_by}
-                                </span>
+                              {getUserType() === "staff" ? (
+                                homeWork?.approved ? (
+                                  <span className="d-block text-muted">
+                                    Approved By : {homeWork?.approve_by}
+                                  </span>
+                                ) : (
+                                  <span className="badge border border-danger text-danger badge-pill">
+                                    NOT APPROVED
+                                  </span>
+                                )
                               ) : (
-                                <span className="badge border border-danger text-danger badge-pill">
-                                  NOT APPROVED
-                                </span>
+                                ""
                               )}
 
                               <span className="d-block text-muted">
@@ -166,27 +172,43 @@ const HomeWork = (props) => {
                             />
 
                             {getUserType() === "staff" && (
-                              <Link
-                                className="btn btn-sm btn-outline-success ml-2"
-                                to={{
-                                  pathname: "/submitted-home-work",
-                                  query: { hid: homeWork?.id },
-                                }}
-                              >
-                                VIEW SUBMITTED HOMEWORK
-                              </Link>
+                              <Space>
+                                <Link
+                                  className="btn btn-sm btn-outline-info ml-2"
+                                  to={{
+                                    pathname: "/edit-home-work",
+                                    query: { hid: homeWork?.id },
+                                  }}
+                                >
+                                  Edit
+                                </Link>
+
+                                <Link
+                                  className="btn btn-sm btn-outline-success ml-2"
+                                  to={{
+                                    pathname: "/submitted-home-work",
+                                    query: { hid: homeWork?.id },
+                                  }}
+                                >
+                                  VIEW SUBMITTED HOMEWORK
+                                </Link>
+                              </Space>
                             )}
 
                             {getUserType() !== "staff" && (
-                              <Link
-                                className="btn btn-sm btn-outline-danger ml-2"
-                                to={{
-                                  pathname: "/submitted-home-work",
-                                  query: { hid: homeWork?.id },
-                                }}
-                              >
-                                SUBMIT HOMEWORK
-                              </Link>
+                              <Space>
+                                <Link
+                                  className="btn btn-sm btn-outline-danger ml-2"
+                                  to={{
+                                    pathname: "/submit-home-work",
+                                    query: { hid: homeWork?.id },
+                                  }}
+                                >
+                                  SUBMIT HOMEWORK
+                                </Link>
+
+                                <SubmitedHomeWorkDetail />
+                              </Space>
                             )}
                           </div>
 
@@ -195,29 +217,33 @@ const HomeWork = (props) => {
                               homeWorkDetail={homeWork}
                               hideParent={false}
                             />
-                            <span className="text-primary mr-2 pointer">
-                              {getUserType() === "staff"
-                                ? homeWork.comment_count
-                                : ""}
-                              &nbsp;
-                              {getUserType() === "staff" ? (
-                                <i
-                                  className={
-                                    homeWork.comment_count > 0
-                                      ? "fas fa-comment"
-                                      : "fal fa-comment"
-                                  }
-                                ></i>
-                              ) : (
-                                <i
-                                  className={
-                                    homeWork.is_user_comment
-                                      ? "fas fa-comment"
-                                      : "fal fa-comment"
-                                  }
-                                ></i>
-                              )}
-                            </span>
+                            {homeWork.comment_enable ? (
+                              <span className="text-primary mr-2 pointer">
+                                {getUserType() === "staff"
+                                  ? homeWork.comment_count
+                                  : ""}
+                                &nbsp;
+                                {getUserType() === "staff" ? (
+                                  <i
+                                    className={
+                                      homeWork.comment_count > 0
+                                        ? "fas fa-comment"
+                                        : "fal fa-comment"
+                                    }
+                                  ></i>
+                                ) : (
+                                  <i
+                                    className={
+                                      homeWork.is_user_comment
+                                        ? "fas fa-comment"
+                                        : "fal fa-comment"
+                                    }
+                                  ></i>
+                                )}
+                              </span>
+                            ) : (
+                              ""
+                            )}
                             <span className="text-primary mr-2">
                               {getUserType() === "staff"
                                 ? homeWork.documents_count

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import {
@@ -20,20 +20,22 @@ import {
   SuccessNotificationMsg,
   ErrorNotificationMsg,
 } from "../../utils/NotificationHelper";
-import { getSessionData, getUserData } from "../../utils/Helpers";
+import { getSessionData, getSchoolData } from "../../utils/Helpers";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-const CreateHomeWorkBySubject = (props) => {
+const EditHomeWork = (props) => {
+  const formRef = useRef();
+  const queryString = props.history.location.query;
+  if (queryString === undefined || queryString.hid === undefined) {
+    props.history.push("/dashboard");
+  }
+
   const dateFormat = "DD-MM-YYYY";
   const [state, setState] = useState({
-    class_code: null,
-    student_list: [],
-    sections: [],
-    assignment_date: moment().format("DD-MM-YYYY"),
-    submission_date: moment().format("DD-MM-YYYY"),
-    subject: null,
+    assignment_date: "",
+    submission_date: "",
     page_no: null,
     chapter_no: null,
     comment_enable: 0,
@@ -41,14 +43,29 @@ const CreateHomeWorkBySubject = (props) => {
     description: null,
   });
   const [btnLoading, setBtnLoading] = useState(false);
-  const [classList, setClassList] = useState([]);
-  const [studentList, setStudentList] = useState([]);
-  const [sectionList, setSectionList] = useState([]);
-  const [subjectList, setSubjectList] = useState([]);
+  const [homeWorkDetail, setHomeWorkDetail] = useState(null);
 
   useEffect(() => {
-    getClassList();
+    if (props?.history?.location?.query?.hid) {
+      getHomeworkDetail();
+    }
   }, []);
+
+  const getHomeworkDetail = async () => {
+    const response = await postRequest("get-edit-homework", {
+      hid: queryString?.hid,
+    });
+    setHomeWorkDetail(response.data.response);
+    formRef.current.setFieldsValue({
+      page_no: response.data.response.page_no,
+      chapter_no: response.data.response.chapter_no,
+      topic: response.data.response.topic,
+      description: response.data.response.description,
+      comment_enable: response.data.response.comment_enable,
+      assignment_date: moment(),
+      submission_date: moment(),
+    });
+  };
 
   const handleChange = (field, value) => {
     setState({ ...state, [field]: value.target.value });
@@ -71,104 +88,45 @@ const CreateHomeWorkBySubject = (props) => {
     return current && current < moment(customDate, "DD-MM-YYYY");
   };
 
-  const getClassList = async () => {
-    const classRes = await postRequest("get-teacher-class-subject", {
-      session_code: getSessionData().code,
-      tid: getUserData().tid,
-    });
-
-    let classArr = classRes.data.response.as_class_teacher.concat(
-      classRes.data.response.as_subject_teacher
-    );
-    let uniqueClassList = classArr.filter(
-      (item, pos) => classArr.indexOf(item) === pos
-    );
-    setClassList(uniqueClassList);
-  };
-
-  const handleClassChange = async (field, value) => {
-    let classCode = value.split("-");
-
-    setState({ ...state, [field]: classCode[0] });
-
-    const sectionRes = await postRequest("get-section-by-class", {
-      session_code: getSessionData().code,
-      class_code: classCode[0],
-    });
-
-    setSectionList(sectionRes.data.response);
-  };
-
-  const handleSectionChange = async (field, value) => {
-    setState({ ...state, sections: value });
-
-    const subjectRes = await postRequest("get-subject-by-class-multi-section", {
-      session_code: getSessionData().code,
-      class_code: state.class_code,
-      sections: value,
-      tid: getUserData().tid,
-    });
-
-    setSubjectList(subjectRes.data.response);
-  };
-
-  const handleSubjectChange = async (field, value) => {
-    setState({ ...state, subject: value });
-
-    const studentRes = await postRequest(
-      "get-student-by-class-section-subject",
-      {
-        session_code: getSessionData().code,
-        class_code: state.class_code,
-        sections: state.sections,
-        subject_id: value,
-      }
-    );
-
-    setStudentList(studentRes.data.response);
-  };
-
   const onFinish = async () => {
     setBtnLoading(true);
-
-    let studentsArr = [];
-    state.student_list.map((student) => {
-      let sInfo = student.split("-");
-      studentsArr.push({ id: sInfo[0], name: sInfo[1] });
-    });
-
+    
     const payload = {
-      session_code: getSessionData().code,
-      subject: state.subject,
+      edit_mode: "",
+      sid: getSessionData().code,
+      subject: homeWorkDetail.subject,
       topic: state.topic,
       description: state.description,
       page_no: state.page_no,
       chapter_no: state.chapter_no,
-      class_code: state.class_code,
-      sections: state.sections,
       comment_enable: state.comment_enable,
       assignment_date: moment(state.assignment_date).format("YYYY-MM-DD"),
       submission_date: moment(state.submission_date).format("YYYY-MM-DD"),
+      school_code: getSchoolData().school_code,
       is_draft: "0",
-      sdata: {
-        student_list: studentsArr,
-      },
-      // "multifile": [
-      //   {
-      //     "file_name": "IMG_1636181784933",
-      //     "ext": ".jpg",
-      //     "file": ""
-      //   }
-      // ]
+      tclass: homeWorkDetail.class_code,
+      hid: queryString?.hid,
+        sdata: {
+          class_code: homeWorkDetail.class_code,
+          edit_mode: "",
+          homework_id: "",
+          edit_student_list: [],
+          student_list: homeWorkDetail.students,
+        },
+      "multifile": [
+        {
+          "file_name": "IMG_1636181784933",
+          "ext": ".jpg",
+          "file": ""
+        }
+      ]
     };
 
-    //console.log(payload);
-
     try {
-      const res = await postRequest("add-homework-by-subject", payload);
+      const res = await postRequest("add-homework", payload);
 
       if (res.data.response === "success") {
-        SuccessNotificationMsg("Success", "Homework created successfully.");
+        SuccessNotificationMsg("Success", "Homework updated successfully.");
         setBtnLoading(false);
         props.history.push("/home-work");
       } else {
@@ -202,13 +160,6 @@ const CreateHomeWorkBySubject = (props) => {
                   <div className="panel-toolbar">
                     <Space>
                       <Link
-                        to="/create-home-work"
-                        className="btn btn-sm btn-primary waves-effect waves-themed"
-                      >
-                        <i className="fal fa-plus"></i> Create By Class &
-                        Section
-                      </Link>
-                      <Link
                         to="/home-work"
                         className="btn btn-sm btn-info waves-effect waves-themed"
                       >
@@ -221,128 +172,11 @@ const CreateHomeWorkBySubject = (props) => {
                   <div className="panel-content p-0">
                     <Form
                       onFinish={onFinish}
+                      ref={formRef}
                       autoComplete="off"
                       layout="vertical"
                     >
                       <div className="panel-content">
-                        <Row gutter={[15]}>
-                          <Col xs={24} sm={12} lg={8}>
-                            <Form.Item
-                              name="class_code"
-                              label="Class"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please select class!",
-                                },
-                              ]}
-                            >
-                              <Select
-                                placeholder="Select Class"
-                                onChange={(value) =>
-                                  handleClassChange("class_code", value)
-                                }
-                              >
-                                {!!classList &&
-                                  classList.map((s) => (
-                                    <Option key={s} value={s}>
-                                      {s}
-                                    </Option>
-                                  ))}
-                              </Select>
-                            </Form.Item>
-                          </Col>
-                          <Col xs={24} sm={12} lg={8}>
-                            <Form.Item
-                              label="Section"
-                              name="sections"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please select section!",
-                                },
-                              ]}
-                            >
-                              <Select
-                                mode="multiple"
-                                placeholder="Select Section"
-                                onChange={(value) =>
-                                  handleSectionChange("sections", value)
-                                }
-                              >
-                                {!!sectionList &&
-                                  sectionList.map((s) => (
-                                    <Option key={s} value={s}>
-                                      {s}
-                                    </Option>
-                                  ))}
-                              </Select>
-                            </Form.Item>
-                          </Col>
-                          <Col xs={24} sm={12} lg={8}>
-                            <Form.Item
-                              label="Subject"
-                              name="subject"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please select subject!",
-                                },
-                              ]}
-                            >
-                              <Select
-                                placeholder="Select Subject"
-                                onChange={(value) =>
-                                  handleSubjectChange("subject", value)
-                                }
-                              >
-                                {!!subjectList &&
-                                  subjectList.map((s) => (
-                                    <Option key={s.id} value={s.id}>
-                                      {s.subject_name}
-                                    </Option>
-                                  ))}
-                              </Select>
-                            </Form.Item>
-                          </Col>
-
-                          <Col xs={24} sm={12} lg={16}>
-                            <Form.Item
-                              name="student_list"
-                              label="Roll(s)"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please select students!",
-                                },
-                              ]}
-                            >
-                              <Select
-                                mode="multiple"
-                                placeholder="Select Rolls"
-                                onChange={(value) =>
-                                  handleSelectChange("student_list", value)
-                                }
-                              >
-                                {!!studentList &&
-                                  studentList.map((s) => (
-                                    <Option
-                                      key={s.roll_no}
-                                      value={
-                                        s.student_class_id +
-                                        "-" +
-                                        s.student_name
-                                      }
-                                    >
-                                      {s.roll_no + " - " + s.student_name}
-                                    </Option>
-                                  ))}
-                              </Select>
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                        <hr />
-
                         <Row gutter={[15]}>
                           <Col xs={24} sm={12} lg={12}>
                             <Form.Item
@@ -504,4 +338,4 @@ const CreateHomeWorkBySubject = (props) => {
   );
 };
 
-export default CreateHomeWorkBySubject;
+export default EditHomeWork;

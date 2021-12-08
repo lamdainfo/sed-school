@@ -81,6 +81,8 @@ const HomeWorkComment = (props) => {
               >
                 <TextArea
                   rows={4}
+                  defaultValue={props?.commentText}
+                  value={props?.commentText}
                   onChange={(value) => handleChange("comment", value)}
                 />
               </Form.Item>

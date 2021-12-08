@@ -75,25 +75,35 @@ const HomeWorkDetail = (props) => {
               <span className="d-block">
                 Posted By : <strong>{homeWorkDetail?.published_by}</strong>
               </span>
-              {homeWorkDetail?.approved ? (
-                <span className="d-block">
-                  Approved By : <strong>{homeWorkDetail?.approve_by}</strong>
-                </span>
+              {getUserType() === "staff" ? (
+                homeWorkDetail?.approved ? (
+                  <span className="d-block">
+                    Approved By : <strong>{homeWorkDetail?.approve_by}</strong>
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-danger"
+                    onClick={approveHomeWork}
+                  >
+                    <i className="fal fa-hand-paper"></i> Approve Now
+                  </button>
+                )
               ) : (
-                <button
-                  type="button"
-                  className="btn btn-sm btn-danger"
-                  onClick={approveHomeWork}
-                >
-                  <i className="fal fa-hand-paper"></i> Approve Now
-                </button>
+                ""
               )}
             </div>
             <HomeWorkLikeList
               homeWorkDetail={homeWorkDetail}
               hideParentModel={() => hideModelFunction()}
             />
-            <HomeWorkComment hideParentModel={() => hideModelFunction()} />
+
+            {homeWorkDetail?.comment_enable ? (
+              <HomeWorkComment hideParentModel={() => hideModelFunction()} />
+            ) : (
+              ""
+            )}
+
             <span className="text-primary">
               {getUserType() === "staff" ? homeWorkDetail?.documents_count : ""}{" "}
               <i
@@ -109,9 +119,11 @@ const HomeWorkDetail = (props) => {
         <hr />
         <div className="row">
           <div className="col-md-12">
-            <p>
-              Class : <strong>{homeWorkDetail?.class_code}</strong>
-            </p>
+            {getUserType() === "staff" && (
+              <p>
+                Class : <strong>{homeWorkDetail?.class_code}</strong>
+              </p>
+            )}
             <p>
               Subject : <strong>{homeWorkDetail?.subject}</strong>
             </p>

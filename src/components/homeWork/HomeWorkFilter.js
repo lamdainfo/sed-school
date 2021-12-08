@@ -3,7 +3,7 @@ import moment from "moment";
 import { Modal, Form, Button, DatePicker, Col, Row, Radio, Select } from "antd";
 
 import { postRequest } from "../../axios";
-import { getSessionData, getUserData } from "../../utils/Helpers";
+import { getSessionData, getUserData, getUserType } from "../../utils/Helpers";
 
 const { Option } = Select;
 
@@ -89,29 +89,31 @@ const HomeWorkFilter = (props) => {
                 />
               </Form.Item>
             </Col>
-            <Col xs={24} sm={12} lg={12}>
-              <Form.Item name="class_code" label="Class">
-                <Select
-                  placeholder="Select Class"
-                  onChange={(value) =>
-                    props.handleFilterSelectChange("category", value)
-                  }
-                >
-                  {!!classList &&
-                    classList.map((s) => (
-                      <Option key={s} value={s}>
-                        {s}
-                      </Option>
-                    ))}
-                </Select>
-              </Form.Item>
-            </Col>
+            {getUserType() === "staff" && (
+              <Col xs={24} sm={12} lg={12}>
+                <Form.Item name="class_code" label="Class">
+                  <Select
+                    placeholder="Select Class"
+                    onChange={(value) =>
+                      props.handleFilterSelectChange("category", value)
+                    }
+                  >
+                    {!!classList &&
+                      classList.map((s) => (
+                        <Option key={s} value={s}>
+                          {s}
+                        </Option>
+                      ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+            )}
             <Col xs={24} sm={12} lg={12}>
               <Form.Item name="subject" label="Subject">
                 <Select
                   placeholder="Select Subject"
                   onChange={(value) =>
-                    props.handleFilterSelectChange("category", value)
+                    props.handleFilterSelectChange("subject", value)
                   }
                 ></Select>
               </Form.Item>

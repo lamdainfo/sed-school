@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 import { postRequest } from "../../axios";
 
 import SubmitedHomeWorkBlock from "./SubmitedHomeWorkBlock";
-import HomeWorkLikeList from "./HomeWorkLikeList";
 import { getSessionData } from "../../utils/Helpers";
 
 const SubmitedHomeWork = (props) => {
   const queryString = props.history.location.query;
-  if (queryString.hid === undefined) {
+
+  if (queryString === undefined || queryString.hid === undefined) {
     props.history.push("/dashboard");
   }
 
@@ -24,7 +24,7 @@ const SubmitedHomeWork = (props) => {
 
   const getHomeWork = async (hid) => {
     const response = await postRequest("get-single-homework", {
-      hid: queryString.hid,
+      hid: queryString?.hid,
     });
     setHomeWorkDetail(response.data.response);
     getHomeWorkList(1);

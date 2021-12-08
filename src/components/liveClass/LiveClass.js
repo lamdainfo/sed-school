@@ -137,12 +137,14 @@ const LiveClass = () => {
                               <strong>{liveClass.subject_name}</strong>
                             </span>
                             <br />{" "}
-                            <span
-                              className="badge text-white "
-                              style={{ backgroundColor: "#0025FF" }}
-                            >
-                              {liveClass.class_code}
-                            </span>{" "}
+                            {getUserType() === "staff" && (
+                              <span
+                                className="badge text-white "
+                                style={{ backgroundColor: "#0025FF" }}
+                              >
+                                {liveClass.class_code}
+                              </span>
+                            )}
                             <div className="frame-wrap mb-0">
                               <span className="d-block text-muted">
                                 <i className="fal fa-sm fa-angle-double-right text-warning"></i>
@@ -164,6 +166,15 @@ const LiveClass = () => {
                                 Duration : {liveClass.duration} Minutes
                               </span>
                             </div>
+                            {getUserType() !== "staff" && (
+                              <div className="frame-wrap mb-2">
+                                <span className="d-block text-muted">
+                                  <i className="fa fa-sm fa-angle-double-right text-warning"></i>
+                                  Remarks : {liveClass?.remarks}
+                                </span>
+                              </div>
+                            )}
+
                             {liveClass.is_meeting_ready ? (
                               <a
                                 target="_blank"
@@ -248,7 +259,7 @@ const LiveClass = () => {
 
                   {liveClassList && liveClassList.length === 0 && (
                     <div className="alert alert-warning ">
-                      No Live Class List Found!
+                      No Live Class List Found for { moment(filterData.filterDate).format("DD-MM-YYYY")}!
                     </div>
                   )}
 

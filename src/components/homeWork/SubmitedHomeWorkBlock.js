@@ -1,6 +1,6 @@
 import React from "react";
 import HomeWorkComment from "./HomeWorkComment";
-import { ShowDocumentPreview } from "../../utils/Helpers";
+import { getUserType, ShowDocumentPreview } from "../../utils/Helpers";
 
 const SubmitedHomeWorkBlock = (props) => {
   return (
@@ -12,7 +12,7 @@ const SubmitedHomeWorkBlock = (props) => {
             alt="student-img"
             className="profile-image rounded-circle"
           />
-          <span className="card-title mb-2">
+          <span className="card-title mb-2 ml-2">
             <strong>{props.homeWorkDetail?.student_name}</strong>
             <br />
             <span className="badge badge-primary">
@@ -39,27 +39,49 @@ const SubmitedHomeWorkBlock = (props) => {
               </div>
             </div>
           </div>
+
+          {props.homeWorkDetail &&
+            props.homeWorkDetail.teacher_comment !== "" && (
+              <p className="d-block mt-3">
+                <strong>Teacher's Comment : {props.homeWorkDetail?.teacher_comment}</strong>
+              </p>
+            )}
         </div>
 
         <div className="card-footer text-muted py-2">
-          <HomeWorkComment
-            htmlText={
-              <button className="btn btn-sm btn-danger waves-effect waves-themed">
-                Re-Submit
-              </button>
-            }
-            stu_sub_hid={props.homeWorkDetail.id}
-            status={2}
-          />
-          <HomeWorkComment
-            htmlText={
-              <button className="btn btn-sm btn-primary waves-effect waves-themed ml-2">
-                Add Comment
-              </button>
-            }
-            stu_sub_hid={props.homeWorkDetail.id}
-            status={1}
-          />
+          {props.homeWorkDetail.teacher_comment !== "" ? (
+            <HomeWorkComment
+              htmlText={
+                <button className="btn btn-sm btn-outline-info waves-effect waves-themed">
+                  Edit Comment
+                </button>
+              }
+              stu_sub_hid={props.homeWorkDetail.id}
+              commentText={props.homeWorkDetail.teacher_comment}
+              status={1}
+            />
+          ) : (
+            <>
+              <HomeWorkComment
+                htmlText={
+                  <button className="btn btn-sm btn-danger waves-effect waves-themed">
+                    Re-Submit
+                  </button>
+                }
+                stu_sub_hid={props.homeWorkDetail.id}
+                status={2}
+              />
+              <HomeWorkComment
+                htmlText={
+                  <button className="btn btn-sm btn-primary waves-effect waves-themed ml-2">
+                    Add Comment
+                  </button>
+                }
+                stu_sub_hid={props.homeWorkDetail.id}
+                status={1}
+              />
+            </>
+          )}
         </div>
       </div>
     </>

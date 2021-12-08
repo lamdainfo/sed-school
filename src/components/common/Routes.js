@@ -21,7 +21,9 @@ import HomeWork from "../homeWork/HomeWork";
 import ApprovalHomeWork from "../homeWork/ApprovalHomeWork";
 import CreateHomeWork from "../homeWork/CreateHomeWork";
 import CreateHomeWorkBySubject from "../homeWork/CreateHomeWorkBySubject";
+import EditHomeWork from "../homeWork/EditHomeWork";
 import SubmitedHomeWork from "../homeWork/SubmitedHomeWork";
+import SubmitHomeWork from "../homeWork/SubmitHomeWork";
 
 import LiveClass from "../liveClass/LiveClass";
 import CreateLiveClass from "../liveClass/CreateLiveClass";
@@ -32,7 +34,6 @@ import Fees from "../fees";
 import Logout from "../authentication/Logout";
 import Maintenance from "../common/Maintenance";
 import Notfound from "../common/Notfound";
-
 export default class Routes extends Component {
   render() {
     if (config.IS_MAINTENANCE_MODE) {
@@ -77,6 +78,11 @@ export default class Routes extends Component {
         />
         <PrivateRoute
           exact
+          path="/edit-home-work"
+          component={EditHomeWork}
+        />        
+        <PrivateRoute
+          exact
           path="/approval-home-work"
           component={ApprovalHomeWork}
         />
@@ -84,6 +90,11 @@ export default class Routes extends Component {
           exact
           path="/submitted-home-work"
           component={SubmitedHomeWork}
+        />
+        <PrivateRoute
+          exact
+          path="/submit-home-work"
+          component={SubmitHomeWork}
         />
 
         <PrivateRoute exact path="/live-class" component={LiveClass} />

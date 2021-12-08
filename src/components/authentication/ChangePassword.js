@@ -3,9 +3,7 @@ import { Modal, Col, Row, Button, Form, Space } from "antd";
 import Password from "antd/lib/input/Password";
 import { postRequest } from "../../axios";
 
-import {
-  SuccessNotificationMsg
-} from "../../utils/NotificationHelper";
+import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
 import { getUserData, getSchoolData, logout } from "../../utils/Helpers";
 
 const ChangePassword = () => {
@@ -69,26 +67,17 @@ const ChangePassword = () => {
                     required: true,
                     message: "Please input new password!",
                   },
-                  () => ({
-                    validator(rule, value) {
-                      if (
-                        !/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!_%*#?&])[A-Za-z\d@$!_%*#?&]{6,}$/.test(
-                          value
-                        )
-                      ) {
-                        return Promise.reject(
-                          "Password should be minimum six characters, at least one letter and one number and one special character."
-                        );
-                      }
-                      return Promise.resolve();
-                    },
-                  }),
+                  {
+                    min: 5,
+                    message: "Password must be minimum six characters.",
+                  },
                 ]}
               >
                 <Password
                   name="newPassword"
                   onChange={(value) => handleChange("newPassword", value)}
                   placeholder="New Password"
+                  maxLength="15"
                 />
               </Form.Item>
             </Col>
@@ -107,7 +96,7 @@ const ChangePassword = () => {
                         return Promise.resolve();
                       }
                       return Promise.reject(
-                        "The two passwords that you entered do not match!"
+                        "The password do not match with new password!"
                       );
                     },
                   }),
@@ -119,6 +108,7 @@ const ChangePassword = () => {
                     handleChange("confirmNewPassword", value)
                   }
                   placeholder="Confirm Password"
+                  maxLength="15"
                 />
               </Form.Item>
             </Col>
