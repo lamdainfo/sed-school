@@ -6,7 +6,7 @@ import { postRequest } from "../../axios";
 import HomeWorkDetail from "./HomeWorkDetail";
 import HomeWorkLikeList from "./HomeWorkLikeList";
 import HomeWorkFilter from "./HomeWorkFilter";
-import SubmitedHomeWorkDetail from "./SubmitedHomeWorkDetail";
+
 import {
   getSessionData,
   getSchoolData,
@@ -192,22 +192,6 @@ const HomeWork = (props) => {
                                 >
                                   VIEW SUBMITTED HOMEWORK
                                 </Link>
-                              </Space>
-                            )}
-
-                            {getUserType() !== "staff" && (
-                              <Space>
-                                <Link
-                                  className="btn btn-sm btn-outline-danger ml-2"
-                                  to={{
-                                    pathname: "/submit-home-work",
-                                    query: { hid: homeWork?.id },
-                                  }}
-                                >
-                                  SUBMIT HOMEWORK
-                                </Link>
-
-                                <SubmitedHomeWorkDetail />
                               </Space>
                             )}
                           </div>

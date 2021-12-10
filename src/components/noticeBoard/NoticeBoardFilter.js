@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Modal, Form, Button, DatePicker, Select, Col, Row } from "antd";
+import { Modal, Form, Button, DatePicker, Select, Col, Row, Space } from "antd";
 import { postRequest } from "../../axios";
 
 const { Option } = Select;
@@ -22,7 +22,7 @@ const NoticeBoardFilter = (props) => {
   const showModelFunction = () => {
     setShowModel(true);
   };
-  
+
   const getCategoryList = async () => {
     const response = await postRequest("get-notice-board-category");
     setCategoryList(response.data.response);
@@ -30,6 +30,11 @@ const NoticeBoardFilter = (props) => {
 
   const onFinish = async () => {
     props.applyFilter();
+    setShowModel(false);
+  };
+
+  const onReset = async () => {
+    props.resetFilter();
     setShowModel(false);
   };
 
@@ -84,14 +89,19 @@ const NoticeBoardFilter = (props) => {
           </Row>
 
           <div className="panel-content mt-2 d-flex flex-row">
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={btnLoading}
-              className="btn btn-primary ml-auto waves-effect waves-themed"
-            >
-              Apply Filter
-            </Button>
+            <Space>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={btnLoading}
+                className="btn btn-primary ml-auto waves-effect waves-themed"
+              >
+                Apply Filter
+              </Button>
+              <button onClick={onReset} className="btn btn-secondary ml-auto waves-effect waves-themed">
+                Clear Filter
+              </button>
+            </Space>
           </div>
         </Form>
       </Modal>

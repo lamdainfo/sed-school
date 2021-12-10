@@ -10,6 +10,7 @@ import {
 } from "../../utils/NotificationHelper";
 import LiveClassAttendentList from "./LiveClassAttendentList";
 import LiveClassFilter from "./LiveClassFilter";
+import LiveClassButton from "./LiveClassButton";
 
 const LiveClass = () => {
   const [popConfirmShowStatus, setPopConfirmShowStatus] = useState(false);
@@ -104,7 +105,7 @@ const LiveClass = () => {
         <div className="subheader">
           <h1 className="subheader-title">
             <i className="subheader-icon fal fa-clipboard"></i>{" "}
-            <span className="fw-300">Live Classes</span>
+            <span className="fw-300">Live Classes </span>
           </h1>
         </div>
         <div className="row">
@@ -160,7 +161,7 @@ const LiveClass = () => {
                                   liveClass.start_time}
                               </span>
                             </div>
-                            <div className="frame-wrap mb-2">
+                            <div className="frame-wrap mb-0">
                               <span className="d-block text-muted">
                                 <i className="fa fa-sm fa-angle-double-right text-warning"></i>
                                 Duration : {liveClass.duration} Minutes
@@ -175,25 +176,9 @@ const LiveClass = () => {
                               </div>
                             )}
 
-                            {liveClass.is_meeting_ready ? (
-                              <a
-                                target="_blank"
-                                href={
-                                  getUserType() === "staff"
-                                    ? liveClass.teacher_start_url
-                                    : liveClass.join_url
-                                }
-                                className="btn btn-sm btn-success text-white"
-                              >
-                                {getUserType() === "staff"
-                                  ? "Start Class"
-                                  : "Join Class"}
-                              </a>
-                            ) : (
-                              <a className="btn btn-sm btn-danger text-white">
-                                Class Not Ready{" "}
-                              </a>
-                            )}
+                            <LiveClassButton liveClassDetail={liveClass} />
+
+                            
                           </div>
 
                           {getUserType() === "staff" && (
@@ -253,13 +238,15 @@ const LiveClass = () => {
                               )}
                             </div>
                           )}
+
+                          
                         </div>
                       );
                     })}
 
                   {liveClassList && liveClassList.length === 0 && (
                     <div className="alert alert-warning ">
-                      No Live Class List Found for { moment(filterData.filterDate).format("DD-MM-YYYY")}!
+                      No Live Class List Found for {filterData.filterDate}!
                     </div>
                   )}
 

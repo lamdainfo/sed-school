@@ -61,6 +61,14 @@ const NoticeBoard = (props) => {
     getNoticeBoardList(1);
   };
 
+  const resetFilter = () => {
+    // setFilterData({
+    //   filter_date: "",
+    //   category: "",
+    // });
+    // getNoticeBoardList(1);
+  };
+
   return (
     <main id="js-page-content" role="main" className="page-content">
       <div id="content">
@@ -80,6 +88,7 @@ const NoticeBoard = (props) => {
                     handleFilterChangeFilterDate={handleFilterChangeFilterDate}
                     handleFilterSelectChange={handleFilterSelectChange}
                     applyFilter={applyFilter}
+                    resetFilter={resetFilter}
                   />
                 </div>
               </div>

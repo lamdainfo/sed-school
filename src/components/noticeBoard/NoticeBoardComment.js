@@ -6,7 +6,7 @@ import { postRequest } from "../../axios";
 import { getSessionData, getUserType } from "../../utils/Helpers";
 import NoticeBoardCommentPost from "./NoticeBoardCommentPost";
 
-const CommentUI = ({ time, comment, userImg }) => {
+const CommentUI = ({ time, comment, userImg, cmt, refreshScreen, nid }) => {
   return (
     <div className="alert alert-info fade show px-3 py-2" role="alert">
       <div className="row">
@@ -20,6 +20,25 @@ const CommentUI = ({ time, comment, userImg }) => {
           <p>{time}</p>
         </div>
         <div className="col-md-1"></div>
+
+        {cmt.reply?.length === 0 && getUserType() !== "staff" ? (
+          <div>
+            <NoticeBoardCommentPost
+              commentType="comment"
+              refreshScreen={refreshScreen}
+              nid={nid}
+              cid={cmt.id}
+              commentText={comment}
+              html={
+                <button className="btn btn-sm btn-success waves-effect waves-themed">
+                  Edit
+                </button>
+              }
+            />
+          </div>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );
@@ -139,6 +158,9 @@ const NoticeBoardComment = (props) => {
                               time={cmt.time}
                               comment={cmt.description}
                               userImg={cmt.user.image}
+                              cmt={cmt}
+                              refreshScreen={refreshScreen}
+                              nid={noticeBoardDetail?.id}
                             />
 
                             {cmt.reply &&
@@ -179,7 +201,8 @@ const NoticeBoardComment = (props) => {
                     </div>
                   </div>
 
-                  {noticeBoardDetail?.comment.length === 0 && getUserType() !== "staff" ? (
+                  {noticeBoardDetail?.comment.length === 0 &&
+                  getUserType() !== "staff" ? (
                     <div>
                       <NoticeBoardCommentPost
                         commentType="comment"

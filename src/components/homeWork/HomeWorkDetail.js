@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { Modal } from "antd";
+import { Link } from "react-router-dom";
+import { Modal, Space } from "antd";
 
 import { postRequest } from "../../axios";
 import HomeWorkComment from "./HomeWorkComment";
 import HomeWorkLikeList from "./HomeWorkLikeList";
+import SubmitedHomeWorkDetail from "./SubmitedHomeWorkDetail";
+
 import { ShowDocumentPreview, getUserType } from "../../utils/Helpers";
 import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
 
@@ -69,7 +72,36 @@ const HomeWorkDetail = (props) => {
             <span className="d-block">
               Submit By :<strong>{homeWorkDetail?.submission_date}</strong>
             </span>
+            <div className="mt-3">
+              {getUserType() !== "staff" ? (
+                <Space>
+                  {homeWorkDetail?.is_homework_complete === 0 ||
+                    homeWorkDetail?.is_homework_complete === 2 ? (
+                    <Link
+                      className="btn btn-sm btn-outline-danger ml-2"
+                      to={{
+                        pathname: "/submit-home-work",
+                        query: { hid: homeWorkDetail?.id },
+                      }}
+                    >
+                      SUBMIT HOMEWORK
+                    </Link>
+                  ) : (
+                    ""
+                  )}
+
+                  {homeWorkDetail?.is_homework_complete === 1 ? (
+                    <SubmitedHomeWorkDetail homeWorkDetail={homeWorkDetail} />
+                  ) : (
+                    ""
+                  )}
+                </Space>
+              ) : (
+                ""
+              )}
+            </div>
           </div>
+
           <div className="col-md-8 text-right">
             <div className="frame-wrap mb-2">
               <span className="d-block">

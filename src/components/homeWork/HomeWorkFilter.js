@@ -15,6 +15,7 @@ const HomeWorkFilter = (props) => {
   });
   const [showModel, setShowModel] = useState(false);
   const [classList, setClassList] = useState([]);
+  const [subjectList, setSubjectList] = useState([]);
 
   useEffect(() => {
     getClassList();
@@ -41,6 +42,15 @@ const HomeWorkFilter = (props) => {
       (item, pos) => classArr.indexOf(item) === pos
     );
     setClassList(uniqueClassList);
+  };
+
+  const getSubjectList = async () => {
+    const subjectRes = await postRequest("get-homework-subject-by-class-code", {
+      sid: getSessionData().code,
+      class_code: getUserData().stdClass + "-" + getUserData().stdSection,
+    });
+
+    setSubjectList(subjectRes.data.response);
   };
 
   const onFinish = async () => {
@@ -115,7 +125,14 @@ const HomeWorkFilter = (props) => {
                   onChange={(value) =>
                     props.handleFilterSelectChange("subject", value)
                   }
-                ></Select>
+                >
+                  {!!subjectList &&
+                    subjectList.map((s) => (
+                      <Option key={s.id} value={s.id}>
+                        {s.subject_name}
+                      </Option>
+                    ))}
+                </Select>
               </Form.Item>
             </Col>
           </Row>
