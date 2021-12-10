@@ -85,7 +85,7 @@ const CreateNoticeBoard = (props) => {
   };
 
   const onFinish = async () => {
-    // setBtnLoading(true);
+    setBtnLoading(true);
 
     let studentsArr = [];
     state.student_list.map((student) => {

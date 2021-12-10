@@ -3,7 +3,7 @@ import moment from "moment";
 import { Modal, Form, Button, Col, Row, Select, Radio } from "antd";
 
 import { postRequest } from "../../axios";
-import { getSessionData, getUserData, getUserType } from "../../utils/Helpers";
+import { getSessionData, getSchoolData } from "../../utils/Helpers";
 import { ErrorNotificationMsg } from "../../utils/NotificationHelper";
 
 const { Option } = Select;
@@ -34,35 +34,27 @@ const FeePayment = (props) => {
     setShowPGModel(true);
   };
 
-  const handleFilterSelectChange = (field, value) => {
+  const handleFilterSelectChange = (value) => {
     setState({ ...state, selectedMonth: value });
   };
 
   const onFinish = async () => {
+    let selectedMonthArr = [];
+    state.selectedMonth.map((month) => {
+      let sInfo = month.split("-");
+      selectedMonthArr.push({ monthId: sInfo[0], monthName: sInfo[1] });
+    });
+
     const payload = {
       form_data: {
         paymentGateway: "PayUmoney",
-        schoolCode: "2222222",
-        sessionCode: "2021",
+        schoolCode: getSchoolData().school_code,
+        sessionCode: getSessionData().rcode,
         sid: "1",
-        categoryId: "2",
-        nameArray: [
-          {
-            id: "6",
-            markOptional: 0,
-          },
-        ],
-        amount: "702",
-        selectedMonth: [
-          {
-            monthId: "10",
-            monthName: "OCT",
-          },
-          {
-            monthId: "11",
-            monthName: "NOV",
-          },
-        ],
+        categoryId: props?.categoryId,
+        nameArray: props?.nameArray,
+        amount: state.selectedMonth.length * props?.amountPerMonth,
+        selectedMonth: selectedMonthArr,
       },
     };
 
@@ -109,7 +101,7 @@ const FeePayment = (props) => {
           layout="vertical"
         >
           <Row gutter={[15]}>
-            <Col xs={24} sm={12} lg={12}>
+            <Col xs={24} sm={24} lg={24}>
               <Form.Item
                 name="subject"
                 label="Select Month(s)"
@@ -127,12 +119,67 @@ const FeePayment = (props) => {
                 >
                   {!!props.feesDueDetail &&
                     props.feesDueDetail.map((s) => (
-                      <Option key={s.monthId} value={s.monthId}>
+                      <Option
+                        key={s.monthId}
+                        value={s.monthId + "-" + s.monthName}
+                      >
                         {s.monthName}
                       </Option>
                     ))}
                 </Select>
               </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={[15]}>
+            <Col xs={24} sm={24} lg={24}>
+              <table className="table table-sm table-bordered table-hover">
+                <thead className="thead-themed text-center">
+                  <tr>
+                    <th>
+                      PREVIOUS DUE
+                      <br />
+                      (1)
+                    </th>
+                    <th>
+                      NUMBER OF MONTH(S)
+                      <br />
+                      (2)
+                    </th>
+                    <th>
+                      AMOUNT
+                      <br />
+                      (3)
+                    </th>
+                    <th>
+                      TOTAL
+                      <br />
+                      (1+2x3)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="text-right">
+                      <i className="fal fa-rupee-sign"></i>
+                      <span>0</span>
+                    </td>
+                    <td className="text-right">
+                      <span>{state.selectedMonth.length}</span>
+                    </td>
+                    <td className="text-right">
+                      <i className="fal fa-rupee-sign"></i>
+                      <span> {props?.amountPerMonth}</span>
+                    </td>
+                    <td className="text-right">
+                      <i className="fal fa-rupee-sign"></i>
+                      <span>
+                        {state.selectedMonth.length * props?.amountPerMonth}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </Col>
           </Row>
 
@@ -155,18 +202,34 @@ const FeePayment = (props) => {
         onCancel={hidePGModelFunction}
         footer={false}
       >
-        <form
-          action="https://secure.payu.in/_payment"
-          method="POST"
-        >
-          <input type="hidden" name="key" value={pgData?.pgDetails?.merchantKey} />
+        <p>
+          Payable Amount : {state.selectedMonth.length * props?.amountPerMonth}
+        </p>
+        <form action="https://secure.payu.in/_payment" method="POST">
+          <input
+            type="hidden"
+            name="key"
+            value={pgData?.pgDetails?.merchantKey}
+          />
           <input type="hidden" name="hash" value={pgData?.pgDetails?.hash} />
           <input type="hidden" name="txnid" value={pgData?.pgDetails?.txnid} />
-          <input type="hidden" name="amount" value={pgData?.pgDetails?.amount} />
-          <input type="hidden" name="firstname" value={pgData?.pgDetails?.firstname} />
+          <input
+            type="hidden"
+            name="amount"
+            value={pgData?.pgDetails?.amount}
+          />
+          <input
+            type="hidden"
+            name="firstname"
+            value={pgData?.pgDetails?.firstname}
+          />
           <input type="hidden" name="email" value={pgData?.pgDetails?.email} />
           <input type="hidden" name="phone" value={pgData?.pgDetails?.phone} />
-          <input type="hidden" name="productinfo" value={pgData?.pgDetails?.productinfo} />
+          <input
+            type="hidden"
+            name="productinfo"
+            value={pgData?.pgDetails?.productinfo}
+          />
           <input
             type="hidden"
             name="service_provider"
@@ -176,15 +239,16 @@ const FeePayment = (props) => {
           <input type="hidden" name="surl" value={pgData?.pgDetails?.surl} />
           <input type="hidden" name="furl" value={pgData?.pgDetails?.furl} />
           <input type="hidden" name="udf1" value={pgData?.pgDetails?.udf1} />
-        
-          <input type="submit" value="Submit"  />
-        {/* <Row gutter={[15]}>
-          <Col xs={24} sm={12} lg={12}>
-            <Form.Item name="subject" label="Select Month(s)">
-              <Radio on>PayUmoney</Radio>
-            </Form.Item>
-          </Col>
-        </Row> */}
+          <input type="hidden" name="udf2" value={pgData?.pgDetails?.udf2} />
+          <input type="hidden" name="udf3" value={pgData?.pgDetails?.udf3} />
+          <input type="hidden" name="udf4" value={pgData?.pgDetails?.udf4} />
+          <input type="hidden" name="udf5" value={pgData?.pgDetails?.udf5} />
+
+          <input
+            type="submit"
+            value="Submit"
+            className="btn btn-primary ml-auto waves-effect waves-themed"
+          />
         </form>
       </Modal>
     </>

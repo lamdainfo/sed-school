@@ -31,9 +31,7 @@ const DueFees = () => {
     console.log(key);
   }
 
-  const payFees = () => {
-    
-  }
+  const payFees = () => {};
 
   return (
     <div className="panel">
@@ -118,29 +116,12 @@ const DueFees = () => {
                           </tr>
                           <tr>
                             <th colspan="4">
-
-                            {/* <form name="postForm" action="https://secure.payu.in/_payment" method="POST" >
-                <input type="hidden" name="key" value="BOX14uUt" />
-                <input type="hidden" name="hash" value="250c0f6234cc5e3b4db93a626b5e15d2a50b1913166144a8cab748ff916e5a4364ce9b7ee7ec4e8b4cb53d07cbec948069e988e0fd66f04e937902a00952d098" />
-                <input type="hidden" name="txnid" value="12100011549596319" />
-                <input type="hidden" name="amount" value="11" />
-                <input type="hidden" name="firstname" value="ABHIDHANI MANDAL" />
-                <input type="hidden" name="email" value="abhidhanimandal.1210001@gmail.com" />
-                <input type="hidden" name="phone" value="1234567890" />
-                <input type="hidden" name="productinfo" value="Fees" />
-                <input type="hidden" name="service_provider" value="payu_paisa" size="64" />
-                <input type="hidden" name="surl" value="http://localhost:3000/dashboard" />
-                <input type="hidden" name="furl" value="http://localhost:3000/live-class" />
-                <input type="hidden" name="udf1" value="2222222" />
-                <input type="hidden" name="udf2" value="2021" />
-                <input type="hidden" name="udf3" value="1" />
-                <input type="hidden" name="udf4" value="2" />
-                <input type="hidden" name="udf5" value="10,11" />
-            
-                              
-                              </form> */}
-
-                              <FeePayment feesDueDetail={fees.dueMonthArray} />
+                              <FeePayment
+                                feesDueDetail={fees.dueMonthArray}
+                                categoryId={fees.categoryId}
+                                nameArray={fees.nameArray}
+                                amountPerMonth={fees.amountPerMonth}
+                              />
                             </th>
                           </tr>
                         </tfoot>
