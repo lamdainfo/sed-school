@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import moment from "moment";
-import { Modal, Form, Button, DatePicker, Col, Row } from "antd";
+import { Modal, Form, Button, DatePicker, Col, Row, Space } from "antd";
 
 const LiveClassFilter = (props) => {
   const dateFormat = "DD/MM/YYYY";
@@ -21,6 +21,10 @@ const LiveClassFilter = (props) => {
   const onFinish = async () => {
     props.applyFilter();
     setShowModel(false);
+  };
+
+  const onReset = () => {
+    window.location.href = "/live-class";
   };
 
   return (
@@ -57,6 +61,7 @@ const LiveClassFilter = (props) => {
           </Row>
 
           <div className="panel-content mt-2 d-flex flex-row">
+          <Space>
             <Button
               type="primary"
               htmlType="submit"
@@ -64,6 +69,13 @@ const LiveClassFilter = (props) => {
             >
               Apply Filter
             </Button>
+            <button
+                onClick={onReset}
+                className="btn btn-secondary ml-auto waves-effect waves-themed"
+              >
+                Clear Filter
+              </button>
+            </Space>
           </div>
         </Form>
       </Modal>

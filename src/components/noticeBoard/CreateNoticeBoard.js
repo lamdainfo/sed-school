@@ -6,6 +6,7 @@ import { postRequest } from "../../axios";
 import { UploadOutlined } from "@ant-design/icons";
 
 import PageHeader from "../common/PageHeader";
+import NoticeBoardDocumentUpload from "./NoticeBoardDocumentUpload";
 import {
   SuccessNotificationMsg,
   ErrorNotificationMsg,
@@ -31,6 +32,8 @@ const CreateNoticeBoard = (props) => {
     is_draft: null,
     class_code: null,
     student_list: [],
+    projectDocuments: [],
+    uploadedFiles: [],
   });
   const [btnLoading, setBtnLoading] = useState(false);
   const [categoryList, setCategoryList] = useState([]);
@@ -84,6 +87,16 @@ const CreateNoticeBoard = (props) => {
     setStudentList(studentRes.data.response);
   };
 
+  const getBase64 = (img, callback) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   const onFinish = async () => {
     setBtnLoading(true);
 
@@ -92,6 +105,17 @@ const CreateNoticeBoard = (props) => {
       let sInfo = student.split("-");
       studentsArr.push({ id: sInfo[0], name: sInfo[1] });
     });
+
+    let multifile = [];
+    state.projectDocuments.map((img) => {
+      getBase64(img.file.originFileObj, (imageUrl) => {
+        img.file = imageUrl.replace("data:", "").replace(/^.+,/, "");
+      });
+      multifile.push(img);
+    });
+
+    await sleep(state.projectDocuments.length * 1000);
+    console.log(multifile);
 
     const payload = {
       edit_mode: "",
@@ -109,13 +133,14 @@ const CreateNoticeBoard = (props) => {
         student_list: studentsArr,
         staff_list: [],
       },
-      // "multifile": [
+      // multifile: [
       //   {
       //     "file_name": "IMG_1636181784933",
       //     "ext": ".jpg",
       //     "file": ""
       //   }
       // ]
+      multifile: multifile,
     };
 
     try {
@@ -133,15 +158,25 @@ const CreateNoticeBoard = (props) => {
     }
   };
 
+  const handleProjectDocumentChange = (images) => {
+    setState({ ...state, projectDocuments: images });
+  };
+
+  const handleDocumentDelete = (doc) => {
+    let documents = state.projectDocuments;
+    let documentIndex = documents.findIndex(
+      (res) => res.file.uid === doc.file.uid
+    );
+    documents.splice(documentIndex, 1);
+    setState({ ...state, projectDocuments: documents });
+  };
+
   const uploadProps = {
     name: "file",
     multiple: true,
-    accept: ".jpg,.png,.jpeg",
+    accept: ".jpg,.png,.jpeg,.pdf",
     maxCount: 10,
-    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-    headers: {
-      authorization: "authorization-text",
-    },
+    listType: "picture",
   };
 
   return (
@@ -322,13 +357,13 @@ const CreateNoticeBoard = (props) => {
                           </Col>
 
                           <Col xs={24} sm={12} lg={24}>
-                            <label>Attachment(s) [Attach up to 10 files.]</label>
-                            <br />
-                            <Upload {...uploadProps}>
-                              <Button icon={<UploadOutlined />}>
-                                Click to Upload
-                              </Button>
-                            </Upload>
+                            <NoticeBoardDocumentUpload
+                              stateValues={state}
+                              handleProjectDocumentChange={
+                                handleProjectDocumentChange
+                              }
+                              handleDocumentDelete={handleDocumentDelete}
+                            />
                           </Col>
                         </Row>
                         <br />

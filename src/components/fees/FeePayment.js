@@ -1,6 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import moment from "moment";
-import { Modal, Form, Button, Col, Row, Select, Radio } from "antd";
+import React, { useState, useRef } from "react";
+import { Modal, Form, Button, Col, Row, Select } from "antd";
 
 import { postRequest } from "../../axios";
 import { getSessionData, getSchoolData } from "../../utils/Helpers";

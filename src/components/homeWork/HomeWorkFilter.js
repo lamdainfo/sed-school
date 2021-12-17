@@ -1,6 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
-import moment from "moment";
-import { Modal, Form, Button, DatePicker, Col, Row, Radio, Select } from "antd";
+import {
+  Modal,
+  Form,
+  Button,
+  DatePicker,
+  Col,
+  Row,
+  Radio,
+  Select,
+  Space,
+} from "antd";
 
 import { postRequest } from "../../axios";
 import { getSessionData, getUserData, getUserType } from "../../utils/Helpers";
@@ -56,6 +65,10 @@ const HomeWorkFilter = (props) => {
   const onFinish = async () => {
     props.applyFilter();
     setShowModel(false);
+  };
+
+  const onReset = () => {
+    window.location.href = "/home-work";
   };
 
   return (
@@ -138,13 +151,21 @@ const HomeWorkFilter = (props) => {
           </Row>
 
           <div className="panel-content mt-2 d-flex flex-row">
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="btn btn-primary ml-auto waves-effect waves-themed"
-            >
-              Apply Filter
-            </Button>
+            <Space>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="btn btn-primary ml-auto waves-effect waves-themed"
+              >
+                Apply Filter
+              </Button>
+              <button
+                onClick={onReset}
+                className="btn btn-secondary ml-auto waves-effect waves-themed"
+              >
+                Clear Filter
+              </button>
+            </Space>
           </div>
         </Form>
       </Modal>

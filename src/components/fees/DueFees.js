@@ -31,8 +31,6 @@ const DueFees = () => {
     console.log(key);
   }
 
-  const payFees = () => {};
-
   return (
     <div className="panel">
       <div className="panel-hdr">

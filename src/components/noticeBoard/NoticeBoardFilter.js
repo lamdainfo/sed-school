@@ -33,9 +33,8 @@ const NoticeBoardFilter = (props) => {
     setShowModel(false);
   };
 
-  const onReset = async () => {
-    props.resetFilter();
-    setShowModel(false);
+  const onReset = () => {
+    window.location.href = "/notice-board";
   };
 
   return (
@@ -98,7 +97,10 @@ const NoticeBoardFilter = (props) => {
               >
                 Apply Filter
               </Button>
-              <button onClick={onReset} className="btn btn-secondary ml-auto waves-effect waves-themed">
+              <button
+                onClick={onReset}
+                className="btn btn-secondary ml-auto waves-effect waves-themed"
+              >
                 Clear Filter
               </button>
             </Space>

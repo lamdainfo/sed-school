@@ -85,3 +85,17 @@ export const ShowDocumentPreview = (docURL, docType) => {
     return <iframe src={docURL} title="doc-view" height="400px"></iframe>;
   }
 };
+
+export const isImageOrFile = (type) => {
+  const imagesArr = [
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".gif",
+    ".tiff",
+  ];
+  return imagesArr.includes(type);
+};
