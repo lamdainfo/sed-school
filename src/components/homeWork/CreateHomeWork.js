@@ -1,21 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import {
-  Input,
-  Row,
-  Col,
-  Select,
-  Form,
-  Upload,
-  Button,
-  DatePicker,
-  Space,
-} from "antd";
+import { Input, Row, Col, Select, Form, Button, DatePicker, Space } from "antd";
 import { postRequest } from "../../axios";
-import { UploadOutlined } from "@ant-design/icons";
 
 import PageHeader from "../common/PageHeader";
+import HomeworkDocumentUpload from "./HomeworkDocumentUpload";
 import {
   SuccessNotificationMsg,
   ErrorNotificationMsg,
@@ -42,6 +32,7 @@ const CreateHomeWork = (props) => {
     comment_enable: 0,
     topic: "",
     description: null,
+    projectDocuments: [],
   });
   const [btnLoading, setBtnLoading] = useState(false);
   const [classList, setClassList] = useState([]);
@@ -111,6 +102,16 @@ const CreateHomeWork = (props) => {
     setSubjectList(subjectRes.data.response);
   };
 
+  const getBase64 = (img, callback) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   const onFinish = async () => {
     setBtnLoading(true);
 
@@ -119,6 +120,16 @@ const CreateHomeWork = (props) => {
       let sInfo = student.split("-");
       studentsArr.push({ id: sInfo[0], name: sInfo[1] });
     });
+
+    let multifile = [];
+    state.projectDocuments.map((img) => {
+      getBase64(img.file.originFileObj, (imageUrl) => {
+        img.file = imageUrl.replace("data:", "").replace(/^.+,/, "");
+      });
+      multifile.push(img);
+    });
+
+    await sleep(state.projectDocuments.length * 1000);
 
     const payload = {
       edit_mode: "",
@@ -142,13 +153,7 @@ const CreateHomeWork = (props) => {
         edit_student_list: [],
         student_list: studentsArr,
       },
-      // "multifile": [
-      //   {
-      //     "file_name": "IMG_1636181784933",
-      //     "ext": ".jpg",
-      //     "file": ""
-      //   }
-      // ]
+      multifile: multifile,
     };
 
     try {
@@ -168,12 +173,17 @@ const CreateHomeWork = (props) => {
     }
   };
 
-  const uploadProps = {
-    name: "file",
-    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-    headers: {
-      authorization: "authorization-text",
-    },
+  const handleProjectDocumentChange = (images) => {
+    setState({ ...state, projectDocuments: images });
+  };
+
+  const handleDocumentDelete = (doc) => {
+    let documents = state.projectDocuments;
+    let documentIndex = documents.findIndex(
+      (res) => res.file.uid === doc.file.uid
+    );
+    documents.splice(documentIndex, 1);
+    setState({ ...state, projectDocuments: documents });
   };
 
   return (
@@ -430,13 +440,13 @@ const CreateHomeWork = (props) => {
                           </Col>
 
                           <Col xs={24} sm={12} lg={24}>
-                            <label>Attachment(s) [Attach up to 4 files.]</label>
-                            <br />
-                            <Upload {...uploadProps}>
-                              <Button icon={<UploadOutlined />}>
-                                Click to Upload
-                              </Button>
-                            </Upload>
+                            <HomeworkDocumentUpload
+                              stateValues={state}
+                              handleProjectDocumentChange={
+                                handleProjectDocumentChange
+                              }
+                              handleDocumentDelete={handleDocumentDelete}
+                            />
                           </Col>
                         </Row>
                         <br />

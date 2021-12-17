@@ -148,9 +148,9 @@ const CreateLiveClass = (props) => {
                     <div className="panel-content">
                       <Row gutter={[15]}>
                         <Col xs={24} sm={12} lg={8}>
-                          <label>Class *</label>
                           <Form.Item
                             name="class_code"
+                            label="Class"
                             rules={[
                               {
                                 required: true,
@@ -174,9 +174,9 @@ const CreateLiveClass = (props) => {
                           </Form.Item>
                         </Col>
                         <Col xs={24} sm={12} lg={8}>
-                          <label>Section *</label>
                           <Form.Item
                             name="sections"
+                            label="Section"
                             rules={[
                               {
                                 required: true,
@@ -201,9 +201,9 @@ const CreateLiveClass = (props) => {
                           </Form.Item>
                         </Col>
                         <Col xs={24} sm={12} lg={8}>
-                          <label>Subject *</label>
                           <Form.Item
                             name="subject_code"
+                            label="Subject"
                             rules={[
                               {
                                 required: true,
@@ -228,8 +228,7 @@ const CreateLiveClass = (props) => {
                         </Col>
 
                         <Col xs={24} sm={12} lg={8}>
-                          <label>Class Date *</label>
-                          <Form.Item name="class_date">
+                          <Form.Item name="class_date" label="Class Date">
                             <DatePicker
                               defaultValue={moment()}
                               format={dateFormat}
@@ -241,8 +240,7 @@ const CreateLiveClass = (props) => {
                         </Col>
 
                         <Col xs={24} sm={12} lg={8}>
-                          <label>From Time *</label>
-                          <Form.Item name="class_start_time">
+                          <Form.Item name="class_start_time" label="From Time">
                             <TimePicker
                               defaultValue={moment()}
                               format={timeFormat}
@@ -253,9 +251,9 @@ const CreateLiveClass = (props) => {
                         </Col>
 
                         <Col xs={24} sm={12} lg={8}>
-                          <label>Duration *</label>
                           <Form.Item
                             name="class_duration"
+                            label="Duration"
                             rules={[
                               {
                                 required: true,
@@ -279,8 +277,7 @@ const CreateLiveClass = (props) => {
                         </Col>
 
                         <Col xs={24} sm={12} lg={24}>
-                          <label>Remarks</label>
-                          <Form.Item name="remarks">
+                          <Form.Item name="remarks" label="Remarks">
                             <TextArea
                               placeholder="Enter Remarks"
                               rows={2}

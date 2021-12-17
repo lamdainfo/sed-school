@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   getSchoolData,
   getUserData,
@@ -12,18 +12,35 @@ import ChangePassword from "../authentication/ChangePassword";
 import "antd/dist/antd.css";
 
 const AdminLayout = (props) => {
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const toggleSidebar = () => {
+    setSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className="page-wrapper mod-nav-link">
       <div className="page-inner">
-        {getUserType() === "staff" ? <Sidebar /> : <SidebarStudent />}
+        {getUserType() === "staff" ? (
+          <Sidebar
+            isSidebarOpen={isSidebarOpen}
+            toggleSidebar={toggleSidebar}
+          />
+        ) : (
+          <SidebarStudent
+            isSidebarOpen={isSidebarOpen}
+            toggleSidebar={toggleSidebar}
+          />
+        )}
 
         <div className="page-content-wrapper">
           <header className="page-header">
-            <a href="#" className="hamburger hamopen">
-              <span></span>
-              <span></span>
-              <span></span>
-            </a>
+            {!isSidebarOpen && (
+              <a href="#" onClick={toggleSidebar} className="hamburger hamopen">
+                <span></span>
+                <span></span>
+                <span></span>
+              </a>
+            )}
             <div className="ml-auto d-flex">
               <div>
                 <a

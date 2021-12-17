@@ -35,36 +35,36 @@ const ButtonUI = (props) => {
 const Dashboard = (props) => {
   return (
     <main className="page-content">
-      {getUserType() === "staff" && (
-        <div className="row">
-          <ButtonUI
-            title="Notice Board"
-            subtitle="Create"
-            url="/create-notice-board"
-            icon="fal fa-user"
-            color="bg-primary-800"
-            history={props.history}
-          />
-          <ButtonUI
-            title="Homework"
-            subtitle="Create"
-            url="/create-home-work"
-            icon="fal fa-user"
-            color="bg-warning-800"
-            history={props.history}
-          />
-          <ButtonUI
-            title="Live Class"
-            subtitle="Create"
-            url="/create-live-class"
-            icon="fal fa-user"
-            color="bg-success-800"
-            history={props.history}
-          />
-        </div>
-      )}
-
       <div className="row">
+        {getUserType() === "staff" && (
+          <>
+            <ButtonUI
+              title="Notice Board"
+              subtitle="Create"
+              url="/create-notice-board"
+              icon="fal fa-user"
+              color="bg-primary-800"
+              history={props.history}
+            />
+            <ButtonUI
+              title="Homework"
+              subtitle="Create"
+              url="/create-home-work"
+              icon="fal fa-user"
+              color="bg-warning-800"
+              history={props.history}
+            />
+            <ButtonUI
+              title="Live Class"
+              subtitle="Create"
+              url="/create-live-class"
+              icon="fal fa-user"
+              color="bg-success-800"
+              history={props.history}
+            />
+          </>
+        )}
+
         <ButtonUI
           title="Notice Board"
           subtitle="Show List"

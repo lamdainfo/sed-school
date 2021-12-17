@@ -5,18 +5,35 @@ import LogoSmall from "../../styles/LogoSmall";
 import coverBG from "../../images/cover-2-lg.png";
 import { getUserData, getSchoolData } from "../../utils/Helpers";
 
-const Sidebar = () => {
+const Sidebar = (props) => {
   const [menu1, setmenu1] = useState(false);
   const [menu2, setmenu2] = useState(false);
   const [menu3, setmenu3] = useState(false);
 
+  const toggleSidebar = () => {
+    props.toggleSidebar();
+  };
+
   return (
     <>
-      <aside className="page-sidebar sidebaropen ">
+      <aside
+        className={
+          props.isSidebarOpen
+            ? "page-sidebar sidebaropen"
+            : "page-sidebar sidebarclose"
+        }
+      >
         <div className="page-logo">
           <Link to="/dashboard">
             <LogoSmall />
           </Link>
+          <div style={{marginLeft:"30px"}}>
+            <a href="#" onClick={toggleSidebar} className="hamburger hamopen">
+              <span></span>
+              <span></span>
+              <span></span>
+            </a>
+          </div>
         </div>
 
         <nav id="js-primary-nav" className="primary-nav" role="navigation">

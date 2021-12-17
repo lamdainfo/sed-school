@@ -11,7 +11,8 @@ import { isImageOrFile } from "../../utils/Helpers";
 import { ErrorNotificationMsg } from "../../utils/NotificationHelper";
 
 const { Dragger } = Upload;
-class NoticeBoardDocumentUpload extends React.Component {
+
+class HomeworkDocumentUpload extends React.Component {
   uploadFile = (info) => {
     let isValidationFiles = true;
     info.fileList.forEach((doc) => {
@@ -45,7 +46,7 @@ class NoticeBoardDocumentUpload extends React.Component {
       multiple: true,
       listType: "picture-card",
       showUploadList: false,
-      accept: ".pdf,.jpg,.jpeg,.png",
+      accept: ".jpg,.jpeg,.png",
       maxCount: 10,
       beforeUpload: (file) => {
         return false;
@@ -68,8 +69,8 @@ class NoticeBoardDocumentUpload extends React.Component {
               Click or drag file to this area to upload
             </p>
             <p className="ant-upload-hint">
-              Support for a single or bulk upload. Supported file types are pdf,
-              jpg, jpeg, png. File upload limit is 10.
+              Support for a single or bulk upload. Supported file types are jpg,
+              jpeg, png. File upload limit is 10.
             </p>
           </Dragger>
         </div>
@@ -113,4 +114,4 @@ class NoticeBoardDocumentUpload extends React.Component {
   }
 }
 
-export default NoticeBoardDocumentUpload;
+export default HomeworkDocumentUpload;

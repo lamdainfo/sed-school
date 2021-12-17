@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import { Input, Row, Col, Select, Form, Upload, Button } from "antd";
+import { Input, Row, Col, Select, Form, Button } from "antd";
 import { postRequest } from "../../axios";
-import { UploadOutlined } from "@ant-design/icons";
 
 import PageHeader from "../common/PageHeader";
 import NoticeBoardDocumentUpload from "./NoticeBoardDocumentUpload";
@@ -115,7 +114,6 @@ const CreateNoticeBoard = (props) => {
     });
 
     await sleep(state.projectDocuments.length * 1000);
-    console.log(multifile);
 
     const payload = {
       edit_mode: "",
@@ -133,13 +131,6 @@ const CreateNoticeBoard = (props) => {
         student_list: studentsArr,
         staff_list: [],
       },
-      // multifile: [
-      //   {
-      //     "file_name": "IMG_1636181784933",
-      //     "ext": ".jpg",
-      //     "file": ""
-      //   }
-      // ]
       multifile: multifile,
     };
 
