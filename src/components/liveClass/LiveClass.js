@@ -149,7 +149,8 @@ const LiveClass = () => {
                             <div className="frame-wrap mb-0">
                               <span className="d-block text-muted">
                                 <i className="fal fa-sm fa-angle-double-right text-warning"></i>
-                                Teacher Name : {liveClass.teacher_name}
+                                <label>Teacher Name :</label>{" "}
+                                {liveClass.teacher_name}
                               </span>
                             </div>
                             <div className="frame-wrap mb-0">
@@ -175,10 +176,7 @@ const LiveClass = () => {
                                 </span>
                               </div>
                             )}
-
                             <LiveClassButton liveClassDetail={liveClass} />
-
-                            
                           </div>
 
                           {getUserType() === "staff" && (
@@ -238,8 +236,6 @@ const LiveClass = () => {
                               )}
                             </div>
                           )}
-
-                          
                         </div>
                       );
                     })}

@@ -152,7 +152,7 @@ const NoticeBoardDetail = (props) => {
             noticeBoardDetail.document &&
             noticeBoardDetail.document.map((doc, key) => {
               return (
-                <div className="col-md-2" key={key}>
+                <div className="col-md-3" key={key}>
                   {ShowDocumentPreview(doc.file_url, doc.ext)}
                 </div>
               );

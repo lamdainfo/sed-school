@@ -76,7 +76,7 @@ const HomeWorkDetail = (props) => {
               {getUserType() !== "staff" ? (
                 <Space>
                   {homeWorkDetail?.is_homework_complete === 0 ||
-                    homeWorkDetail?.is_homework_complete === 2 ? (
+                  homeWorkDetail?.is_homework_complete === 2 ? (
                     <Link
                       className="btn btn-sm btn-outline-danger ml-2"
                       to={{
@@ -179,7 +179,7 @@ const HomeWorkDetail = (props) => {
             homeWorkDetail.documents &&
             homeWorkDetail.documents.map((doc) => {
               return (
-                <div className="col-md-2">
+                <div className="col-md-3">
                   {ShowDocumentPreview(doc.file_url, doc.ext)}
                 </div>
               );

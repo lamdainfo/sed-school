@@ -44,6 +44,7 @@ export class FrontLayout extends Component {
                 <LogoSmall />
               </a>
             </div>
+
             {this.props.children}
           </div>
         </div>

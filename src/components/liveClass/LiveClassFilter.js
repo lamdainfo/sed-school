@@ -60,16 +60,16 @@ const LiveClassFilter = (props) => {
             </Col>
           </Row>
 
-          <div className="panel-content mt-2 d-flex flex-row">
-          <Space>
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="btn btn-primary ml-auto waves-effect waves-themed"
-            >
-              Apply Filter
-            </Button>
-            <button
+          <div className="panel-content mt-2 d-flex flex-row justify-content-end">
+            <Space>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="btn btn-primary ml-auto waves-effect waves-themed"
+              >
+                Apply Filter
+              </Button>
+              <button
                 onClick={onReset}
                 className="btn btn-secondary ml-auto waves-effect waves-themed"
               >

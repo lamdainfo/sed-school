@@ -87,7 +87,7 @@ const NoticeBoardFilter = (props) => {
             </Col>
           </Row>
 
-          <div className="panel-content mt-2 d-flex flex-row">
+          <div className="panel-content mt-2 d-flex flex-row justify-content-end">
             <Space>
               <Button
                 type="primary"

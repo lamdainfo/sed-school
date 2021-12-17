@@ -31,7 +31,7 @@ const SubmitedHomeWorkBlock = (props) => {
               <div className="lightgallery">
                 {props.homeWorkDetail?.documents.map((doc, key) => {
                   return (
-                    <div className="col-md-2" key={key}>
+                    <div className="col-md-3" key={key}>
                       {ShowDocumentPreview(doc.file_url, doc.ext)}
                     </div>
                   );
@@ -40,12 +40,13 @@ const SubmitedHomeWorkBlock = (props) => {
             </div>
           </div>
 
-          {props.homeWorkDetail &&
-            props.homeWorkDetail.teacher_comment !== "" && (
-              <p className="d-block mt-3">
-                <strong>Teacher's Comment : {props.homeWorkDetail?.teacher_comment}</strong>
-              </p>
-            )}
+          {props.homeWorkDetail && props.homeWorkDetail.teacher_comment !== "" && (
+            <p className="d-block mt-3">
+              <strong>
+                Teacher's Comment : {props.homeWorkDetail?.teacher_comment}
+              </strong>
+            </p>
+          )}
         </div>
 
         <div className="card-footer text-muted py-2">

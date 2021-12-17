@@ -15,12 +15,15 @@ const AdminLayout = (props) => {
   return (
     <div className="page-wrapper mod-nav-link">
       <div className="page-inner">
-        
         {getUserType() === "staff" ? <Sidebar /> : <SidebarStudent />}
-
 
         <div className="page-content-wrapper">
           <header className="page-header">
+            <a href="#" className="hamburger hamopen">
+              <span></span>
+              <span></span>
+              <span></span>
+            </a>
             <div className="ml-auto d-flex">
               <div>
                 <a

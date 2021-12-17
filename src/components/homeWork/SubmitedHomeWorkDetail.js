@@ -65,7 +65,7 @@ const SubmitedHomeWorkDetail = (props) => {
             homeWorkDetail.documents &&
             homeWorkDetail.documents.map((doc) => {
               return (
-                <div className="col-md-2">
+                <div className="col-md-3">
                   {ShowDocumentPreview(doc.file_url, doc.ext)}
                 </div>
               );

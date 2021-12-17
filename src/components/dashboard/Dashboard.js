@@ -4,7 +4,7 @@ import { getUserType } from "../../utils/Helpers";
 const ButtonUI = (props) => {
   return (
     <div
-      className="col-sm-6 col-xl-3 pointer"
+      className="col-sm-6 col-xl-4 pointer"
       onClick={() => props.history.push(props.url)}
     >
       <div

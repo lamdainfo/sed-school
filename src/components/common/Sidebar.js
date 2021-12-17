@@ -12,7 +12,7 @@ const Sidebar = () => {
 
   return (
     <>
-      <aside className="page-sidebar">
+      <aside className="page-sidebar sidebaropen ">
         <div className="page-logo">
           <Link to="/dashboard">
             <LogoSmall />
