@@ -11,7 +11,7 @@ const LiveClassButton = ({ liveClassDetail }) => {
     " " +
     moment(liveClassDetail.start_time, "HH:mm A").format("HH:mm:ss");
 
-  var classDateTime = classDateTime + liveClassDetail.duration;
+  classDateTime = classDateTime + liveClassDetail.duration;
 
   var classEndDateTime =
     moment(liveClassDetail.live_class_date, "DD-MM-YYYY").format("YYYY-MM-DD") +

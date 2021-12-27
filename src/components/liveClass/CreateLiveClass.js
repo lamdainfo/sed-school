@@ -68,6 +68,7 @@ const CreateLiveClass = (props) => {
     classArr.map((cls) => {
       let clsname = cls.split("-");
       uniqueClassList.push(clsname[0]);
+      return null;
     });
 
     let uniqueClasses = uniqueClassList.filter((v, i, a) => a.indexOf(v) === i);

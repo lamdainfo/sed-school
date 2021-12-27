@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal } from "antd";
 
 import { postRequest } from "../../axios";
-import { ShowDocumentPreview, getUserType } from "../../utils/Helpers";
+import { ShowDocumentPreview } from "../../utils/Helpers";
 
 const SubmitedHomeWorkDetail = (props) => {
   const [showModel, setShowModel] = useState(false);

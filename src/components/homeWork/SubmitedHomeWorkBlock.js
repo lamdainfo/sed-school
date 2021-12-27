@@ -1,6 +1,6 @@
 import React from "react";
 import HomeWorkComment from "./HomeWorkComment";
-import { getUserType, ShowDocumentPreview } from "../../utils/Helpers";
+import { ShowDocumentPreview } from "../../utils/Helpers";
 
 const SubmitedHomeWorkBlock = (props) => {
   return (

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
-import { postRequest } from "../../axios";
 
+import { postRequest } from "../../axios";
 import NoticeBoardDetail from "./NoticeBoardDetail";
 import NoticeBoardLikeList from "./NoticeBoardLikeList";
 import NoticeBoardFilter from "./NoticeBoardFilter";
 import { getSessionData, getUserType } from "../../utils/Helpers";
+
+import userIcon from "../../images/userIcon.jpg";
 
 const NoticeBoard = (props) => {
   const [noticeBoardList, setNoticeBoardList] = useState([]);
@@ -69,6 +71,7 @@ const NoticeBoard = (props) => {
     // getNoticeBoardList(1);
   };
 
+
   return (
     <main id="js-page-content" role="main" className="page-content">
       <div id="content">
@@ -103,6 +106,7 @@ const NoticeBoard = (props) => {
                               src={noticeBoard.published_by_image}
                               className="profile-image rounded-circle"
                               alt="publish-by"
+                              onError={(e)=>{e.target.onerror = null; e.target.src=userIcon}}
                             />{" "}
                             <span className="badge card-title">
                               {" "}

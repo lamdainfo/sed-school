@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import { Space } from "antd";
 import { postRequest } from "../../axios";
 
 import HomeWorkDetail from "./HomeWorkDetail";
@@ -12,7 +13,7 @@ import {
   getSchoolData,
   getUserType,
 } from "../../utils/Helpers";
-import { Space } from "antd";
+import userIcon from "../../images/userIcon.jpg";
 
 const HomeWork = (props) => {
   const [homeWorkList, setHomeWorkList] = useState([]);
@@ -106,6 +107,7 @@ const HomeWork = (props) => {
                 <h2>Homework</h2>
                 <div className="panel-toolbar">
                   <HomeWorkFilter
+                    filterData={filterData}
                     handleFilterChangeFilterDate={handleFilterChangeFilterDate}
                     handleFilterSelectChange={handleFilterSelectChange}
                     handleFilterChangeDateType={handleFilterChangeDateType}
@@ -124,6 +126,7 @@ const HomeWork = (props) => {
                               src={homeWork?.created_by_image}
                               alt="created-by-img"
                               className="profile-image rounded-circle"
+                              onError={(e)=>{e.target.onerror = null; e.target.src=userIcon}}
                             />
 
                             <span className="badge card-title">

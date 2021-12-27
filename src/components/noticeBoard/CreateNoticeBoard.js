@@ -103,6 +103,7 @@ const CreateNoticeBoard = (props) => {
     state.student_list.map((student) => {
       let sInfo = student.split("-");
       studentsArr.push({ id: sInfo[0], name: sInfo[1] });
+      return null;
     });
 
     let multifile = [];
@@ -111,6 +112,7 @@ const CreateNoticeBoard = (props) => {
         img.file = imageUrl.replace("data:", "").replace(/^.+,/, "");
       });
       multifile.push(img);
+      return null;
     });
 
     await sleep(state.projectDocuments.length * 1000);
@@ -135,11 +137,7 @@ const CreateNoticeBoard = (props) => {
     };
 
     try {
-      const createNoticeBoardResponse = await postRequest(
-        "add-notice-board",
-        payload
-      );
-
+      await postRequest("add-notice-board", payload);
       SuccessNotificationMsg("Success", "Notice Board created successfully");
       setBtnLoading(false);
       props.history.push("/notice-board");
@@ -160,14 +158,6 @@ const CreateNoticeBoard = (props) => {
     );
     documents.splice(documentIndex, 1);
     setState({ ...state, projectDocuments: documents });
-  };
-
-  const uploadProps = {
-    name: "file",
-    multiple: true,
-    accept: ".jpg,.png,.jpeg,.pdf",
-    maxCount: 10,
-    listType: "picture",
   };
 
   return (

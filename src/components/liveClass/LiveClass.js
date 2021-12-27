@@ -8,9 +8,12 @@ import {
   SuccessNotificationMsg,
   ErrorNotificationMsg,
 } from "../../utils/NotificationHelper";
+
 import LiveClassAttendentList from "./LiveClassAttendentList";
 import LiveClassFilter from "./LiveClassFilter";
 import LiveClassButton from "./LiveClassButton";
+
+import userIcon from "../../images/userIcon.jpg";
 
 const LiveClass = () => {
   const [popConfirmShowStatus, setPopConfirmShowStatus] = useState(false);
@@ -132,6 +135,7 @@ const LiveClass = () => {
                               src={liveClass.teacher_img}
                               alt="teacher-pic"
                               className="profile-image rounded-circle"
+                              onError={(e)=>{e.target.onerror = null; e.target.src=userIcon}}
                             />{" "}
                             <span className="badge card-title">
                               {" "}

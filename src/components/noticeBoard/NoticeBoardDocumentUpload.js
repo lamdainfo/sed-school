@@ -3,7 +3,6 @@ import { Upload, Button, Row, Col } from "antd";
 import {
   InboxOutlined,
   DeleteOutlined,
-  DownloadOutlined,
   FileTextOutlined,
   FileImageOutlined,
 } from "@ant-design/icons";

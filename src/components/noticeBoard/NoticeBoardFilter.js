@@ -8,7 +8,6 @@ const NoticeBoardFilter = (props) => {
   const dateFormat = "DD/MM/YYYY";
   const formRef = useRef();
   const [showModel, setShowModel] = useState(false);
-  const [btnLoading, setBtnLoading] = useState(false);
   const [categoryList, setCategoryList] = useState([]);
 
   useEffect(() => {
@@ -92,7 +91,6 @@ const NoticeBoardFilter = (props) => {
               <Button
                 type="primary"
                 htmlType="submit"
-                loading={btnLoading}
                 className="btn btn-primary ml-auto waves-effect waves-themed"
               >
                 Apply Filter

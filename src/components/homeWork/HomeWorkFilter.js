@@ -109,6 +109,12 @@ const HomeWorkFilter = (props) => {
                   format={dateFormat}
                   onChange={props.handleFilterChangeFilterDate}
                   style={{ width: "100%" }}
+                  disabled={
+                    props.filterData.is_assignment === 0 &&
+                    props.filterData.is_submission === 0
+                      ? true
+                      : false
+                  }
                 />
               </Form.Item>
             </Col>

@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Input, Modal, Form, Button } from "antd";
 import { postRequest } from "../../axios";
-import { getUserType } from "../../utils/Helpers";
 import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
 
 const { TextArea } = Input;

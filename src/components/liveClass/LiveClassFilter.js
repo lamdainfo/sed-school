@@ -5,9 +5,6 @@ import { Modal, Form, Button, DatePicker, Col, Row, Space } from "antd";
 const LiveClassFilter = (props) => {
   const dateFormat = "DD/MM/YYYY";
   const formRef = useRef();
-  const [state, setState] = useState({
-    comment: null,
-  });
   const [showModel, setShowModel] = useState(false);
 
   const hideModelFunction = () => {
