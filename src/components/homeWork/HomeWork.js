@@ -88,6 +88,7 @@ const HomeWork = (props) => {
   };
 
   const applyFilter = () => {
+    console.log("herer", filterData)
     getHomeWorkList(1);
   };
 

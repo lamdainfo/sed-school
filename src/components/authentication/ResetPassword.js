@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Input, Button, Form } from "antd";
+import Password from "antd/lib/input/Password";
 import { postRequest } from "../../axios";
 
 import {
@@ -8,12 +8,11 @@ import {
   ErrorNotificationMsg,
 } from "../../utils/NotificationHelper";
 
-const ForgotPasswordVerification = (props) => {
+const ResetPassword = (props) => {
   const [state, setState] = useState({
-    otp: null,
+    password: null,
     code: props?.location?.state?.detail?.code,
     login_id: props?.location?.state?.detail?.login_id,
-    type: "reset-password",
   });
   const [btnLoading, setBtnLoading] = useState(false);
 
@@ -25,15 +24,13 @@ const ForgotPasswordVerification = (props) => {
     setBtnLoading(true);
 
     try {
-      const apiResponse = await postRequest("otp-verify", state);
-      if (apiResponse.data && apiResponse.data.response === 'success') {        
+      const apiResponse = await postRequest("update-password", state);
+      if (apiResponse.data && apiResponse.data.errmsg === "") {
         setBtnLoading(false);
-        props.history.push({
-          pathname: "/reset-password",
-          state: { detail: state },
-        });
+        SuccessNotificationMsg("Success", "Password change successfully.");
+        props.history.push("login");
       } else {
-        ErrorNotificationMsg("Invalid OTP!");
+        ErrorNotificationMsg("Error in update password!");
         setBtnLoading(false);
       }
     } catch (error) {
@@ -47,20 +44,19 @@ const ForgotPasswordVerification = (props) => {
       <div className="card p-4 border-top-left-radius-0 border-top-right-radius-0">
         <Form onFinish={onSubmit} autoComplete="off" layout="vertical">
           <Form.Item
-            label="OTP"
-            name="otp"
+            label="Password"
+            name="password"
             rules={[
               {
                 required: true,
-                pattern: new RegExp("^[0-9+]{0,6}$"),
-                message: "Please enter otp",
+                whitespace: true,
+                message: "Please enter password",
               },
             ]}
           >
-            <Input
-              onChange={(value) => handleChange("otp", value)}
-              placeholder="Enter OTP"
-              maxLength="6"
+            <Password
+              onChange={(value) => handleChange("password", value)}
+              placeholder="Enter password"
             />
           </Form.Item>
 
@@ -80,4 +76,4 @@ const ForgotPasswordVerification = (props) => {
   );
 };
 
-export default ForgotPasswordVerification;
+export default ResetPassword;

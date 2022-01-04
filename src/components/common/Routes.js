@@ -8,6 +8,7 @@ import PrivateRoute from "./PrivateRoute";
 /* open Route Components */
 import Login from "../authentication/Login";
 import ForgotPassword from "../authentication/ForgotPassword";
+import ResetPassword from "../authentication/ResetPassword";
 import ForgotPasswordVerification from "../authentication/ForgotPasswordVerification";
 
 /* Auth Required Private Route Components */
@@ -50,9 +51,9 @@ export default class Routes extends Component {
           path="/forgot-password-verification"
           component={ForgotPasswordVerification}
         />
+        <OpenRoute exact path="/reset-password" component={ResetPassword} />
 
         <PrivateRoute exact path="/dashboard" component={Dashboard} />
-
         <PrivateRoute exact path="/notice-board" component={NoticeBoard} />
         <PrivateRoute
           exact

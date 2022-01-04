@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { Input, Button, Form } from "antd";
 import Password from "antd/lib/input/Password";
 import { postRequest } from "../../axios";
@@ -157,11 +158,11 @@ const Login = () => {
           </Button>
         </Form>
       </div>
-      {/* <div className="blankpage-footer text-center">
+      <div className="blankpage-footer text-center">
         <Link to="/forgot-password">
           <strong>Forgot Password?</strong>
         </Link>
-      </div> */}
+      </div>
     </>
   );
 };

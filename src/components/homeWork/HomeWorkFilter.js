@@ -28,7 +28,18 @@ const HomeWorkFilter = (props) => {
 
   useEffect(() => {
     getClassList();
+
+    if (getUserType() !== "staff") {
+      loadSubjects();
+    }
   }, []);
+
+  const loadSubjects = () => {
+    handleClassChange(
+      "class_code",
+      getUserData().stdClass + "-" + getUserData().stdSection
+    );
+  };
 
   const hideModelFunction = () => {
     setShowModel(false);
@@ -53,13 +64,20 @@ const HomeWorkFilter = (props) => {
     setClassList(uniqueClassList);
   };
 
-  const getSubjectList = async () => {
-    const subjectRes = await postRequest("get-homework-subject-by-class-code", {
-      sid: getSessionData().code,
-      class_code: getUserData().stdClass + "-" + getUserData().stdSection,
+  const handleClassChange = async (field, value) => {
+    let classCode = value.split("-");
+
+    setState({ ...state, [field]: classCode[0] });
+
+    const subjectRes = await postRequest("get-subject-by-class-multi-section", {
+      session_code: getSessionData().code,
+      class_code: classCode[0],
+      sections: [classCode[1]],
+      tid: getUserData().tid,
     });
 
     setSubjectList(subjectRes.data.response);
+    props.handleFilterSelectChange(field, classCode[0]);
   };
 
   const onFinish = async () => {
@@ -123,9 +141,7 @@ const HomeWorkFilter = (props) => {
                 <Form.Item name="class_code" label="Class">
                   <Select
                     placeholder="Select Class"
-                    onChange={(value) =>
-                      props.handleFilterSelectChange("category", value)
-                    }
+                    onChange={(value) => handleClassChange("class_code", value)}
                   >
                     {!!classList &&
                       classList.map((s) => (

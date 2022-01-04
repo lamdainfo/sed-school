@@ -1,84 +1,106 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Input, Button, Form } from "antd";
+import { postRequest } from "../../axios";
 
-class ForgotPassword extends React.Component {
-  state = {
-    btnLoading: false,
+import {
+  SuccessNotificationMsg,
+  ErrorNotificationMsg,
+} from "../../utils/NotificationHelper";
+
+const ForgotPassword = (props) => {
+  const [state, setState] = useState({
+    code: null,
+    login_id: null,
+    type: "reset-password",
+  });
+  const [btnLoading, setBtnLoading] = useState(false);
+
+  const handleChange = (field, value) => {
+    setState({ ...state, [field]: value.target.value });
   };
 
-  onFinish = async (values) => {
-    this.setState({ btnLoading: true });
+  const onSubmit = async () => {
+    setBtnLoading(true);
+
+    try {
+      const apiResponse = await postRequest("login-otp", state);
+
+      if (apiResponse.data && apiResponse.data.response !== undefined) {
+        SuccessNotificationMsg(
+          "Success",
+          "SMS Send successfully to registerd no!"
+        );
+        setBtnLoading(false);
+
+        props.history.push({
+          pathname: "/forgot-password-verification",
+          state: { detail: state },
+        });
+      } else {
+        ErrorNotificationMsg("Error in forgot password!");
+        setBtnLoading(false);
+      }
+    } catch (error) {
+      setBtnLoading(false);
+      ErrorNotificationMsg(error.errmsg);
+    }
   };
 
-  handleInputChange = (input) => (event) => {
-    this.setState({ [input]: event.target.value });
-  };
+  return (
+    <>
+      <div className="card p-4 border-top-left-radius-0 border-top-right-radius-0">
+        <Form onFinish={onSubmit} autoComplete="off" layout="vertical">
+          <Form.Item
+            label="School Code"
+            name="code"
+            rules={[
+              {
+                required: true,
+                pattern: new RegExp("^[0-9+]{0,7}$"),
+                message: "Please enter school code",
+              },
+            ]}
+          >
+            <Input
+              onChange={(value) => handleChange("code", value)}
+              placeholder="Enter school code"
+              maxLength="7"
+            />
+          </Form.Item>
 
-  render() {
-    return (
-      <>
-        <div className="card p-4 border-top-left-radius-0 border-top-right-radius-0">
-          <form id="cdComment" method="post" role="form">
-         
+          <Form.Item
+            label="Username / Unique ID"
+            name="login_id"
+            rules={[
+              {
+                required: true,
+                pattern: new RegExp("^[0-9+]{0,7}$"),
+                message: "Please enter username",
+              },
+            ]}
+          >
+            <Input
+              onChange={(value) => handleChange("login_id", value)}
+              placeholder="Enter username"
+              maxLength="7"
+            />
+          </Form.Item>
 
-            <div className="form-row">
-              <div className="col-md-12 mb-3">
-                <label className="form-label required" for="school_code">
-                  School Code
-                </label>{" "}
-                <span className="text-danger">*</span>
-                <input
-                  type="text"
-                  name="school_code"
-                  id="school_code"
-                  required
-                  className="form-control"
-                  maxlength="7"
-                  minlength="7"
-                />
-                <div className="invalid-feedback"></div>
-              </div>
-
-              <div className="col-md-12 mb-3">
-                <label className="form-label required" for="unique_id">
-                  Username / Unique ID
-                </label>{" "}
-                <span className="text-danger">*</span>
-                <input
-                  type="text"
-                  name="unique_id"
-                  id="unique_id"
-                  required
-                  className="form-control"
-                  maxlength="7"
-                  minlength="7"
-                />
-                <div className="invalid-feedback"></div>
-              </div>
-            </div>
-            <button
-              className="btn btn-primary ml-auto waves-effect waves-themed"
-              type="submit"
-            >
-              <i className="fal fa-check"></i> Submit
-            </button>
-            <button
-              type="button"
-              className="btn btn-default ml-2 waves-effect waves-themed"
-              data-dismiss="modal"
-            >
-              <i className="fal fa-times"></i> Close
-            </button>
-          </form>
-        </div>
-        <div className="blankpage-footer text-center">
-          <Link to="/login">
-            <strong>Back to Login ?</strong>
-          </Link>
-        </div>
-      </>
-    );
-  }
-}
+          <Button type="primary" htmlType="submit" loading={btnLoading}>
+            Submit
+          </Button>
+          <Button
+            type="secondary"
+            htmlType="button"
+            onClick={() => props.history.push("/login")}
+          >
+            Close
+          </Button>
+        </Form>
+      </div>
+    </>
+  );
+};
 
 export default ForgotPassword;

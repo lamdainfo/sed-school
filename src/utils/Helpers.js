@@ -80,7 +80,20 @@ export const ShowDocumentPreview = (docURL, docType) => {
   const imgTypeArr = [".jpeg", ".jpg", ".png", ".gif"];
 
   if (imgTypeArr.includes(docType)) {
-    return <Image src={docURL} alt="attchment" />;
+    return (
+      <>
+        <Image src={docURL} alt="attchment" />
+        <a
+          href={docURL}
+          target="_blank"
+          rel="noopener noreferrer"
+          download
+          className="btn btn-sm btn-primary"
+        >
+          Download
+        </a>
+      </>
+    );
   } else {
     return <iframe src={docURL} title="doc-view"></iframe>;
   }

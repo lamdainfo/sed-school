@@ -177,9 +177,9 @@ const HomeWorkDetail = (props) => {
         <div className="row mt-3">
           {homeWorkDetail &&
             homeWorkDetail.documents &&
-            homeWorkDetail.documents.map((doc) => {
+            homeWorkDetail.documents.map((doc, key) => {
               return (
-                <div className="col-md-3">
+                <div className="col-md-3" key={key}>
                   {ShowDocumentPreview(doc.file_url, doc.ext)}
                 </div>
               );
