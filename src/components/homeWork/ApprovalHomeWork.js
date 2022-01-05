@@ -3,8 +3,8 @@ import moment from "moment";
 import { postRequest } from "../../axios";
 
 import HomeWorkDetail from "./HomeWorkDetail";
-import HomeWorkFilter from "./HomeWorkFilter";
 import { getSessionData } from "../../utils/Helpers";
+import HomeWorkApproveFilter from "./HomeWorkApproveFilter";
 
 const ApprovalHomeWork = () => {
   const [homeWorkList, setHomeWorkList] = useState([]);
@@ -13,7 +13,9 @@ const ApprovalHomeWork = () => {
   });
 
   const [filterData, setFilterData] = useState({
-    filter_date: "",
+    filterDate: moment().format("YYYY-MM-DD"),
+    class_section: "",
+    subject_id: "",
   });
 
   useEffect(() => {
@@ -46,7 +48,14 @@ const ApprovalHomeWork = () => {
   const handleFilterChangeFilterDate = (date, dateString) => {
     setFilterData({
       ...filterData,
-      filter_date: date !== null ? moment(date).format("YYYY-MM-DD") : "",
+      filterDate: date !== null ? moment(date).format("YYYY-MM-DD") : "",
+    });
+  };
+
+  const handleFilterSelectChange = (field, value) => {
+    setFilterData({
+      ...filterData,
+      [field]: value !== undefined && value !== "" ? value : "",
     });
   };
 
@@ -69,8 +78,10 @@ const ApprovalHomeWork = () => {
               <div className="panel-hdr">
                 <h2>Homework</h2>
                 <div className="panel-toolbar">
-                  <HomeWorkFilter
+                  <HomeWorkApproveFilter
+                    filterData={filterData}
                     handleFilterChangeFilterDate={handleFilterChangeFilterDate}
+                    handleFilterSelectChange={handleFilterSelectChange}
                     applyFilter={applyFilter}
                   />
                 </div>
@@ -132,7 +143,8 @@ const ApprovalHomeWork = () => {
 
                   {homeWorkList && homeWorkList.length === 0 && (
                     <div className="alert alert-warning ">
-                      No Home Work List Found!
+                      No Home Work List Found for approval for{" "}
+                      {moment(filterData.filterDate).format("DD-MM-YYYY")}
                     </div>
                   )}
 
@@ -143,17 +155,17 @@ const ApprovalHomeWork = () => {
                           <div className="col-md-5">
                             <div className="dataTables_info">
                               Showing{" "}
-                              {paginationData.current === 1
+                              {paginationData?.current === 1
                                 ? "1"
-                                : (paginationData.current - 1) * 10 + 1}{" "}
+                                : (paginationData?.current - 1) * 10 + 1}{" "}
                               to{" "}
-                              {paginationData.current *
-                                paginationData.record_per_page >
-                              paginationData.total_record
-                                ? paginationData.total_record
-                                : paginationData.current *
-                                  paginationData.record_per_page}{" "}
-                              of {paginationData.total_record} entries
+                              {paginationData?.current *
+                                paginationData?.record_per_page >
+                              paginationData?.total_record
+                                ? paginationData?.total_record
+                                : paginationData?.current *
+                                  paginationData?.record_per_page}{" "}
+                              of {paginationData?.total_record} entries
                             </div>
                           </div>
                           <div className="col-md-7 right">
@@ -161,7 +173,7 @@ const ApprovalHomeWork = () => {
                               <ul className="pagination">
                                 <li
                                   className={
-                                    paginationData.prev === ""
+                                    paginationData?.prev === ""
                                       ? "paginate_button page-item previous disabled"
                                       : "paginate_button page-item previous"
                                   }
@@ -175,7 +187,7 @@ const ApprovalHomeWork = () => {
                                 </li>
                                 <li
                                   className={
-                                    paginationData.next === ""
+                                    paginationData?.next === ""
                                       ? "paginate_button page-item next disabled"
                                       : "paginate_button page-item next"
                                   }

@@ -88,7 +88,6 @@ const HomeWork = (props) => {
   };
 
   const applyFilter = () => {
-    console.log("herer", filterData)
     getHomeWorkList(1);
   };
 
@@ -127,7 +126,10 @@ const HomeWork = (props) => {
                               src={homeWork?.created_by_image}
                               alt="created-by-img"
                               className="profile-image rounded-circle"
-                              onError={(e)=>{e.target.onerror = null; e.target.src=userIcon}}
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = userIcon;
+                              }}
                             />
 
                             <span className="badge card-title">
@@ -175,7 +177,7 @@ const HomeWork = (props) => {
                               history={props.history}
                             />
 
-                            {getUserType() === "staff" && (
+                            {getUserType() === "staff" && homeWork?.approved === 0 && (
                               <Space>
                                 <Link
                                   className="btn btn-sm btn-outline-info ml-2"
@@ -185,16 +187,6 @@ const HomeWork = (props) => {
                                   }}
                                 >
                                   Edit
-                                </Link>
-
-                                <Link
-                                  className="btn btn-sm btn-outline-success ml-2"
-                                  to={{
-                                    pathname: "/submitted-home-work",
-                                    query: { hid: homeWork?.id },
-                                  }}
-                                >
-                                  VIEW SUBMITTED HOMEWORK
                                 </Link>
                               </Space>
                             )}

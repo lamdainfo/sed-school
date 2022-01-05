@@ -85,8 +85,12 @@ const Login = () => {
           userDetailResponse.data.response.school_information.school_menu
         );
         localStorage.setItem("userData", JSON.stringify(userData));
+        localStorage.setItem(
+          "upload_img_limit",
+          userDetailResponse.data.response.hw_submission_image_upload_limit
+        );
       }
-      
+
       SuccessNotificationMsg("Success", "Succesfully logged in!");
       setBtnLoading(false);
       window.location.href = "/dashboard";

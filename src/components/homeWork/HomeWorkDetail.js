@@ -42,6 +42,42 @@ const HomeWorkDetail = (props) => {
     }, 2000);
   };
 
+  const isSubmissionDateOver = 0;
+
+  const renderButtons = () => {
+    if (homeWorkDetail?.is_homework_complete === 1) {
+      return <SubmitedHomeWorkDetail homeWorkDetail={homeWorkDetail} />;
+    } else if (homeWorkDetail?.is_homework_complete === 2) {
+      return (
+        <Link
+          className="btn btn-sm btn-outline-danger ml-2"
+          to={{
+            pathname: "/submit-home-work",
+            query: { hid: homeWorkDetail?.id },
+          }}
+        >
+          RE-SUBMIT HOMEWORK
+        </Link>
+      );
+    } else {
+      if (homeWorkDetail?.student_homework_status === 1) {
+        return <SubmitedHomeWorkDetail homeWorkDetail={homeWorkDetail} />;
+      } else {
+        return (
+          <Link
+            className="btn btn-sm btn-outline-danger ml-2"
+            to={{
+              pathname: "/submit-home-work",
+              query: { hid: homeWorkDetail?.id },
+            }}
+          >
+            SUBMIT HOMEWORK
+          </Link>
+        );
+      }
+    }
+  };
+
   return (
     <>
       <button
@@ -70,34 +106,35 @@ const HomeWorkDetail = (props) => {
               Assigned On : <strong> {homeWorkDetail?.assignment_date}</strong>
             </span>
             <span className="d-block">
-              Submit By :<strong>{homeWorkDetail?.submission_date}</strong>
+              Submit By : <strong>{homeWorkDetail?.submission_date}</strong>
             </span>
+
             <div className="mt-3">
               {getUserType() !== "staff" ? (
                 <Space>
-                  {homeWorkDetail?.is_homework_complete === 0 ||
-                  homeWorkDetail?.is_homework_complete === 2 ? (
-                    <Link
-                      className="btn btn-sm btn-outline-danger ml-2"
-                      to={{
-                        pathname: "/submit-home-work",
-                        query: { hid: homeWorkDetail?.id },
-                      }}
-                    >
-                      SUBMIT HOMEWORK
-                    </Link>
-                  ) : (
-                    ""
-                  )}
+                  {renderButtons()}
 
-                  {homeWorkDetail?.is_homework_complete === 1 ? (
-                    <SubmitedHomeWorkDetail homeWorkDetail={homeWorkDetail} />
+                  {/* {isSubmissionDateOver === 0 &&
+                  homeWorkDetail?.is_submission_allowed === 0 ? (
+                    <button className="btn btn-sm btn-danger">
+                      Homework submission disabled
+                    </button>
                   ) : (
                     ""
-                  )}
+                  )} */}
                 </Space>
               ) : (
-                ""
+                <Space>
+                  <Link
+                    className="btn btn-sm btn-outline-success ml-2"
+                    to={{
+                      pathname: "/submitted-home-work",
+                      query: { hid: homeWorkDetail?.id },
+                    }}
+                  >
+                    VIEW SUBMITTED HOMEWORK
+                  </Link>
+                </Space>
               )}
             </div>
           </div>

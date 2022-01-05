@@ -23,17 +23,17 @@ const SubmitHomeWork = (props) => {
     description: null,
     image_files: [
       {
-        "extension": "jpg",
-        "file": "",
+        extension: "jpg",
+        file: "",
       },
     ],
     desc_audio_file: {
-      "extension": "mp3",
-      "file": "",
+      extension: "mp3",
+      file: "",
     },
     comment_audio_file: {
-      "extension": "mp3",
-      "file": "",
+      extension: "mp3",
+      file: "",
     },
   });
   const [btnLoading, setBtnLoading] = useState(false);
@@ -73,6 +73,8 @@ const SubmitHomeWork = (props) => {
       authorization: "authorization-text",
     },
   };
+
+  const uploadLimit = localStorage.getItem("upload_img_limit");
 
   return (
     <>
@@ -127,7 +129,7 @@ const SubmitHomeWork = (props) => {
 
                           <Col xs={24} sm={12} lg={24}>
                             <label>
-                              Attachment(s) [Attach up to 10 files.]
+                              Attachment(s) [Attach up to {uploadLimit} files.]
                             </label>
                             <br />
                             <Upload {...uploadProps}>

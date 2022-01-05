@@ -16,7 +16,7 @@ import { getSessionData, getUserData, getUserType } from "../../utils/Helpers";
 
 const { Option } = Select;
 
-const HomeWorkFilter = (props) => {
+const HomeWorkApproveFilter = (props) => {
   const dateFormat = "DD/MM/YYYY";
   const formRef = useRef();
   const [state, setState] = useState({
@@ -55,9 +55,7 @@ const HomeWorkFilter = (props) => {
       tid: getUserData().tid,
     });
 
-    let classArr = classRes.data.response.as_class_teacher.concat(
-      classRes.data.response.as_subject_teacher
-    );
+    let classArr = classRes.data.response.as_class_teacher;
     let uniqueClassList = classArr.filter(
       (item, pos) => classArr.indexOf(item) === pos
     );
@@ -91,7 +89,7 @@ const HomeWorkFilter = (props) => {
   };
 
   const onReset = () => {
-    window.location.href = "/home-work";
+    window.location.href = "/approval-home-work";
   };
 
   return (
@@ -114,17 +112,6 @@ const HomeWorkFilter = (props) => {
           autoComplete="off"
           layout="vertical"
         >
-          <Row gutter={[15]} className="mb-3">
-            <Col xs={24} sm={12} lg={12}>
-              <label>Based On</label>
-              <br />
-              <Radio.Group onChange={props.handleFilterChangeDateType}>
-                <Radio value="is_assignment">Assignment Date</Radio>
-                <Radio value="is_submission">Submission Date</Radio>
-              </Radio.Group>
-            </Col>
-          </Row>
-
           <Row gutter={[15]}>
             <Col xs={24} sm={12} lg={12}>
               <Form.Item name="filterDate" label="Date">
@@ -142,40 +129,46 @@ const HomeWorkFilter = (props) => {
               </Form.Item>
             </Col>
             {getUserType() === "staff" && (
-              <Col xs={24} sm={12} lg={12}>
-                <Form.Item name="class_code" label="Class">
-                  <Select
-                    allowClear
-                    placeholder="Select Class"
-                    onChange={(value) => handleClassChange("class_code", value)}
-                  >
-                    {!!classList &&
-                      classList.map((s) => (
-                        <Option key={s} value={s}>
-                          {s}
-                        </Option>
-                      ))}
-                  </Select>
-                </Form.Item>
-              </Col>
+              <>
+                <Col xs={24} sm={12} lg={12}>
+                  <Form.Item name="class_section" label="Class">
+                    <Select
+                      allowClear
+                      placeholder="Select Class"
+                      onChange={(value) =>
+                        handleClassChange("class_section", value)
+                      }
+                    >
+                      {!!classList &&
+                        classList.map((s) => (
+                          <Option key={s} value={s}>
+                            {s}
+                          </Option>
+                        ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+
+                <Col xs={24} sm={12} lg={12}>
+                  <Form.Item name="subject_id" label="Subject">
+                    <Select
+                      allowClear
+                      placeholder="Select Subject"
+                      onChange={(value) =>
+                        props.handleFilterSelectChange("subject_id", value)
+                      }
+                    >
+                      {!!subjectList &&
+                        subjectList.map((s) => (
+                          <Option key={s.id} value={s.id}>
+                            {s.subject_name}
+                          </Option>
+                        ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </>
             )}
-            <Col xs={24} sm={12} lg={12}>
-              <Form.Item name="subject" label="Subject">
-                <Select
-                  placeholder="Select Subject"
-                  onChange={(value) =>
-                    props.handleFilterSelectChange("subject", value)
-                  }
-                >
-                  {!!subjectList &&
-                    subjectList.map((s) => (
-                      <Option key={s.id} value={s.subject_name}>
-                        {s.subject_name}
-                      </Option>
-                    ))}
-                </Select>
-              </Form.Item>
-            </Col>
           </Row>
 
           <div className="panel-content mt-2 d-flex flex-row justify-content-end">
@@ -201,4 +194,4 @@ const HomeWorkFilter = (props) => {
   );
 };
 
-export default HomeWorkFilter;
+export default HomeWorkApproveFilter;
