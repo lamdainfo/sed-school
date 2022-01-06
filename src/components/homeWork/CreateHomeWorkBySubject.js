@@ -149,7 +149,7 @@ const CreateHomeWorkBySubject = (props) => {
 
     let multifile = [];
     state.projectDocuments.map((img) => {
-      getBase64(img.file.originFileObj, (imageUrl) => {
+      getBase64(img.file, (imageUrl) => {
         img.file = imageUrl.replace("data:", "").replace(/^.+,/, "");
       });
       multifile.push(img);

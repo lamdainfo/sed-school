@@ -95,7 +95,21 @@ export const ShowDocumentPreview = (docURL, docType) => {
       </>
     );
   } else {
-    return <iframe src={docURL} title="doc-view"></iframe>;
+    return (
+      <>
+        {" "}
+        <iframe src={docURL} title="doc-view"></iframe>
+        <a
+          href={docURL}
+          target="_blank"
+          rel="noopener noreferrer"
+          download
+          className="btn btn-sm btn-primary"
+        >
+          Download
+        </a>{" "}
+      </>
+    );
   }
 };
 

@@ -39,7 +39,7 @@ const Sidebar = (props) => {
         <nav id="js-primary-nav" className="primary-nav" role="navigation">
           <div className="info-card">
             <img
-              src={getSchoolData().sch_img}
+              src={getSchoolData()?.sch_img}
               className="profile-image rounded-circle"
               alt="School Logo"
             />

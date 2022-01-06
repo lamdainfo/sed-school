@@ -1,54 +1,76 @@
 import React from "react";
 import { Upload, Button, Row, Col } from "antd";
+import ImgCrop from "antd-img-crop";
 import {
   InboxOutlined,
   DeleteOutlined,
   FileTextOutlined,
-  FileImageOutlined,
 } from "@ant-design/icons";
 import { isImageOrFile } from "../../utils/Helpers";
 import { ErrorNotificationMsg } from "../../utils/NotificationHelper";
 
 const { Dragger } = Upload;
+
+function getBase64(img, callback) {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result));
+  reader.readAsDataURL(img);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 class NoticeBoardDocumentUpload extends React.Component {
-  uploadFile = (info) => {
-    let isValidationFiles = true;
-    info.fileList.forEach((doc) => {
-      let isLt2M = doc.size / 1024 / 1024 < 2;
-      if (!isLt2M) {
-        ErrorNotificationMsg("Image must smaller than 2MB!");
-        isValidationFiles = false;
+  uploadProductFile = async ({ file, onSuccess, onError }) => {
+    if (file.size > 5242880) {
+      ErrorNotificationMsg("Maximum size for file upload is 5MB.");
+      return false;
+    }
+
+    let uploadImageStat = this.props.stateValues.projectDocuments;
+    let docObj = {
+      file_name: file.name,
+      ext: "." + file.name.split(".").pop(),
+      file: file,
+    };
+
+    getBase64(file, (imageUrl) => (docObj.furl = imageUrl));
+    await sleep(300);
+    uploadImageStat.push(docObj);
+    this.props.handleProjectDocumentChange(uploadImageStat);
+  };
+
+  beforeCropFeature = async (file) => {
+    if (isImageOrFile(file.type)) {
+      return true;
+    } else {
+      if (file.size > 5242880) {
+        ErrorNotificationMsg("Maximum size for file upload is 5MB.");
+        return false;
       }
-    });
 
-    if (isValidationFiles) {
-      let docs = [];
-      info.fileList.forEach((doc) => {
-        console.log(doc);
+      let uploadImageStat = this.props.stateValues.projectDocuments;
+      let docObj = {
+        file_name: file.name,
+        ext: "." + file.name.split(".").pop(),
+        file: file,
+      };
 
-        let docObj = {
-          file_name: doc.name,
-          ext: "." + doc.name.split(".").pop(),
-          file: doc,
-        };
-        docs.push(docObj);
-      });
-
-      this.props.handleProjectDocumentChange(docs);
+      getBase64(file, (imageUrl) => (docObj.furl = imageUrl));
+      await sleep(300);
+      uploadImageStat.push(docObj);
+      this.props.handleProjectDocumentChange(uploadImageStat);
     }
   };
 
   render() {
     const { projectDocuments } = this.props.stateValues;
     const uploadProps = {
-      multiple: true,
+      multiple: false,
       listType: "picture-card",
       showUploadList: false,
       accept: ".pdf,.jpg,.jpeg,.png",
       maxCount: 10,
-      beforeUpload: (file) => {
-        return false;
-      },
       disabled: projectDocuments.length >= 10 ? true : false,
       projectDocuments,
     };
@@ -59,18 +81,24 @@ class NoticeBoardDocumentUpload extends React.Component {
         </div>
 
         <div className="upload-document">
-          <Dragger {...uploadProps} onChange={this.uploadFile}>
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined />
-            </p>
-            <p className="ant-upload-text">
-              Click or drag file to this area to upload
-            </p>
-            <p className="ant-upload-hint">
-              Support for a single or bulk upload. Supported file types are pdf,
-              jpg, jpeg, png. File upload limit is 10.
-            </p>
-          </Dragger>
+          <ImgCrop
+            rotate={true}
+            aspect={3 / 4}
+            beforeCrop={this.beforeCropFeature}
+          >
+            <Dragger {...uploadProps} customRequest={this.uploadProductFile}>
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">
+                Click or drag file to this area to upload
+              </p>
+              <p className="ant-upload-hint">
+                Support for a single or bulk upload. Supported file types are
+                pdf, jpg, jpeg, png. File upload limit is 10.
+              </p>
+            </Dragger>
+          </ImgCrop>
         </div>
 
         <div className="documents_wrap">
@@ -82,8 +110,8 @@ class NoticeBoardDocumentUpload extends React.Component {
                     <Col xs={24} sm={12} md={8} lg={6} xl={4} key={index}>
                       <div className="imgdiv photo">
                         <div className="img_wrap">
-                          {isImageOrFile(document.type) ? (
-                            <FileImageOutlined />
+                          {isImageOrFile(document.file.type) ? (
+                            <img src={document.furl} alt={document.url}></img>
                           ) : (
                             <FileTextOutlined />
                           )}

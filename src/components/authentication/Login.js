@@ -89,11 +89,14 @@ const Login = () => {
           "upload_img_limit",
           userDetailResponse.data.response.hw_submission_image_upload_limit
         );
-      }
 
-      SuccessNotificationMsg("Success", "Succesfully logged in!");
-      setBtnLoading(false);
-      window.location.href = "/dashboard";
+        SuccessNotificationMsg("Success", "Succesfully logged in!");
+        setBtnLoading(false);
+        window.location.href = "/dashboard";
+      } else {
+        ErrorNotificationMsg(loginResponse.data.errmsg);
+        setBtnLoading(false);
+      }
     } catch (error) {
       setBtnLoading(false);
       ErrorNotificationMsg(error.errmsg);
