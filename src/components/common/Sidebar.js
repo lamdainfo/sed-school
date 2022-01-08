@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import LogoSmall from "../../styles/LogoSmall";
 import coverBG from "../../images/cover-2-lg.png";
 import { getUserData, getSchoolData } from "../../utils/Helpers";
+import userIcon from "../../images/userIcon.jpg";
 
 const Sidebar = (props) => {
   const [menu1, setmenu1] = useState(false);
@@ -27,7 +28,7 @@ const Sidebar = (props) => {
           <Link to="/dashboard">
             <LogoSmall />
           </Link>
-          <div style={{marginLeft:"30px"}}>
+          <div style={{ marginLeft: "30px" }}>
             <a href="#" onClick={toggleSidebar} className="hamburger hamopen">
               <span></span>
               <span></span>
@@ -42,6 +43,10 @@ const Sidebar = (props) => {
               src={getSchoolData()?.sch_img}
               className="profile-image rounded-circle"
               alt="School Logo"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = userIcon;
+              }}
             />
             <div className="info-card-text">
               <a className="d-flex align-items-center text-white">

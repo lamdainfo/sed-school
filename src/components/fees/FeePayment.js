@@ -54,6 +54,7 @@ const FeePayment = (props) => {
         nameArray: props?.nameArray,
         amount: state.selectedMonth.length * props?.amountPerMonth,
         selectedMonth: selectedMonthArr,
+        platform: "web",
       },
     };
 
@@ -242,6 +243,7 @@ const FeePayment = (props) => {
           <input type="hidden" name="udf3" value={pgData?.pgDetails?.udf3} />
           <input type="hidden" name="udf4" value={pgData?.pgDetails?.udf4} />
           <input type="hidden" name="udf5" value={pgData?.pgDetails?.udf5} />
+          <input type="hidden" name="udf6" value="web" />
 
           <input
             type="submit"

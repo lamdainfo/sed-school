@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import {
-  Input,
-  Row,
-  Col,
-  Select,
-  Form,
-  Button,
-  DatePicker,
-  Space,
-} from "antd";
+import { Input, Row, Col, Select, Form, Button, DatePicker, Space } from "antd";
 import { postRequest } from "../../axios";
 
 import PageHeader from "../common/PageHeader";
@@ -59,11 +50,11 @@ const CreateHomeWorkBySubject = (props) => {
   };
 
   const handleChangeAssignmentDate = (date, dateString) => {
-    setState({ ...state, assignment_date: date });
+    setState({ ...state, assignment_date: dateString });
   };
 
   const handleChangeSubmissionDate = (date, dateString) => {
-    setState({ ...state, submission_date: date });
+    setState({ ...state, submission_date: dateString });
   };
 
   const disablePastDate = (current) => {
@@ -167,8 +158,8 @@ const CreateHomeWorkBySubject = (props) => {
       class_code: state.class_code,
       sections: state.sections,
       comment_enable: state.comment_enable,
-      assignment_date: moment(state.assignment_date).format("YYYY-MM-DD"),
-      submission_date: moment(state.submission_date).format("YYYY-MM-DD"),
+      assignment_date: moment(state.assignment_date, "DD-MM-YYYY").format("YYYY-MM-DD"),
+      submission_date: moment(state.submission_date, "DD-MM-YYYY").format("YYYY-MM-DD"),
       is_draft: "0",
       sdata: {
         student_list: studentsArr,
@@ -261,11 +252,14 @@ const CreateHomeWorkBySubject = (props) => {
                                 }
                               >
                                 {!!classList &&
-                                  classList.map((s) => (
-                                    <Option key={s} value={s}>
-                                      {s}
-                                    </Option>
-                                  ))}
+                                  classList.map((s) => {
+                                    let classCode = s.split("-");
+                                    return (
+                                      <Option key={s} value={s}>
+                                        {classCode[0]}
+                                      </Option>
+                                    );
+                                  })}
                               </Select>
                             </Form.Item>
                           </Col>
@@ -367,6 +361,7 @@ const CreateHomeWorkBySubject = (props) => {
                               label="Assignment Date"
                             >
                               <DatePicker
+                                allowClear={false}
                                 defaultValue={moment()}
                                 format={dateFormat}
                                 disabledDate={disablePastDate}
@@ -381,6 +376,7 @@ const CreateHomeWorkBySubject = (props) => {
                               label="Submission Date"
                             >
                               <DatePicker
+                                allowClear={false}
                                 defaultValue={moment()}
                                 format={dateFormat}
                                 disabledDate={disablePastDate}
@@ -391,17 +387,7 @@ const CreateHomeWorkBySubject = (props) => {
                           </Col>
 
                           <Col xs={24} sm={12} lg={8}>
-                            <Form.Item
-                              label="Page No."
-                              name="page_no"
-                              rules={[
-                                {
-                                  required: true,
-                                  whitespace: true,
-                                  message: "Please enter page no",
-                                },
-                              ]}
-                            >
+                            <Form.Item label="Page No." name="page_no">
                               <Input
                                 onChange={(value) =>
                                   handleChange("page_no", value)
@@ -410,17 +396,7 @@ const CreateHomeWorkBySubject = (props) => {
                             </Form.Item>
                           </Col>
                           <Col xs={24} sm={12} lg={8}>
-                            <Form.Item
-                              label="Chapter No."
-                              name="chapter_no"
-                              rules={[
-                                {
-                                  required: true,
-                                  whitespace: true,
-                                  message: "Please enter chapter no",
-                                },
-                              ]}
-                            >
+                            <Form.Item label="Chapter No." name="chapter_no">
                               <Input
                                 onChange={(value) =>
                                   handleChange("chapter_no", value)

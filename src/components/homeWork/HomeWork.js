@@ -17,35 +17,57 @@ import userIcon from "../../images/userIcon.jpg";
 
 const HomeWork = (props) => {
   const [homeWorkList, setHomeWorkList] = useState([]);
+  const [filterApply, setFilterApply] = useState(false);
   const [paginationData, setPaginationData] = useState({
     page: 1,
   });
 
-  const [filterData, setFilterData] = useState({
+  const initFilter = {
     class_code: "",
     filter_date: "",
     subject: "",
     is_assignment: 0,
     is_submission: 0,
-  });
+  };
+  const [filterData, setFilterData] = useState(initFilter);
 
-  useEffect(() => {
-    getHomeWorkList(1);
-  }, []);
+  useEffect(
+    (props) => {
+      getHomeWorkList(1, true);
+    },
+    [props]
+  );
 
-  const getHomeWorkList = async (page) => {
-    const response = await postRequest("get-all-homework", {
-      sid: getSessionData().code,
-      school_code: getSchoolData().school_code,
-      page: page,
-      ...filterData,
-    });
-    setHomeWorkList(
-      response.data.response && response.data.response.homework_list
-        ? response.data.response.homework_list
-        : []
-    );
-    setPaginationData(response.data.paginationData);
+  const getHomeWorkList = async (page, refresh = false) => {
+    if (refresh) {
+      setFilterApply(false);
+      setFilterData(initFilter);
+      const response = await postRequest("get-all-homework", {
+        sid: getSessionData().code,
+        school_code: getSchoolData().school_code,
+        page: page,
+        ...initFilter,
+      });
+      setHomeWorkList(
+        response.data.response && response.data.response.homework_list
+          ? response.data.response.homework_list
+          : []
+      );
+      setPaginationData(response.data.paginationData);
+    } else {
+      const response = await postRequest("get-all-homework", {
+        sid: getSessionData().code,
+        school_code: getSchoolData().school_code,
+        page: page,
+        ...filterData,
+      });
+      setHomeWorkList(
+        response.data.response && response.data.response.homework_list
+          ? response.data.response.homework_list
+          : []
+      );
+      setPaginationData(response.data.paginationData);
+    }
   };
 
   const handlePrevPage = () => {
@@ -88,6 +110,7 @@ const HomeWork = (props) => {
   };
 
   const applyFilter = () => {
+    setFilterApply(true);
     getHomeWorkList(1);
   };
 
@@ -112,6 +135,7 @@ const HomeWork = (props) => {
                     handleFilterSelectChange={handleFilterSelectChange}
                     handleFilterChangeDateType={handleFilterChangeDateType}
                     applyFilter={applyFilter}
+                    filterApply={filterApply}
                   />
                 </div>
               </div>
@@ -177,19 +201,20 @@ const HomeWork = (props) => {
                               history={props.history}
                             />
 
-                            {getUserType() === "staff" && homeWork?.approved === 0 && (
-                              <Space>
-                                <Link
-                                  className="btn btn-sm btn-outline-info ml-2"
-                                  to={{
-                                    pathname: "/edit-home-work",
-                                    query: { hid: homeWork?.id },
-                                  }}
-                                >
-                                  Edit
-                                </Link>
-                              </Space>
-                            )}
+                            {getUserType() === "staff" &&
+                              homeWork?.approved === 0 && (
+                                <Space>
+                                  <Link
+                                    className="btn btn-sm btn-outline-info ml-2"
+                                    to={{
+                                      pathname: "/edit-home-work",
+                                      query: { hid: homeWork?.id },
+                                    }}
+                                  >
+                                    Edit
+                                  </Link>
+                                </Space>
+                              )}
                           </div>
 
                           <div className="card-footer text-muted py-2">

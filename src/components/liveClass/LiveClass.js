@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
 import { Popconfirm } from "antd";
+import { CheckCircleTwoTone } from "@ant-design/icons";
 
 import { postRequest } from "../../axios";
 import { getUserType } from "../../utils/Helpers";
@@ -12,43 +13,62 @@ import {
 import LiveClassAttendentList from "./LiveClassAttendentList";
 import LiveClassFilter from "./LiveClassFilter";
 import LiveClassButton from "./LiveClassButton";
-
 import userIcon from "../../images/userIcon.jpg";
 
-const LiveClass = () => {
+const LiveClass = (props) => {
   const [popConfirmShowStatus, setPopConfirmShowStatus] = useState(false);
   const [editIndexStatus, setEditIndexStatus] = useState(null);
-
   const [liveClassList, setLiveClassList] = useState([]);
+  const [filterApply, setFilterApply] = useState(false);
   const [paginationData, setPaginationData] = useState({
     page: 1,
   });
 
-  const [filterData, setFilterData] = useState({
+  const initFilter = {
     filterDate: moment().format("DD/MM/YYYY"),
-  });
+  };
+  const [filterData, setFilterData] = useState(initFilter);
 
-  useEffect(() => {
-    getLiveClassList(1);
-  }, []);
+  useEffect(
+    (props) => {
+      getLiveClassList(1, true);
+    },
+    [props]
+  );
 
-  const getLiveClassList = async (page) => {
+  const getLiveClassList = async (page, refresh = false) => {
     let apiName =
       getUserType() === "staff"
         ? "live-class-list-staff"
         : "live-class-list-student";
 
-    const getClassResponse = await postRequest(apiName, {
-      page: page,
-      ...filterData,
-    });
-    setLiveClassList(
-      getClassResponse.data.response &&
-        getClassResponse.data.response.live_classes
-        ? getClassResponse.data.response.live_classes
-        : []
-    );
-    setPaginationData(getClassResponse.data.paginationData);
+    if (refresh) {
+      setFilterApply(false);
+      setFilterData(initFilter);
+      const getClassResponse = await postRequest(apiName, {
+        page: page,
+        ...initFilter,
+      });
+      setLiveClassList(
+        getClassResponse.data.response &&
+          getClassResponse.data.response.live_classes
+          ? getClassResponse.data.response.live_classes
+          : []
+      );
+      setPaginationData(getClassResponse.data.paginationData);
+    } else {
+      const getClassResponse = await postRequest(apiName, {
+        page: page,
+        ...filterData,
+      });
+      setLiveClassList(
+        getClassResponse.data.response &&
+          getClassResponse.data.response.live_classes
+          ? getClassResponse.data.response.live_classes
+          : []
+      );
+      setPaginationData(getClassResponse.data.paginationData);
+    }
   };
 
   const deleteLiveClass = async (id) => {
@@ -99,6 +119,7 @@ const LiveClass = () => {
   };
 
   const applyFilter = () => {
+    setFilterApply(true);
     getLiveClassList(1);
   };
 
@@ -121,6 +142,7 @@ const LiveClass = () => {
                     handleFilterChangeFilterDate={handleFilterChangeFilterDate}
                     handleFilterSelectChange={handleFilterSelectChange}
                     applyFilter={applyFilter}
+                    filterApply={filterApply}
                   />
                 </div>
               </div>
@@ -135,10 +157,21 @@ const LiveClass = () => {
                               src={liveClass.teacher_img}
                               alt="teacher-pic"
                               className="profile-image rounded-circle"
-                              onError={(e)=>{e.target.onerror = null; e.target.src=userIcon}}
-                            />{" "}
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = userIcon;
+                              }}
+                            />
                             <span className="badge card-title">
-                              {" "}
+                              {getUserType() !== "staff" && (
+                                <span style={{ marginRight: "5px" }}>
+                                  {liveClass.is_student_attend ? (
+                                    <CheckCircleTwoTone twoToneColor="#52c41a" />
+                                  ) : (
+                                    <CheckCircleTwoTone twoToneColor="#eb2f96" />
+                                  )}
+                                </span>
+                              )}
                               <strong>{liveClass.subject_name}</strong>
                             </span>
                             <br />{" "}

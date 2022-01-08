@@ -20,7 +20,8 @@ function getBase64(img, callback) {
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
-class HomeworkDocumentUpload extends React.Component {
+
+class SubmitHomeworkDocumentUpload extends React.Component {
   uploadProductFile = async ({ file, onSuccess, onError }) => {
     if (file.size > 5242880) {
       ErrorNotificationMsg("Maximum size for file upload is 5MB.");
@@ -30,7 +31,7 @@ class HomeworkDocumentUpload extends React.Component {
     let uploadImageStat = this.props.stateValues.projectDocuments;
     let docObj = {
       file_name: file.name,
-      ext: "." + file.name.split(".").pop(),
+      extension: "." + file.name.split(".").pop(),
       file: file,
     };
 
@@ -52,7 +53,7 @@ class HomeworkDocumentUpload extends React.Component {
       let uploadImageStat = this.props.stateValues.projectDocuments;
       let docObj = {
         file_name: file.name,
-        ext: "." + file.name.split(".").pop(),
+        extension: "." + file.name.split(".").pop(),
         file: file,
       };
 
@@ -140,4 +141,4 @@ class HomeworkDocumentUpload extends React.Component {
   }
 }
 
-export default HomeworkDocumentUpload;
+export default SubmitHomeworkDocumentUpload;

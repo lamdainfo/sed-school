@@ -94,11 +94,19 @@ const HomeWorkApproveFilter = (props) => {
 
   return (
     <>
-      <span onClick={() => showModelFunction()} style={{ float: "right" }}>
-        <button className="btn btn-sm btn-primary waves-effect waves-themed">
-          <i className="fal fa-filter"></i> Filter
-        </button>
-      </span>
+      {props.filterApply ? (
+        <span onClick={() => onReset()} style={{ float: "right" }}>
+          <button className="btn btn-sm btn-secondary waves-effect waves-themed">
+            <i className="fal fa-filter"></i> Clear Filter
+          </button>
+        </span>
+      ) : (
+        <span onClick={() => showModelFunction()} style={{ float: "right" }}>
+          <button className="btn btn-sm btn-primary waves-effect waves-themed">
+            <i className="fal fa-filter"></i> Filter
+          </button>
+        </span>
+      )}
 
       <Modal
         title="Homework Filter"

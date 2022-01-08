@@ -4,6 +4,7 @@ import { postRequest } from "../../axios";
 
 import SubmitedHomeWorkBlock from "./SubmitedHomeWorkBlock";
 import { getSessionData } from "../../utils/Helpers";
+import userIcon from "../../images/userIcon.jpg";
 
 const SubmitedHomeWork = (props) => {
   const queryString = props.history.location.query;
@@ -79,6 +80,10 @@ const SubmitedHomeWork = (props) => {
                         src={homeWorkDetail?.created_by_image}
                         alt="created-by-img"
                         className="profile-image rounded-circle"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = userIcon;
+                        }}
                       />
 
                       <span className="badge card-title">

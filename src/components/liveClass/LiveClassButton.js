@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
+
+import { postRequest } from "../../axios";
 import { getUserType } from "../../utils/Helpers";
 
 const LiveClassButton = ({ liveClassDetail }) => {
@@ -27,6 +29,17 @@ const LiveClassButton = ({ liveClassDetail }) => {
     }
   }, []);
 
+  const fillAttendance = async () => {
+    if (getUserType() === "staff") {
+      window.open(liveClassDetail?.teacher_start_url);
+    } else {
+      const response = await postRequest("student-live-class-activity-update", {
+        live_class_id: liveClassDetail.id,
+      });
+      window.open(liveClassDetail?.join_url);
+    }
+  };
+
   return (
     <>
       {dateState > 0 && endDateState > 0 && (
@@ -35,12 +48,8 @@ const LiveClassButton = ({ liveClassDetail }) => {
 
       {dateState > 0 && endDateState < 0 && (
         <a
-          target="_blank"
-          href={
-            getUserType() === "staff"
-              ? liveClassDetail?.teacher_start_url
-              : liveClassDetail?.join_url
-          }
+          href="#"
+          onClick={fillAttendance}
           className="btn btn-sm btn-success text-white"
         >
           {getUserType() === "staff" ? "Start Class" : "Join Class"}

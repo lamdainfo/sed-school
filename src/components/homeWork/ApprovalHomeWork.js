@@ -6,35 +6,59 @@ import HomeWorkDetail from "./HomeWorkDetail";
 import { getSessionData } from "../../utils/Helpers";
 import HomeWorkApproveFilter from "./HomeWorkApproveFilter";
 
-const ApprovalHomeWork = () => {
+import userIcon from "../../images/userIcon.jpg";
+
+const ApprovalHomeWork = (props) => {
   const [homeWorkList, setHomeWorkList] = useState([]);
+  const [filterApply, setFilterApply] = useState(false);
   const [paginationData, setPaginationData] = useState({
     page: 1,
   });
 
-  const [filterData, setFilterData] = useState({
+  const initFilter = {
     filterDate: moment().format("YYYY-MM-DD"),
     class_section: "",
     subject_id: "",
-  });
+  };
+  const [filterData, setFilterData] = useState(initFilter);
 
-  useEffect(() => {
-    getHomeWorkList(1);
-  }, []);
+  useEffect(
+    (props) => {
+      getHomeWorkList(1, true);
+    },
+    [props]
+  );
 
-  const getHomeWorkList = async (page) => {
-    const response = await postRequest("pending-approval-homework-list", {
-      scode: getSessionData().code,
-      page: page,
-      ...filterData,
-    });
+  const getHomeWorkList = async (page, refresh = false) => {
+    if (refresh) {
+      setFilterApply(false);
+      setFilterData(initFilter);
+      const response = await postRequest("pending-approval-homework-list", {
+        scode: getSessionData().code,
+        page: page,
+        ...initFilter,
+      });
 
-    setHomeWorkList(
-      response.data.response.homework_list
-        ? response.data.response.homework_list
-        : []
-    );
-    setPaginationData(response.data.paginationData);
+      setHomeWorkList(
+        response.data.response.homework_list
+          ? response.data.response.homework_list
+          : []
+      );
+      setPaginationData(response.data.paginationData);
+    } else {
+      const response = await postRequest("pending-approval-homework-list", {
+        scode: getSessionData().code,
+        page: page,
+        ...filterData,
+      });
+
+      setHomeWorkList(
+        response.data.response.homework_list
+          ? response.data.response.homework_list
+          : []
+      );
+      setPaginationData(response.data.paginationData);
+    }
   };
 
   const handlePrevPage = () => {
@@ -60,6 +84,7 @@ const ApprovalHomeWork = () => {
   };
 
   const applyFilter = () => {
+    setFilterApply(true);
     getHomeWorkList(1);
   };
 
@@ -83,6 +108,7 @@ const ApprovalHomeWork = () => {
                     handleFilterChangeFilterDate={handleFilterChangeFilterDate}
                     handleFilterSelectChange={handleFilterSelectChange}
                     applyFilter={applyFilter}
+                    filterApply={filterApply}
                   />
                 </div>
               </div>
@@ -97,6 +123,10 @@ const ApprovalHomeWork = () => {
                               src={homeWork?.created_by_image}
                               alt="created-by-img"
                               className="profile-image rounded-circle"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = userIcon;
+                              }}
                             />
 
                             <span className="badge card-title">

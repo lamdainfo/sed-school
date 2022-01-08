@@ -293,6 +293,7 @@ const CreateHomeWork = (props) => {
                               label="Assignment Date"
                             >
                               <DatePicker
+                                allowClear={false}
                                 defaultValue={moment()}
                                 format={dateFormat}
                                 disabledDate={disablePastDate}
@@ -307,6 +308,7 @@ const CreateHomeWork = (props) => {
                               label="Submission Date"
                             >
                               <DatePicker
+                                allowClear={false}
                                 defaultValue={moment()}
                                 format={dateFormat}
                                 disabledDate={disablePastDate}
@@ -344,17 +346,7 @@ const CreateHomeWork = (props) => {
                           </Col>
 
                           <Col xs={24} sm={12} lg={8}>
-                            <Form.Item
-                              label="Page No."
-                              name="page_no"
-                              rules={[
-                                {
-                                  required: true,
-                                  whitespace: true,
-                                  message: "Please enter page no",
-                                },
-                              ]}
-                            >
+                            <Form.Item label="Page No." name="page_no">
                               <Input
                                 onChange={(value) =>
                                   handleChange("page_no", value)
@@ -363,17 +355,7 @@ const CreateHomeWork = (props) => {
                             </Form.Item>
                           </Col>
                           <Col xs={24} sm={12} lg={8}>
-                            <Form.Item
-                              label="Chapter No."
-                              name="chapter_no"
-                              rules={[
-                                {
-                                  required: true,
-                                  whitespace: true,
-                                  message: "Please enter chapter no",
-                                },
-                              ]}
-                            >
+                            <Form.Item label="Chapter No." name="chapter_no">
                               <Input
                                 onChange={(value) =>
                                   handleChange("chapter_no", value)

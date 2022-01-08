@@ -56,6 +56,15 @@ const EditHomeWork = (props) => {
       hid: queryString?.hid,
     });
     setHomeWorkDetail(response.data.response);
+    setState({
+      page_no: response.data.response.page_no,
+      chapter_no: response.data.response.chapter_no,
+      topic: response.data.response.topic,
+      description: response.data.response.description,
+      comment_enable: response.data.response.comment_enable,
+      assignment_date: response.data.response.assignment_date,
+      submission_date: response.data.response.submission_date,
+    });
     formRef.current.setFieldsValue({
       page_no: response.data.response.page_no,
       chapter_no: response.data.response.chapter_no,
@@ -76,11 +85,11 @@ const EditHomeWork = (props) => {
   };
 
   const handleChangeAssignmentDate = (date, dateString) => {
-    setState({ ...state, assignment_date: date });
+    setState({ ...state, assignment_date: dateString });
   };
 
   const handleChangeSubmissionDate = (date, dateString) => {
-    setState({ ...state, submission_date: date });
+    setState({ ...state, submission_date: dateString });
   };
 
   const disablePastDate = (current) => {
@@ -90,7 +99,7 @@ const EditHomeWork = (props) => {
 
   const onFinish = async () => {
     setBtnLoading(true);
-    
+
     const payload = {
       edit_mode: "",
       sid: getSessionData().code,
@@ -100,26 +109,30 @@ const EditHomeWork = (props) => {
       page_no: state.page_no,
       chapter_no: state.chapter_no,
       comment_enable: state.comment_enable,
-      assignment_date: moment(state.assignment_date).format("YYYY-MM-DD"),
-      submission_date: moment(state.submission_date).format("YYYY-MM-DD"),
+      assignment_date: moment(state.assignment_date, "DD-MM-YYYY").format(
+        "YYYY-MM-DD"
+      ),
+      submission_date: moment(state.submission_date, "DD-MM-YYYY").format(
+        "YYYY-MM-DD"
+      ),
       school_code: getSchoolData().school_code,
       is_draft: "0",
       tclass: homeWorkDetail.class_code,
       hid: queryString?.hid,
-        sdata: {
-          class_code: homeWorkDetail.class_code,
-          edit_mode: "",
-          homework_id: "",
-          edit_student_list: [],
-          student_list: homeWorkDetail.students,
-        },
-      "multifile": [
+      sdata: {
+        class_code: homeWorkDetail.class_code,
+        edit_mode: "",
+        homework_id: "",
+        edit_student_list: [],
+        student_list: homeWorkDetail.students,
+      },
+      multifile: [
         {
-          "file_name": "IMG_1636181784933",
-          "ext": ".jpg",
-          "file": ""
-        }
-      ]
+          file_name: "IMG_1636181784933",
+          ext: ".jpg",
+          file: "",
+        },
+      ],
     };
 
     try {
@@ -184,6 +197,7 @@ const EditHomeWork = (props) => {
                               label="Assignment Date"
                             >
                               <DatePicker
+                                allowClear={false}
                                 defaultValue={moment()}
                                 format={dateFormat}
                                 disabledDate={disablePastDate}
@@ -198,6 +212,7 @@ const EditHomeWork = (props) => {
                               label="Submission Date"
                             >
                               <DatePicker
+                                allowClear={false}
                                 defaultValue={moment()}
                                 format={dateFormat}
                                 disabledDate={disablePastDate}
@@ -208,17 +223,7 @@ const EditHomeWork = (props) => {
                           </Col>
 
                           <Col xs={24} sm={12} lg={8}>
-                            <Form.Item
-                              label="Page No."
-                              name="page_no"
-                              rules={[
-                                {
-                                  required: true,
-                                  whitespace: true,
-                                  message: "Please enter page no",
-                                },
-                              ]}
-                            >
+                            <Form.Item label="Page No." name="page_no">
                               <Input
                                 onChange={(value) =>
                                   handleChange("page_no", value)
@@ -227,17 +232,7 @@ const EditHomeWork = (props) => {
                             </Form.Item>
                           </Col>
                           <Col xs={24} sm={12} lg={8}>
-                            <Form.Item
-                              label="Chapter No."
-                              name="chapter_no"
-                              rules={[
-                                {
-                                  required: true,
-                                  whitespace: true,
-                                  message: "Please enter chapter no",
-                                },
-                              ]}
-                            >
+                            <Form.Item label="Chapter No." name="chapter_no">
                               <Input
                                 onChange={(value) =>
                                   handleChange("chapter_no", value)
@@ -301,16 +296,6 @@ const EditHomeWork = (props) => {
                                 }
                               />
                             </Form.Item>
-                          </Col>
-
-                          <Col xs={24} sm={12} lg={24}>
-                            <label>Attachment(s) [Attach up to 4 files.]</label>
-                            <br />
-                            <Upload {...uploadProps}>
-                              <Button icon={<UploadOutlined />}>
-                                Click to Upload
-                              </Button>
-                            </Upload>
                           </Col>
                         </Row>
                         <br />

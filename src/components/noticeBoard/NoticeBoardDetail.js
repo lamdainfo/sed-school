@@ -8,6 +8,7 @@ import {
   getUserType,
   ShowDocumentPreview,
 } from "../../utils/Helpers";
+import userIcon from "../../images/userIcon.jpg";
 
 const NoticeBoardDetail = (props) => {
   const [showModel, setShowModel] = useState(false);
@@ -53,6 +54,10 @@ const NoticeBoardDetail = (props) => {
               src={noticeBoardDetail?.published_by_image}
               className="profile-image rounded-circle"
               alt="publish-by"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = userIcon;
+              }}
             />
             <span className="d-block">
               Posted On : <strong> {noticeBoardDetail?.posted_on}</strong>

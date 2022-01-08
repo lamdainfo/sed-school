@@ -1,6 +1,7 @@
 import React from "react";
 import HomeWorkComment from "./HomeWorkComment";
 import { ShowDocumentPreview } from "../../utils/Helpers";
+import userIcon from "../../images/userIcon.jpg";
 
 const SubmitedHomeWorkBlock = (props) => {
   return (
@@ -11,6 +12,10 @@ const SubmitedHomeWorkBlock = (props) => {
             src={props.homeWorkDetail?.student_image_url}
             alt="student-img"
             className="profile-image rounded-circle"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = userIcon;
+            }}
           />
           <span className="card-title mb-2 ml-2">
             <strong>{props.homeWorkDetail?.student_name}</strong>

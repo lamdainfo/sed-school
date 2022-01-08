@@ -69,7 +69,7 @@ class NoticeBoardDocumentUpload extends React.Component {
       multiple: false,
       listType: "picture-card",
       showUploadList: false,
-      accept: ".pdf,.jpg,.jpeg,.png",
+      accept: ".jpg,.jpeg,.png",
       maxCount: 10,
       disabled: projectDocuments.length >= 10 ? true : false,
       projectDocuments,
@@ -95,7 +95,7 @@ class NoticeBoardDocumentUpload extends React.Component {
               </p>
               <p className="ant-upload-hint">
                 Support for a single or bulk upload. Supported file types are
-                pdf, jpg, jpeg, png. File upload limit is 10.
+                jpg, jpeg, png. File upload limit is 10.
               </p>
             </Dragger>
           </ImgCrop>

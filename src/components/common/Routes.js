@@ -13,6 +13,8 @@ import ForgotPasswordVerification from "../authentication/ForgotPasswordVerifica
 
 /* Auth Required Private Route Components */
 import Dashboard from "../dashboard/Dashboard";
+import PaymentSuccess from "../fees/PaymentSuccess";
+import PaymentFailed from "../fees/PaymentFailed";
 
 import NoticeBoard from "../noticeBoard/NoticeBoard";
 import CreateNoticeBoard from "../noticeBoard/CreateNoticeBoard";
@@ -52,6 +54,9 @@ export default class Routes extends Component {
           component={ForgotPasswordVerification}
         />
         <OpenRoute exact path="/reset-password" component={ResetPassword} />
+
+        <PrivateRoute exact path="/payment-success" component={PaymentSuccess} />
+        <PrivateRoute exact path="/payment-failed" component={PaymentFailed} />
 
         <PrivateRoute exact path="/dashboard" component={Dashboard} />
         <PrivateRoute exact path="/notice-board" component={NoticeBoard} />

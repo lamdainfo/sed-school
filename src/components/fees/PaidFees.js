@@ -17,11 +17,12 @@ const PaidFees = () => {
   }, []);
 
   const getFeeList = async () => {
-    const getFeesResponse = await axios.post(
-      "https://schoolonweb.in/private/api/fees/history?schoolCode=2222222&sid=1&sessionCode=2021&token=c874792257ded66e703366380d8066809dd8be7b1d42a0c369b33e33cf91946e"
-    );
+    const getFeesResponse = await postRequest("fees-history", {
+      schoolCode: getSchoolData().school_code,
+      sessionCode: getSessionData().rcode,
+    });
 
-    setFeesList(getFeesResponse.data.data.feesHistoryArray);
+    setFeesList(getFeesResponse.data.response.data.feesHistoryArray);
   };
 
   function callback(key) {

@@ -1,4 +1,4 @@
-const APP_ENV = "DEV"; // DEV, DEMO, TEST, PROD
+const APP_ENV = "LOCAL"; // DEV, DEMO, TEST, PROD
 const APP_EXTENSION = ".com";
 const MAINTENANCE_MODE = false;
 
@@ -13,6 +13,11 @@ const config = {
 
 if (APP_ENV === "DEV") {
   config.APP_URL = "https://dev.lamdainfotech.com";
+  config.API_URL = "https://dev.lamdainfotech.com/api/v1/public/api/";
+}
+
+if (APP_ENV === "LOCAL") {
+  config.APP_URL = "http://localhost:3000";
   config.API_URL = "https://dev.lamdainfotech.com/api/v1/public/api/";
 }
 

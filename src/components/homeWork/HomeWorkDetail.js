@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import moment from "moment";
 import { Modal, Space } from "antd";
 
 import { postRequest } from "../../axios";
@@ -9,6 +10,8 @@ import SubmitedHomeWorkDetail from "./SubmitedHomeWorkDetail";
 
 import { ShowDocumentPreview, getUserType } from "../../utils/Helpers";
 import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
+
+import userIcon from "../../images/userIcon.jpg";
 
 const HomeWorkDetail = (props) => {
   const [showModel, setShowModel] = useState(false);
@@ -42,10 +45,20 @@ const HomeWorkDetail = (props) => {
     }, 2000);
   };
 
-  const isSubmissionDateOver = 0;
+  var classDateTime = moment(
+    homeWorkDetail?.submission_date,
+    "DD-MM-YYYY"
+  ).format("YYYY-MM-DD");
+  var isSubmissionDateOver = moment().diff(classDateTime, "day") > 0 ? 1 : 0;
 
   const renderButtons = () => {
-    if (homeWorkDetail?.is_homework_complete === 1) {
+    if (isSubmissionDateOver === 1) {
+      return (
+        <button className="btn btn-sm btn-danger" disabled>
+          Homework Submission Disabled
+        </button>
+      );
+    } else if (homeWorkDetail?.is_homework_complete === 1) {
       return <SubmitedHomeWorkDetail homeWorkDetail={homeWorkDetail} />;
     } else if (homeWorkDetail?.is_homework_complete === 2) {
       return (
@@ -101,6 +114,10 @@ const HomeWorkDetail = (props) => {
               src={homeWorkDetail?.created_by_image}
               className="profile-image rounded-circle"
               alt="publish-by"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = userIcon;
+              }}
             />
             <span className="d-block">
               Assigned On : <strong> {homeWorkDetail?.assignment_date}</strong>
@@ -111,18 +128,7 @@ const HomeWorkDetail = (props) => {
 
             <div className="mt-3">
               {getUserType() !== "staff" ? (
-                <Space>
-                  {renderButtons()}
-
-                  {/* {isSubmissionDateOver === 0 &&
-                  homeWorkDetail?.is_submission_allowed === 0 ? (
-                    <button className="btn btn-sm btn-danger">
-                      Homework submission disabled
-                    </button>
-                  ) : (
-                    ""
-                  )} */}
-                </Space>
+                <Space>{renderButtons()}</Space>
               ) : (
                 <Space>
                   <Link

@@ -5,6 +5,8 @@ import { postRequest } from "../../axios";
 import { UploadOutlined } from "@ant-design/icons";
 
 import PageHeader from "../common/PageHeader";
+import SubmitHomeworkDocumentUpload from "./SubmitHomeworkDocumentUpload";
+
 import {
   SuccessNotificationMsg,
   ErrorNotificationMsg,
@@ -15,26 +17,21 @@ const { TextArea } = Input;
 
 const SubmitHomeWork = (props) => {
   const queryString = props.history.location.query;
-  if (queryString.hid === undefined) {
+  if (queryString?.hid === undefined) {
     props.history.push("/dashboard");
   }
 
   const [state, setState] = useState({
     description: null,
-    image_files: [
-      {
-        extension: "jpg",
-        file: "",
-      },
-    ],
-    desc_audio_file: {
-      extension: "mp3",
-      file: "",
-    },
-    comment_audio_file: {
-      extension: "mp3",
-      file: "",
-    },
+    projectDocuments: [],
+    // desc_audio_file: {
+    //   extension: "mp3",
+    //   file: "",
+    // },
+    // comment_audio_file: {
+    //   extension: "mp3",
+    //   file: "",
+    // },
   });
   const [btnLoading, setBtnLoading] = useState(false);
 
@@ -42,14 +39,35 @@ const SubmitHomeWork = (props) => {
     setState({ ...state, [field]: value.target.value });
   };
 
+  const getBase64 = (img, callback) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   const onFinish = async () => {
-    // setBtnLoading(true);
+    setBtnLoading(true);
+
+    let multifile = [];
+    state.projectDocuments.map((img) => {
+      getBase64(img.file, (imageUrl) => {
+        img.file = imageUrl.replace("data:", "").replace(/^.+,/, "");
+      });
+      multifile.push(img);
+    });
+
+    await sleep(state.projectDocuments.length * 1000);
 
     try {
       const res = await postRequest("add-student-submitted-homework", {
         session_code: getSessionData().code,
         hid: queryString.hid,
-        ...state,
+        description: state.description,
+        image_files: multifile,
       });
 
       if (res.data.errmsg === "") {
@@ -66,15 +84,18 @@ const SubmitHomeWork = (props) => {
     }
   };
 
-  const uploadProps = {
-    name: "file",
-    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-    headers: {
-      authorization: "authorization-text",
-    },
+  const handleProjectDocumentChange = (images) => {
+    setState({ ...state, projectDocuments: images });
   };
 
-  const uploadLimit = localStorage.getItem("upload_img_limit");
+  const handleDocumentDelete = (doc) => {
+    let documents = state.projectDocuments;
+    let documentIndex = documents.findIndex(
+      (res) => res.file.uid === doc.file.uid
+    );
+    documents.splice(documentIndex, 1);
+    setState({ ...state, projectDocuments: documents });
+  };
 
   return (
     <>
@@ -92,7 +113,7 @@ const SubmitHomeWork = (props) => {
                         to="/home-work"
                         className="btn btn-sm btn-info waves-effect waves-themed"
                       >
-                        <i className="fal fa-backward"></i> Back
+                        Back
                       </Link>
                     </Space>
                   </div>
@@ -128,15 +149,13 @@ const SubmitHomeWork = (props) => {
                           </Col>
 
                           <Col xs={24} sm={12} lg={24}>
-                            <label>
-                              Attachment(s) [Attach up to {uploadLimit} files.]
-                            </label>
-                            <br />
-                            <Upload {...uploadProps}>
-                              <Button icon={<UploadOutlined />}>
-                                Click to Upload
-                              </Button>
-                            </Upload>
+                            <SubmitHomeworkDocumentUpload
+                              stateValues={state}
+                              handleProjectDocumentChange={
+                                handleProjectDocumentChange
+                              }
+                              handleDocumentDelete={handleDocumentDelete}
+                            />
                           </Col>
                         </Row>
                         <br />

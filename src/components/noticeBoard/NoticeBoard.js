@@ -11,30 +11,52 @@ import userIcon from "../../images/userIcon.jpg";
 
 const NoticeBoard = (props) => {
   const [noticeBoardList, setNoticeBoardList] = useState([]);
+  const [filterApply, setFilterApply] = useState(false);
   const [paginationData, setPaginationData] = useState({
     page: 1,
   });
-  const [filterData, setFilterData] = useState({
+
+  const initFilter = {
     filter_date: "",
     category: "",
-  });
+  };
+  const [filterData, setFilterData] = useState(initFilter);
 
-  useEffect(() => {
-    getNoticeBoardList(1);
-  }, []);
+  useEffect(
+    (props) => {
+      getNoticeBoardList(1, true);
+    },
+    [props]
+  );
 
-  const getNoticeBoardList = async (page) => {
-    const response = await postRequest("get-all-notice-board-information", {
-      scode: getSessionData().code,
-      page: page,
-      ...filterData,
-    });
-    setNoticeBoardList(
-      response.data.response && response.data.response.noticeinfo
-        ? response.data.response.noticeinfo
-        : []
-    );
-    setPaginationData(response.data.paginationData);
+  const getNoticeBoardList = async (page, refresh = false) => {
+    if (refresh) {
+      setFilterApply(false);
+      setFilterData(initFilter);
+      let response = await postRequest("get-all-notice-board-information", {
+        scode: getSessionData().code,
+        page: page,
+        ...initFilter,
+      });
+      setNoticeBoardList(
+        response.data.response && response.data.response.noticeinfo
+          ? response.data.response.noticeinfo
+          : []
+      );
+      setPaginationData(response.data.paginationData);
+    } else {
+      let response = await postRequest("get-all-notice-board-information", {
+        scode: getSessionData().code,
+        page: page,
+        ...filterData,
+      });
+      setNoticeBoardList(
+        response.data.response && response.data.response.noticeinfo
+          ? response.data.response.noticeinfo
+          : []
+      );
+      setPaginationData(response.data.paginationData);
+    }
   };
 
   const handlePrevPage = () => {
@@ -60,6 +82,7 @@ const NoticeBoard = (props) => {
   };
 
   const applyFilter = () => {
+    setFilterApply(true);
     getNoticeBoardList(1);
   };
 
@@ -70,7 +93,6 @@ const NoticeBoard = (props) => {
     // });
     // getNoticeBoardList(1);
   };
-
 
   return (
     <main id="js-page-content" role="main" className="page-content">
@@ -92,6 +114,7 @@ const NoticeBoard = (props) => {
                     handleFilterSelectChange={handleFilterSelectChange}
                     applyFilter={applyFilter}
                     resetFilter={resetFilter}
+                    filterApply={filterApply}
                   />
                 </div>
               </div>
@@ -106,7 +129,10 @@ const NoticeBoard = (props) => {
                               src={noticeBoard.published_by_image}
                               className="profile-image rounded-circle"
                               alt="publish-by"
-                              onError={(e)=>{e.target.onerror = null; e.target.src=userIcon}}
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = userIcon;
+                              }}
                             />{" "}
                             <span className="badge card-title">
                               {" "}
