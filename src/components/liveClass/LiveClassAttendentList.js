@@ -67,9 +67,8 @@ const LiveClassAttendentList = (props) => {
                     <td>SL.</td>
                     <td>Name</td>
                     <td>Class</td>
-                    <td>Section</td>
                     <td>Roll No.</td>
-                    <td>Attendent</td>
+                    <td>Status</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -80,9 +79,9 @@ const LiveClassAttendentList = (props) => {
                           <td>{id + 1}</td>
                           <td>{student?.student_name}</td>
                           <td>{student?.class}</td>
-                          <td>{student?.section}</td>
+
                           <td>{student?.roll}</td>
-                          <td>{student?.is_meeting_attended ? "Yes" : "No"}</td>
+                          <td>Present Absent Late {student?.is_meeting_attended ? "Yes" : "No"}</td>
                         </tr>
                       );
                     })}

@@ -131,15 +131,17 @@ const HomeWorkDetail = (props) => {
                 <Space>{renderButtons()}</Space>
               ) : (
                 <Space>
-                  <Link
-                    className="btn btn-sm btn-outline-success ml-2"
-                    to={{
-                      pathname: "/submitted-home-work",
-                      query: { hid: homeWorkDetail?.id },
-                    }}
-                  >
-                    VIEW SUBMITTED HOMEWORK
-                  </Link>
+                  {homeWorkDetail?.approved === 1 && (
+                    <Link
+                      className="btn btn-sm btn-outline-success ml-2"
+                      to={{
+                        pathname: "/submitted-home-work",
+                        query: { hid: homeWorkDetail?.id },
+                      }}
+                    >
+                      VIEW SUBMITTED HOMEWORK
+                    </Link>
+                  )}
                 </Space>
               )}
             </div>

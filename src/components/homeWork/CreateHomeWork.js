@@ -81,8 +81,7 @@ const CreateHomeWork = (props) => {
 
   const handleClassChange = async (field, value) => {
     let classCode = value.split("-");
-
-    setState({ ...state, [field]: classCode[0] });
+    setState({ ...state, [field]: value });
 
     const studentRes = await postRequest("get-student-list-by-class", {
       sid: getSessionData().code,
@@ -140,8 +139,12 @@ const CreateHomeWork = (props) => {
       page_no: state.page_no,
       chapter_no: state.chapter_no,
       comment_enable: state.comment_enable,
-      assignment_date: moment(state.assignment_date).format("YYYY-MM-DD"),
-      submission_date: moment(state.submission_date).format("YYYY-MM-DD"),
+      assignment_date: moment(state.assignment_date, "DD-MM-YYYY").format(
+        "YYYY-MM-DD"
+      ),
+      submission_date: moment(state.submission_date, "DD-MM-YYYY").format(
+        "YYYY-MM-DD"
+      ),
       school_code: getSchoolData().school_code,
       is_draft: "0",
       tclass: state.class_code,
