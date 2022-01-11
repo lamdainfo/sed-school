@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import { Modal, Space } from "antd";
+import { Modal, Space, Switch } from "antd";
 
 import { postRequest } from "../../axios";
 import HomeWorkComment from "./HomeWorkComment";
@@ -9,13 +9,17 @@ import HomeWorkLikeList from "./HomeWorkLikeList";
 import SubmitedHomeWorkDetail from "./SubmitedHomeWorkDetail";
 
 import { ShowDocumentPreview, getUserType } from "../../utils/Helpers";
-import { SuccessNotificationMsg } from "../../utils/NotificationHelper";
+import {
+  ErrorNotificationMsg,
+  SuccessNotificationMsg,
+} from "../../utils/NotificationHelper";
 
 import userIcon from "../../images/userIcon.jpg";
 
 const HomeWorkDetail = (props) => {
   const [showModel, setShowModel] = useState(false);
   const [homeWorkDetail, setHomeWorkDetail] = useState(null);
+  const [submissionAllow, setSubmissionAllow] = useState(true);
 
   const hideModelFunction = () => {
     setShowModel(false);
@@ -31,6 +35,7 @@ const HomeWorkDetail = (props) => {
       hid: props.homeWorkDetail.id,
     });
     setHomeWorkDetail(response.data.response);
+    setSubmissionAllow(response.data.response.is_submission_allowed);
   };
 
   const approveHomeWork = async () => {
@@ -91,6 +96,19 @@ const HomeWorkDetail = (props) => {
     }
   };
 
+  const onSwitchChange = async (status) => {
+    const response = await postRequest("toggle-homework-submission-allow", {
+      hid: props.homeWorkDetail.id,
+      status,
+    });
+    if (response.data.errmsg === "") {
+      SuccessNotificationMsg("Success", "Change done successfully");
+      setSubmissionAllow(status);
+    } else {
+      ErrorNotificationMsg("Something went wrong");
+    }
+  };
+
   return (
     <>
       <button
@@ -131,16 +149,25 @@ const HomeWorkDetail = (props) => {
                 <Space>{renderButtons()}</Space>
               ) : (
                 <Space>
+                  <p>
+                    Allow or Disallow submission{" "}
+                    <Switch
+                      checked={submissionAllow}
+                      onChange={onSwitchChange}
+                    />
+                  </p>
                   {homeWorkDetail?.approved === 1 && (
-                    <Link
-                      className="btn btn-sm btn-outline-success ml-2"
-                      to={{
-                        pathname: "/submitted-home-work",
-                        query: { hid: homeWorkDetail?.id },
-                      }}
-                    >
-                      VIEW SUBMITTED HOMEWORK
-                    </Link>
+                    <>
+                      <Link
+                        className="btn btn-sm btn-outline-success ml-2"
+                        to={{
+                          pathname: "/submitted-home-work",
+                          query: { hid: homeWorkDetail?.id },
+                        }}
+                      >
+                        VIEW SUBMITTED HOMEWORK
+                      </Link>
+                    </>
                   )}
                 </Space>
               )}

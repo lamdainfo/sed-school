@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import { Input, Row, Col, Select, Form, Button, DatePicker, Space } from "antd";
@@ -16,6 +16,7 @@ const { Option } = Select;
 const { TextArea } = Input;
 
 const CreateHomeWorkBySubject = (props) => {
+  const formRef = useRef();
   const dateFormat = "DD-MM-YYYY";
   const [state, setState] = useState({
     class_code: null,
@@ -50,15 +51,21 @@ const CreateHomeWorkBySubject = (props) => {
   };
 
   const handleChangeAssignmentDate = (date, dateString) => {
-    setState({ ...state, assignment_date: dateString });
+    setState({ ...state, assignment_date: date, submission_date: date });
+    formRef.current.setFieldsValue({ submission_date: date });
   };
 
   const handleChangeSubmissionDate = (date, dateString) => {
-    setState({ ...state, submission_date: dateString });
+    setState({ ...state, submission_date: date });
   };
 
   const disablePastDate = (current) => {
     let customDate = moment().format("DD-MM-YYYY");
+    return current && current < moment(customDate, "DD-MM-YYYY");
+  };
+
+  const disableSubmissionDate = (current) => {
+    let customDate = state.assignment_date;
     return current && current < moment(customDate, "DD-MM-YYYY");
   };
 
@@ -158,8 +165,12 @@ const CreateHomeWorkBySubject = (props) => {
       class_code: state.class_code,
       sections: state.sections,
       comment_enable: state.comment_enable,
-      assignment_date: moment(state.assignment_date, "DD-MM-YYYY").format("YYYY-MM-DD"),
-      submission_date: moment(state.submission_date, "DD-MM-YYYY").format("YYYY-MM-DD"),
+      assignment_date: moment(state.assignment_date, "DD-MM-YYYY").format(
+        "YYYY-MM-DD"
+      ),
+      submission_date: moment(state.submission_date, "DD-MM-YYYY").format(
+        "YYYY-MM-DD"
+      ),
       is_draft: "0",
       sdata: {
         student_list: studentsArr,
@@ -231,6 +242,7 @@ const CreateHomeWorkBySubject = (props) => {
                       onFinish={onFinish}
                       autoComplete="off"
                       layout="vertical"
+                      ref={formRef}
                     >
                       <div className="panel-content">
                         <Row gutter={[15]}>
@@ -379,7 +391,7 @@ const CreateHomeWorkBySubject = (props) => {
                                 allowClear={false}
                                 defaultValue={moment()}
                                 format={dateFormat}
-                                disabledDate={disablePastDate}
+                                disabledDate={disableSubmissionDate}
                                 onChange={handleChangeSubmissionDate}
                                 style={{ width: "100%" }}
                               />

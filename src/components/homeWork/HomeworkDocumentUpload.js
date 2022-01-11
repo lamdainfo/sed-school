@@ -44,22 +44,8 @@ class HomeworkDocumentUpload extends React.Component {
     if (isImageOrFile(file.type)) {
       return true;
     } else {
-      if (file.size > 5242880) {
-        ErrorNotificationMsg("Maximum size for file upload is 5MB.");
-        return false;
-      }
-
-      let uploadImageStat = this.props.stateValues.projectDocuments;
-      let docObj = {
-        file_name: file.name,
-        ext: "." + file.name.split(".").pop(),
-        file: file,
-      };
-
-      getBase64(file, (imageUrl) => (docObj.furl = imageUrl));
-      await sleep(300);
-      uploadImageStat.push(docObj);
-      this.props.handleProjectDocumentChange(uploadImageStat);
+      ErrorNotificationMsg("Supported file types are jpg, jpeg, png.");
+      return false;
     }
   };
 
