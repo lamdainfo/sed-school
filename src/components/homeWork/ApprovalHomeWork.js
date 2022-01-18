@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import moment from "moment";
 import { postRequest } from "../../axios";
 
-import HomeWorkDetail from "./HomeWorkDetail";
+import HomeWorkDetail from "./HomeWorkDetailApprove";
 import { getSessionData } from "../../utils/Helpers";
 import HomeWorkApproveFilter from "./HomeWorkApproveFilter";
 

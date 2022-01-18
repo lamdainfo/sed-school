@@ -23,7 +23,9 @@ const NoticeBoardFilter = (props) => {
   };
 
   const getCategoryList = async () => {
-    const response = await postRequest("get-notice-board-category");
+    const response = await postRequest("get-notice-board-category", {
+      applyFilter: 1,
+    });
     setCategoryList(response.data.response);
   };
 

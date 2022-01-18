@@ -57,7 +57,7 @@ const HomeWorkLikeList = (props) => {
             : () => likeHomeWork()
         }
       >
-        {getUserType() === "staff" ? props?.homeWorkDetail?.total_like : ""}
+        {props?.homeWorkDetail?.total_like}
         &nbsp;
         {getUserType() === "staff" ? (
           <i

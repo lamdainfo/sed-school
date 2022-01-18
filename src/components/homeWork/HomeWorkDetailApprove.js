@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import { Modal, Space, Switch, Button } from "antd";
+import { Modal, Space } from "antd";
 
 import { postRequest } from "../../axios";
 import HomeWorkComment from "./HomeWorkComment";
@@ -16,7 +16,7 @@ import {
 
 import userIcon from "../../images/userIcon.jpg";
 
-const HomeWorkDetail = (props) => {
+const HomeWorkDetailApprove = (props) => {
   const [showModel, setShowModel] = useState(false);
   const [homeWorkDetail, setHomeWorkDetail] = useState(null);
   const [submissionAllow, setSubmissionAllow] = useState(true);
@@ -36,6 +36,18 @@ const HomeWorkDetail = (props) => {
     });
     setHomeWorkDetail(response.data.response);
     setSubmissionAllow(response.data.response.is_submission_allowed);
+  };
+
+  const approveHomeWork = async () => {
+    await postRequest("approve-homework", {
+      hid: props.homeWorkDetail.id,
+      status: "1",
+    });
+    SuccessNotificationMsg("Success", "Approved successfully");
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   };
 
   const deleteHomeWork = async () => {
@@ -149,13 +161,6 @@ const HomeWorkDetail = (props) => {
                 <Space>{renderButtons()}</Space>
               ) : (
                 <Space>
-                  <p>
-                    Allow or Disallow submission{" "}
-                    <Switch
-                      checked={submissionAllow}
-                      onChange={onSwitchChange}
-                    />
-                  </p>
                   {homeWorkDetail?.approved === 1 && (
                     <>
                       <Link
@@ -185,27 +190,31 @@ const HomeWorkDetail = (props) => {
                     Approved By : <strong>{homeWorkDetail?.approve_by}</strong>
                   </span>
                 ) : (
-                  <>
-                    <span className="d-block">
-                      Approved Status :{" "}
-                      <strong className="text-primary">Pending</strong>
-                    </span>
+                  <Space>
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={approveHomeWork}
+                    >
+                      <i className="fal fa-hand-paper"></i> Approve Now
+                    </button>
 
-                    <Space>
-                      <Link
-                        className="btn btn-sm btn-info ml-2"
-                        to={{
-                          pathname: "/edit-home-work",
-                          query: { hid: homeWorkDetail?.id },
-                        }}
-                      >
-                        Edit
-                      </Link>
-                      <button className="btn btn-sm btn-danger ml-2"  onClick={deleteHomeWork}>
+                    <Link
+                      className="btn btn-sm btn-info ml-2"
+                      to={{
+                        pathname: "/edit-home-work",
+                        query: { hid: homeWorkDetail?.id },
+                      }}
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      className="btn btn-sm btn-danger ml-2"
+                      onClick={deleteHomeWork}
+                    >
                       <i className="fal fa-bin"></i> Delete
-                      </button>
-                    </Space>
-                  </>
+                    </button>
+                  </Space>
                 )
               ) : (
                 ""
@@ -280,4 +289,4 @@ const HomeWorkDetail = (props) => {
   );
 };
 
-export default HomeWorkDetail;
+export default HomeWorkDetailApprove;

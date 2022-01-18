@@ -150,23 +150,23 @@ const NoticeBoardDetail = (props) => {
             <p>{noticeBoardDetail?.description}</p>
           </div>
         </div>
-        <hr />
-        <span className="badge badge-warning">Attachment(s)</span>
-        <div className="row mt-3">
-          {noticeBoardDetail &&
-            noticeBoardDetail.document &&
-            noticeBoardDetail.document.map((doc, key) => {
-              return (
-                <div className="col-md-3" key={key}>
-                  {ShowDocumentPreview(doc.file_url, doc.ext)}
-                </div>
-              );
-            })}
-
-          {noticeBoardDetail?.document?.length === 0 && (
-            <div className="col-md-12">No attachment found.</div>
-          )}
-        </div>
+        {noticeBoardDetail?.document?.length !== 0 && (
+          <>
+            <hr />
+            <span className="badge badge-warning">Attachment(s)</span>
+            <div className="row mt-3">
+              {noticeBoardDetail &&
+                noticeBoardDetail.document &&
+                noticeBoardDetail.document.map((doc, key) => {
+                  return (
+                    <div className="col-md-3" key={key}>
+                      {ShowDocumentPreview(doc.file_url, doc.ext)}
+                    </div>
+                  );
+                })}
+            </div>
+          </>
+        )}
       </Modal>
     </>
   );

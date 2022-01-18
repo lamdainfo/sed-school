@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import moment from "moment";
 import {
   Modal,
   Form,
@@ -92,6 +93,11 @@ const HomeWorkApproveFilter = (props) => {
     window.location.href = "/approval-home-work";
   };
 
+  const disableFutureDate = (current) => {
+    let customDate = moment().add(1, "days").format("DD-MM-YYYY");
+    return current && current > moment(customDate, "DD-MM-YYYY");
+  };
+
   return (
     <>
       <span onClick={() => showModelFunction()} style={{ float: "right" }}>
@@ -125,6 +131,7 @@ const HomeWorkApproveFilter = (props) => {
                   format={dateFormat}
                   onChange={props.handleFilterChangeFilterDate}
                   style={{ width: "100%" }}
+                  disabledDate={disableFutureDate}
                   disabled={
                     props?.filterData?.is_assignment === 0 &&
                     props?.filterData?.is_submission === 0

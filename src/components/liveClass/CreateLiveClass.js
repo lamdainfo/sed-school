@@ -97,6 +97,19 @@ const CreateLiveClass = (props) => {
   };
 
   const onFinish = async () => {
+    let classDateTime =
+      moment(state.class_date, "YYYY-MM-DD").format("YYYY-MM-DD") +
+      " " +
+      moment(state.class_start_time, "HH:mm A").format("HH:mm") +
+      ":00";
+
+    let diffinMinutes = moment().diff(classDateTime, "minutes");
+
+    if (diffinMinutes > 0) {
+      ErrorNotificationMsg("You can't create live class for past time.");
+      return false;
+    }
+
     setBtnLoading(true);
 
     try {

@@ -185,14 +185,13 @@ const LiveClass = (props) => {
                             )}
                             <div className="frame-wrap mb-0">
                               <span className="d-block text-muted">
-                                <i className="fal fa-sm fa-angle-double-right text-warning"></i>
-                                <label>Teacher Name :</label>{" "}
-                                {liveClass.teacher_name}
+                                <i className="fa fa-sm fa-angle-double-right text-warning"></i>
+                                Teacher Name : {liveClass.teacher_name}
                               </span>
                             </div>
                             <div className="frame-wrap mb-0">
                               <span className="d-block text-muted">
-                                <i className="fal fa-sm fa-angle-double-right text-warning"></i>
+                                <i className="fa fa-sm fa-angle-double-right text-warning"></i>
                                 Class Scheduled At :{" "}
                                 {liveClass.live_class_date +
                                   " " +
@@ -202,7 +201,8 @@ const LiveClass = (props) => {
                             <div className="frame-wrap mb-0">
                               <span className="d-block text-muted">
                                 <i className="fa fa-sm fa-angle-double-right text-warning"></i>
-                                Duration : {liveClass.duration} Minutes
+                                <label>Duration : </label> {liveClass.duration}{" "}
+                                Minutes
                               </span>
                             </div>
                             {getUserType() !== "staff" && (

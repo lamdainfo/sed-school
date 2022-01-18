@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import { Input, Row, Col, Select, Form, Button } from "antd";
+import { Input, Row, Col, Select, Form, Button, Switch } from "antd";
 import { postRequest } from "../../axios";
 
 import PageHeader from "../common/PageHeader";
@@ -20,6 +20,7 @@ const { Option } = Select;
 const { TextArea } = Input;
 
 const CreateNoticeBoard = (props) => {
+  const formRef = useRef();
   const [state, setState] = useState({
     edit_mode: "",
     posted_on: null,
@@ -53,7 +54,9 @@ const CreateNoticeBoard = (props) => {
   };
 
   const getCategoryList = async () => {
-    const response = await postRequest("get-notice-board-category");
+    const response = await postRequest("get-notice-board-category", {
+      applyFilter: 0,
+    });
     setCategoryList(response.data.response);
   };
 
@@ -160,6 +163,19 @@ const CreateNoticeBoard = (props) => {
     setState({ ...state, projectDocuments: documents });
   };
 
+  const onSwitchChange = async (status) => {
+    let studentsArr = [];
+    if (status) {
+      studentList.map((s) => {
+        studentsArr.push(s.student_class_id + "-" + s.student_name);
+        return null;
+      });
+    }
+
+    setState({ ...state, student_list: studentsArr });
+    formRef.current.setFieldsValue({ student_list: studentsArr });
+  };
+
   return (
     <>
       <main id="js-page-content" role="main" className="page-content">
@@ -186,6 +202,7 @@ const CreateNoticeBoard = (props) => {
                       onFinish={onFinish}
                       autoComplete="off"
                       layout="vertical"
+                      ref={formRef}
                     >
                       <div className="panel-content">
                         <Row gutter={[15]}>
@@ -233,6 +250,7 @@ const CreateNoticeBoard = (props) => {
                                 onChange={(value) =>
                                   handleSelectChange("student_list", value)
                                 }
+                                value={state.student_list}
                               >
                                 {!!studentList &&
                                   studentList.map((s) => (
@@ -249,6 +267,7 @@ const CreateNoticeBoard = (props) => {
                                   ))}
                               </Select>
                             </Form.Item>
+                            Select All <Switch onChange={onSwitchChange} />
                           </Col>
                         </Row>
                         <hr />

@@ -200,21 +200,6 @@ const HomeWork = (props) => {
                               homeWorkDetail={homeWork}
                               history={props.history}
                             />
-
-                            {getUserType() === "staff" &&
-                              homeWork?.approved === 0 && (
-                                <Space>
-                                  <Link
-                                    className="btn btn-sm btn-outline-info ml-2"
-                                    to={{
-                                      pathname: "/edit-home-work",
-                                      query: { hid: homeWork?.id },
-                                    }}
-                                  >
-                                    Edit
-                                  </Link>
-                                </Space>
-                              )}
                           </div>
 
                           <div className="card-footer text-muted py-2">

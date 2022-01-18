@@ -5,17 +5,15 @@ import { postRequest } from "../../axios";
 import { getUserType } from "../../utils/Helpers";
 
 const LiveClassButton = ({ liveClassDetail }) => {
-  const [dateState, setDateState] = useState("");
-  const [endDateState, setEndDateState] = useState("");
+  const [startDiff, setDateState] = useState("");
+  const [endDiff, setEndDateState] = useState("");
 
-  var classDateTime =
+  var classStartTime =
     moment(liveClassDetail.live_class_date, "DD-MM-YYYY").format("YYYY-MM-DD") +
     " " +
     moment(liveClassDetail.start_time, "HH:mm A").format("HH:mm:ss");
 
-  classDateTime = classDateTime + liveClassDetail.duration;
-
-  var classEndDateTime =
+  var classEndTime =
     moment(liveClassDetail.live_class_date, "DD-MM-YYYY").format("YYYY-MM-DD") +
     " " +
     moment(liveClassDetail.end_time, "HH:mm A").format("HH:mm:ss");
@@ -23,8 +21,8 @@ const LiveClassButton = ({ liveClassDetail }) => {
   useEffect(() => {
     if (liveClassDetail) {
       setInterval(() => {
-        setDateState(moment().diff(classDateTime, "minutes"));
-        setEndDateState(moment().diff(classEndDateTime, "minutes"));
+        setDateState(moment().diff(classStartTime, "minutes"));
+        setEndDateState(moment().diff(classEndTime, "minutes"));
       }, 1000);
     }
   }, []);
@@ -40,33 +38,67 @@ const LiveClassButton = ({ liveClassDetail }) => {
     }
   };
 
-  return (
-    <>
-      {dateState > 0 && endDateState > 0 && (
+  const renderStaffButton = (startDiff, endDiff) => {
+    if (endDiff > 0) {
+      return (
         <a className="btn btn-sm btn-danger text-white disabled">Class Ended</a>
-      )}
+      );
+    }
 
-      {dateState > 0 && endDateState < 0 && (
+    if (startDiff >= -4 && endDiff <= 0) {
+      return (
         <a
           href="#"
           onClick={fillAttendance}
           className="btn btn-sm btn-success text-white"
         >
-          {getUserType() === "staff" ? "Start Class" : "Join Class"}
+          Start Class
         </a>
-      )}
+      );
+    }
 
-      {dateState > -5 && dateState <= 0 && (
-        <a className="btn btn-sm btn-warning text-white disabled">
-          Class will start few min
-        </a>
-      )}
-
-      {dateState < -5 && (
+    if (startDiff < -4) {
+      return (
         <a className="btn btn-sm btn-secondary text-white disabled">
           Class Not Ready
         </a>
-      )}
+      );
+    }
+  };
+
+  const renderStudentButton = (startDiff, endDiff) => {
+    if (endDiff > 0) {
+      return (
+        <a className="btn btn-sm btn-danger text-white disabled">Class Ended</a>
+      );
+    }
+
+    if (startDiff >= 0 && endDiff <= 0) {
+      return (
+        <a
+          href="#"
+          onClick={fillAttendance}
+          className="btn btn-sm btn-success text-white"
+        >
+          Start Class
+        </a>
+      );
+    }
+
+    if (startDiff < 0) {
+      return (
+        <a className="btn btn-sm btn-secondary text-white disabled">
+          Class Not Ready
+        </a>
+      );
+    }
+  };
+
+  return (
+    <>
+      {getUserType() === "staff" && renderStaffButton(startDiff, endDiff)}
+
+      {getUserType() !== "staff" && renderStudentButton(startDiff, endDiff)}
     </>
   );
 };

@@ -223,7 +223,8 @@ const NoticeBoard = (props) => {
 
                   {noticeBoardList && noticeBoardList.length === 0 && (
                     <div className="alert alert-warning">
-                      No Notice Board List Found!
+                      No Notice Board List found for the selected Date /
+                      Category
                     </div>
                   )}
 

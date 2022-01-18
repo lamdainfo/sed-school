@@ -1603,7 +1603,7 @@ body .ant-select-single .ant-select-selector .ant-select-selection-placeholder {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  z-index: 1002;
+  /* z-index: 1002; */
   will-change: left, right;
 }
 .primary-nav {
