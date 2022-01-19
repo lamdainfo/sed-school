@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import { Input, Row, Col, Select, Form, Button, Switch } from "antd";
+import { Input, Row, Col, Select, Form, Button, Switch, Space } from "antd";
 import { postRequest } from "../../axios";
 
 import PageHeader from "../common/PageHeader";
@@ -29,7 +29,7 @@ const CreateNoticeBoard = (props) => {
     description: null,
     comment_enable: 0,
     school_code: null,
-    is_draft: null,
+    is_draft: "0",
     class_code: null,
     student_list: [],
     projectDocuments: [],
@@ -39,6 +39,7 @@ const CreateNoticeBoard = (props) => {
   const [categoryList, setCategoryList] = useState([]);
   const [classList, setClassList] = useState([]);
   const [studentList, setStudentList] = useState([]);
+  const [switchStatus, setSwitchStatus] = useState(false);
 
   useEffect(() => {
     getCategoryList();
@@ -77,8 +78,9 @@ const CreateNoticeBoard = (props) => {
 
   const handleClassChange = async (field, value) => {
     let classCode = value.split("-");
-
-    setState({ ...state, [field]: classCode[0] });
+    setState({ ...state, [field]: classCode[0], student_list: [] });
+    setSwitchStatus(false);
+    formRef.current.setFieldsValue({ student_list: [] });
 
     const studentRes = await postRequest("get-student-list-by-class", {
       sid: getSessionData().code,
@@ -100,6 +102,9 @@ const CreateNoticeBoard = (props) => {
   }
 
   const onFinish = async () => {
+    console.log(state);
+    return false;
+
     setBtnLoading(true);
 
     let studentsArr = [];
@@ -129,7 +134,7 @@ const CreateNoticeBoard = (props) => {
       description: state.description,
       comment_enable: state.comment_enable,
       school_code: getSchoolData().school_code,
-      is_draft: "0",
+      is_draft: state.is_draft,
       sdata: {
         class_code: state.class_code,
         edit_student_list: [],
@@ -172,6 +177,7 @@ const CreateNoticeBoard = (props) => {
       });
     }
 
+    setSwitchStatus(status);
     setState({ ...state, student_list: studentsArr });
     formRef.current.setFieldsValue({ student_list: studentsArr });
   };
@@ -267,7 +273,17 @@ const CreateNoticeBoard = (props) => {
                                   ))}
                               </Select>
                             </Form.Item>
-                            Select All <Switch onChange={onSwitchChange} />
+
+                            <>
+                              Select All{" "}
+                              <Switch
+                                onChange={onSwitchChange}
+                                checked={switchStatus}
+                                disabled={
+                                  state.class_code !== null ? false : true
+                                }
+                              />
+                            </>
                           </Col>
                         </Row>
                         <hr />
@@ -369,15 +385,31 @@ const CreateNoticeBoard = (props) => {
                         <br />
                       </div>
 
-                      <div className="panel-content border-faded border-left-0 border-right-0 border-bottom-0 d-flex flex-row">
-                        <Button
-                          type="primary"
-                          htmlType="submit"
-                          loading={btnLoading}
-                          className="btn btn-primary ml-auto waves-effect waves-themed"
-                        >
-                          Publish
-                        </Button>
+                      <div className="panel-content border-faded border-left-0 border-right-0 border-bottom-0 d-flex flex-row justify-content-end">
+                        <Space>
+                          <Button
+                            type="secondary"
+                            onClick={() =>
+                              setState({ ...state, is_draft: "1" })
+                            }
+                            htmlType="submit"
+                            loading={btnLoading}
+                            className="btn btn-danger ml-auto waves-effect waves-themed"
+                          >
+                            Draft
+                          </Button>
+                          <Button
+                            type="primary"
+                            htmlType="submit"
+                            onClick={() =>
+                              setState({ ...state, is_draft: "0" })
+                            }
+                            loading={btnLoading}
+                            className="btn btn-primary ml-auto waves-effect waves-themed"
+                          >
+                            Publish
+                          </Button>
+                        </Space>
                       </div>
                     </Form>
                   </div>

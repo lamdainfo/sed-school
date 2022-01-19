@@ -1,7 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import { Input, Row, Col, Select, Form, Button, DatePicker, Space } from "antd";
+import {
+  Input,
+  Row,
+  Col,
+  Select,
+  Form,
+  Button,
+  DatePicker,
+  Space,
+  Switch,
+} from "antd";
 import { postRequest } from "../../axios";
 
 import PageHeader from "../common/PageHeader";
@@ -31,12 +41,14 @@ const CreateHomeWorkBySubject = (props) => {
     topic: "",
     description: null,
     projectDocuments: [],
+    is_draft: "0",
   });
   const [btnLoading, setBtnLoading] = useState(false);
   const [classList, setClassList] = useState([]);
   const [studentList, setStudentList] = useState([]);
   const [sectionList, setSectionList] = useState([]);
   const [subjectList, setSubjectList] = useState([]);
+  const [switchStatus, setSwitchStatus] = useState(false);
 
   useEffect(() => {
     getClassList();
@@ -86,8 +98,23 @@ const CreateHomeWorkBySubject = (props) => {
 
   const handleClassChange = async (field, value) => {
     let classCode = value.split("-");
+    setState({
+      ...state,
+      [field]: classCode[0],
+      sections: [],
+      subject: null,
+      student_list: [],
+    });
+    setSwitchStatus(false);
+    setSectionList([]);
+    setSubjectList([]);
+    setStudentList([]);
 
-    setState({ ...state, [field]: classCode[0] });
+    formRef.current.setFieldsValue({
+      sections: [],
+      subject: null,
+      student_list: [],
+    });
 
     const sectionRes = await postRequest("get-section-by-class", {
       session_code: getSessionData().code,
@@ -98,20 +125,44 @@ const CreateHomeWorkBySubject = (props) => {
   };
 
   const handleSectionChange = async (field, value) => {
-    setState({ ...state, sections: value });
+    setState({ ...state, sections: value, subject: [], student_list: [] });
+    setSwitchStatus(false);
+    setSubjectList([]);
+    setStudentList([]);
 
-    const subjectRes = await postRequest("get-subject-by-class-multi-section", {
-      session_code: getSessionData().code,
-      class_code: state.class_code,
-      sections: value,
-      tid: getUserData().tid,
+    formRef.current.setFieldsValue({
+      subject: [],
+      student_list: [],
     });
 
-    setSubjectList(subjectRes.data.response);
+    if (value !== "" && value !== undefined) {
+      const subjectRes = await postRequest(
+        "get-subject-by-class-multi-section",
+        {
+          session_code: getSessionData().code,
+          class_code: state.class_code,
+          sections: value,
+          tid: getUserData().tid,
+        }
+      );
+
+      setSubjectList(
+        subjectRes.data.response && typeof subjectRes.data.response !== "string"
+          ? subjectRes.data.response
+          : []
+      );
+    } else {
+      setSubjectList([]);
+    }
   };
 
   const handleSubjectChange = async (field, value) => {
-    setState({ ...state, subject: value });
+    setState({ ...state, subject: value, student_list: [] });
+    setSwitchStatus(false);
+    setStudentList([]);
+    formRef.current.setFieldsValue({
+      student_list: [],
+    });
 
     const studentRes = await postRequest(
       "get-student-by-class-section-subject",
@@ -171,7 +222,7 @@ const CreateHomeWorkBySubject = (props) => {
       submission_date: moment(state.submission_date, "DD-MM-YYYY").format(
         "YYYY-MM-DD"
       ),
-      is_draft: "0",
+      is_draft: state.is_draft,
       sdata: {
         student_list: studentsArr,
       },
@@ -206,6 +257,20 @@ const CreateHomeWorkBySubject = (props) => {
     );
     documents.splice(documentIndex, 1);
     setState({ ...state, projectDocuments: documents });
+  };
+
+  const onSwitchChange = async (status) => {
+    let studentsArr = [];
+    if (status) {
+      studentList.map((s) => {
+        studentsArr.push(s.student_class_id + "-" + s.student_name);
+        return null;
+      });
+    }
+
+    setSwitchStatus(status);
+    setState({ ...state, student_list: studentsArr });
+    formRef.current.setFieldsValue({ student_list: studentsArr });
   };
 
   return (
@@ -362,6 +427,16 @@ const CreateHomeWorkBySubject = (props) => {
                                   ))}
                               </Select>
                             </Form.Item>
+                            <>
+                              Select All{" "}
+                              <Switch
+                                onChange={onSwitchChange}
+                                checked={switchStatus}
+                                disabled={
+                                  state.class_code !== null ? false : true
+                                }
+                              />
+                            </>
                           </Col>
                         </Row>
                         <hr />
@@ -487,15 +562,31 @@ const CreateHomeWorkBySubject = (props) => {
                         <br />
                       </div>
 
-                      <div className="panel-content border-faded border-left-0 border-right-0 border-bottom-0 d-flex flex-row">
-                        <Button
-                          type="primary"
-                          htmlType="submit"
-                          loading={btnLoading}
-                          className="btn btn-primary ml-auto waves-effect waves-themed"
-                        >
-                          Publish
-                        </Button>
+                      <div className="panel-content border-faded border-left-0 border-right-0 border-bottom-0 d-flex flex-row justify-content-end">
+                        <Space>
+                          <Button
+                            type="secondary"
+                            onClick={() =>
+                              setState({ ...state, is_draft: "1" })
+                            }
+                            htmlType="submit"
+                            loading={btnLoading}
+                            className="btn btn-danger ml-auto waves-effect waves-themed"
+                          >
+                            Draft
+                          </Button>
+                          <Button
+                            type="primary"
+                            htmlType="submit"
+                            onClick={() =>
+                              setState({ ...state, is_draft: "0" })
+                            }
+                            loading={btnLoading}
+                            className="btn btn-primary ml-auto waves-effect waves-themed"
+                          >
+                            Publish
+                          </Button>
+                        </Space>
                       </div>
                     </Form>
                   </div>

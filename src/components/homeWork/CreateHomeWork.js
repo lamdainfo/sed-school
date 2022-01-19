@@ -1,7 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import { Input, Row, Col, Select, Form, Button, DatePicker, Space } from "antd";
+import {
+  Input,
+  Row,
+  Col,
+  Select,
+  Form,
+  Button,
+  DatePicker,
+  Space,
+  Switch,
+} from "antd";
 import { postRequest } from "../../axios";
 
 import PageHeader from "../common/PageHeader";
@@ -34,11 +44,13 @@ const CreateHomeWork = (props) => {
     topic: "",
     description: null,
     projectDocuments: [],
+    is_draft: "0",
   });
   const [btnLoading, setBtnLoading] = useState(false);
   const [classList, setClassList] = useState([]);
   const [studentList, setStudentList] = useState([]);
   const [subjectList, setSubjectList] = useState([]);
+  const [switchStatus, setSwitchStatus] = useState(false);
 
   useEffect(() => {
     getClassList();
@@ -88,7 +100,9 @@ const CreateHomeWork = (props) => {
 
   const handleClassChange = async (field, value) => {
     let classCode = value.split("-");
-    setState({ ...state, [field]: value });
+    setState({ ...state, [field]: value, student_list: [], subject: null });
+    setSwitchStatus(false);
+    formRef.current.setFieldsValue({ student_list: [], subject: null });
 
     const studentRes = await postRequest("get-student-list-by-class", {
       sid: getSessionData().code,
@@ -153,7 +167,7 @@ const CreateHomeWork = (props) => {
         "YYYY-MM-DD"
       ),
       school_code: getSchoolData().school_code,
-      is_draft: "0",
+      is_draft: state.is_draft,
       tclass: state.class_code,
       hid: "",
       sdata: {
@@ -194,6 +208,20 @@ const CreateHomeWork = (props) => {
     );
     documents.splice(documentIndex, 1);
     setState({ ...state, projectDocuments: documents });
+  };
+
+  const onSwitchChange = async (status) => {
+    let studentsArr = [];
+    if (status) {
+      studentList.map((s) => {
+        studentsArr.push(s.student_class_id + "-" + s.student_name);
+        return null;
+      });
+    }
+
+    setSwitchStatus(status);
+    setState({ ...state, student_list: studentsArr });
+    formRef.current.setFieldsValue({ student_list: studentsArr });
   };
 
   return (
@@ -293,6 +321,16 @@ const CreateHomeWork = (props) => {
                                   ))}
                               </Select>
                             </Form.Item>
+                            <>
+                              Select All{" "}
+                              <Switch
+                                onChange={onSwitchChange}
+                                checked={switchStatus}
+                                disabled={
+                                  state.class_code !== null ? false : true
+                                }
+                              />
+                            </>
                           </Col>
                         </Row>
                         <hr />
@@ -445,24 +483,31 @@ const CreateHomeWork = (props) => {
                         <br />
                       </div>
 
-                      <div className="panel-content border-faded border-left-0 border-right-0 border-bottom-0 d-flex flex-row">
-                        {/* <button
-                          name="draft"
-                          type="submit"
-                          loading={btnLoading}
-                          className="btn btn-secondary ml-auto waves-effect waves-themed"
-                        >
-                          Draft
-                        </button> */}
-                        <Button
-                          name="publish"
-                          type="primary"
-                          htmlType="submit"
-                          loading={btnLoading}
-                          className="btn btn-primary ml-auto waves-effect waves-themed"
-                        >
-                          Publish
-                        </Button>
+                      <div className="panel-content border-faded border-left-0 border-right-0 border-bottom-0 d-flex flex-row justify-content-end">
+                        <Space>
+                          <Button
+                            type="secondary"
+                            onClick={() =>
+                              setState({ ...state, is_draft: "1" })
+                            }
+                            htmlType="submit"
+                            loading={btnLoading}
+                            className="btn btn-danger ml-auto waves-effect waves-themed"
+                          >
+                            Draft
+                          </Button>
+                          <Button
+                            type="primary"
+                            htmlType="submit"
+                            onClick={() =>
+                              setState({ ...state, is_draft: "0" })
+                            }
+                            loading={btnLoading}
+                            className="btn btn-primary ml-auto waves-effect waves-themed"
+                          >
+                            Publish
+                          </Button>
+                        </Space>
                       </div>
                     </Form>
                   </div>
