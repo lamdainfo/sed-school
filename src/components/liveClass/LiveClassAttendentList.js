@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import moment from "moment";
 import { Modal, Radio, Button, Space } from "antd";
 
 import { postRequest } from "../../axios";
@@ -142,27 +143,30 @@ const LiveClassAttendentList = (props) => {
               </table>
             </div>
           </div>
-          <hr/>
+          <hr />
           <div className="col-md-12">
             <div className="panel-content d-flex flex-row justify-content-end">
               <Space>
-                <Button
-                  type="secondary"
+                <button
                   onClick={hideModelFunction}
-                  htmlType="button"
-                  className="btn btn-danger ml-auto waves-effect waves-themed"
-                >
-                  Close
-                </Button>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  onClick={updateAttendance}
-                  loading={btnLoading}
                   className="btn btn-primary ml-auto waves-effect waves-themed"
                 >
-                  Update Attendance
-                </Button>
+                  Close
+                </button>
+                {moment().diff(
+                  moment(props.liveClassDetail.live_class_date, "DD-MM-YYYY"),
+                  "days"
+                ) === 0 && (
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={updateAttendance}
+                    loading={btnLoading}
+                    className="btn btn-info ml-auto waves-effect waves-themed"
+                  >
+                    Update Attendance
+                  </Button>
+                )}
               </Space>
             </div>
           </div>

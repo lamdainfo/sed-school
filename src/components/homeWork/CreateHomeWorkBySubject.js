@@ -90,17 +90,25 @@ const CreateHomeWorkBySubject = (props) => {
     let classArr = classRes.data.response.as_class_teacher.concat(
       classRes.data.response.as_subject_teacher
     );
-    let uniqueClassList = classArr.filter(
-      (item, pos) => classArr.indexOf(item) === pos
-    );
+
+    let uniqueClassList = [];
+    let tmArr = [];
+    classArr.forEach((cls) => {
+      let classC = cls.split("-");
+      if (tmArr.includes(classC[0]) === false) {
+        uniqueClassList.push(classC[0]);
+        tmArr.push(classC[0]);
+      }
+    });
+
     setClassList(uniqueClassList);
   };
 
   const handleClassChange = async (field, value) => {
-    let classCode = value.split("-");
+    let classCode = value;
     setState({
       ...state,
-      [field]: classCode[0],
+      [field]: classCode,
       sections: [],
       subject: null,
       student_list: [],
@@ -118,7 +126,7 @@ const CreateHomeWorkBySubject = (props) => {
 
     const sectionRes = await postRequest("get-section-by-class", {
       session_code: getSessionData().code,
-      class_code: classCode[0],
+      class_code: classCode,
     });
 
     setSectionList(sectionRes.data.response);
@@ -329,11 +337,10 @@ const CreateHomeWorkBySubject = (props) => {
                                 }
                               >
                                 {!!classList &&
-                                  classList.map((s) => {
-                                    let classCode = s.split("-");
+                                  classList.map((cls) => {
                                     return (
-                                      <Option key={s} value={s}>
-                                        {classCode[0]}
+                                      <Option key={cls} value={cls}>
+                                        {cls}
                                       </Option>
                                     );
                                   })}
