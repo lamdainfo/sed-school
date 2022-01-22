@@ -222,6 +222,7 @@ const LiveClass = (props) => {
                               {liveClass.total_students}
                               <LiveClassAttendentList
                                 liveClassDetail={liveClass}
+                                history={props.history}
                               />
                               {liveClass.totalAttend <= 0 ? (
                                 editIndexStatus === liveClass.id ? (

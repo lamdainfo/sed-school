@@ -13,7 +13,6 @@ import {
   Space,
 } from "antd";
 import { postRequest } from "../../axios";
-import { UploadOutlined } from "@ant-design/icons";
 
 import PageHeader from "../common/PageHeader";
 import EditHomeworkDocumentUpload from "./EditHomeworkDocumentUpload";
@@ -47,6 +46,7 @@ const EditHomeWork = (props) => {
     topic: "",
     description: null,
     subject: null,
+    subject_id: null,
     projectDocuments: [],
   });
   const [btnLoading, setBtnLoading] = useState(false);
@@ -73,6 +73,7 @@ const EditHomeWork = (props) => {
       assignment_date: response.data.response.assignment_date,
       submission_date: response.data.response.submission_date,
       subject: response.data.response.subject,
+      subject_id: response.data.response.subject_id,
       projectDocuments: response.data.response.documents,
     });
     formRef.current.setFieldsValue({
@@ -90,6 +91,7 @@ const EditHomeWork = (props) => {
         "DD-MM-YYYY"
       ),
       subject: response.data.response.subject,
+      subject_id: response.data.response.subject_id,
     });
     getSubjectList(response.data.response.class_code);
   };
@@ -168,7 +170,7 @@ const EditHomeWork = (props) => {
     const payload = {
       edit_mode: "",
       sid: getSessionData().code,
-      subject: state.subject,
+      subject: state.subject_id,
       topic: state.topic,
       description: state.description,
       page_no: state.page_no,
@@ -332,7 +334,7 @@ const EditHomeWork = (props) => {
                               <Select
                                 placeholder="Select Subject"
                                 onChange={(value) =>
-                                  handleSelectChange("subject", value)
+                                  handleSelectChange("subject_id", value)
                                 }
                               >
                                 {!!subjectList &&
