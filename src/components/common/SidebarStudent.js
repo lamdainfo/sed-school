@@ -80,20 +80,6 @@ const SidebarStudent = (props) => {
                 <span className="nav-link-text">Homework</span>
               </Link>
             </li>
-
-            <li>
-              <Link to="/live-class">
-                <i className="fal fa-camcorder"></i>
-                <span className="nav-link-text">Live Classes</span>
-              </Link>
-            </li>
-
-            <li>
-              <Link to="/fees">
-                <i className="fal fa-receipt"></i>
-                <span className="nav-link-text">Fees</span>
-              </Link>
-            </li>
           </ul>
         </nav>
       </aside>

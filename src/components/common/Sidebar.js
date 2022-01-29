@@ -9,7 +9,6 @@ import userIcon from "../../images/userIcon.jpg";
 const Sidebar = (props) => {
   const [menu1, setmenu1] = useState(false);
   const [menu2, setmenu2] = useState(false);
-  const [menu3, setmenu3] = useState(false);
 
   const toggleSidebar = () => {
     props.toggleSidebar();
@@ -108,28 +107,6 @@ const Sidebar = (props) => {
                 <li>
                   <Link to="/approval-home-work">
                     <span className="nav-link-text">Approval List</span>
-                  </Link>
-                </li>
-              </ul>
-            </li>
-
-            <li
-              className={menu3 ? "active" : ""}
-              onClick={() => setmenu3(!menu3)}
-            >
-              <a title="Form Stuff">
-                <i className="fal fa-camcorder"></i>
-                <span className="nav-link-text">Live Classes</span>
-              </a>
-              <ul>
-                <li>
-                  <Link to="/create-live-class">
-                    <span className="nav-link-text">Create</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/live-class">
-                    <span className="nav-link-text">List</span>
                   </Link>
                 </li>
               </ul>

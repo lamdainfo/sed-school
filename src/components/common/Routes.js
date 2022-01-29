@@ -13,8 +13,6 @@ import ForgotPasswordVerification from "../authentication/ForgotPasswordVerifica
 
 /* Auth Required Private Route Components */
 import Dashboard from "../dashboard/Dashboard";
-import PaymentSuccess from "../fees/PaymentSuccess";
-import PaymentFailed from "../fees/PaymentFailed";
 
 import NoticeBoard from "../noticeBoard/NoticeBoard";
 import CreateNoticeBoard from "../noticeBoard/CreateNoticeBoard";
@@ -27,11 +25,6 @@ import CreateHomeWorkBySubject from "../homeWork/CreateHomeWorkBySubject";
 import EditHomeWork from "../homeWork/EditHomeWork";
 import SubmitedHomeWork from "../homeWork/SubmitedHomeWork";
 import SubmitHomeWork from "../homeWork/SubmitHomeWork";
-
-import LiveClass from "../liveClass/LiveClass";
-import CreateLiveClass from "../liveClass/CreateLiveClass";
-
-import Fees from "../fees";
 
 /* Other Common Route Components */
 import Logout from "../authentication/Logout";
@@ -54,9 +47,6 @@ export default class Routes extends Component {
           component={ForgotPasswordVerification}
         />
         <OpenRoute exact path="/reset-password" component={ResetPassword} />
-
-        <PrivateRoute exact path="/payment-success" component={PaymentSuccess} />
-        <PrivateRoute exact path="/payment-failed" component={PaymentFailed} />
 
         <PrivateRoute exact path="/dashboard" component={Dashboard} />
         <PrivateRoute exact path="/notice-board" component={NoticeBoard} />
@@ -102,15 +92,6 @@ export default class Routes extends Component {
           path="/submit-home-work"
           component={SubmitHomeWork}
         />
-
-        <PrivateRoute exact path="/live-class" component={LiveClass} />
-        <PrivateRoute
-          exact
-          path="/create-live-class"
-          component={CreateLiveClass}
-        />
-
-        <PrivateRoute exact path="/fees" component={Fees} />
 
         <OpenRoute exact path="/logout" component={Logout} />
         <OpenRoute path="*" component={Notfound} />
